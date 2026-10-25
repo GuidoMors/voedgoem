@@ -1,7 +1,15 @@
+import type { Avatar } from "./avatar/model";
+import type { CodenamesSnapshot } from "./games/codenames/types";
+import type { SaboteurSnapshot } from "./games/saboteur/types";
+import type { TetrisSnapshot } from "./games/tetris/types";
+import type { ThirtyOneSnapshot } from "./games/thirtyone/types";
+
 export interface User {
   id: string;
   username: string;
   isAdmin: boolean;
+  isDisplay: boolean;
+  avatar: Avatar | null;
 }
 
 export interface GameInfo {
@@ -25,40 +33,9 @@ export interface AdminUser {
   username: string;
   createdAt: string;
   isAdmin: boolean;
+  isDisplay: boolean;
   hasRecoveryKey: boolean;
 }
 
-export type Phase = "lobby" | "playing" | "results";
-
-export interface PlayerSnapshot {
-  id: string;
-  username: string;
-  alive: boolean;
-  score: number;
-  lines: number;
-  level: number;
-  connected: boolean;
-  board: string;
-}
-
-export interface ResultRow {
-  id: string;
-  username: string;
-  score: number;
-  lines: number;
-  level: number;
-}
-
-export interface LobbySnapshot {
-  type: "snapshot";
-  game: string;
-  name: string;
-  host: { id: string; name: string };
-  phase: Phase;
-  seed: number;
-  round: number;
-  maxPlayers: number;
-  players: PlayerSnapshot[];
-  spectators: { id: string; username: string }[];
-  results: ResultRow[];
-}
+// Add each game's snapshot type here; they are discriminated by `game`.
+export type LobbySnapshot = TetrisSnapshot | CodenamesSnapshot | ThirtyOneSnapshot | SaboteurSnapshot;

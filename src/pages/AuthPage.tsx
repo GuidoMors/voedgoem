@@ -48,7 +48,7 @@ export function AuthPage({ onAuthenticated }: { onAuthenticated: (user: User) =>
       <form className="card auth-card" onSubmit={submit}>
         <h1>Voedgoem</h1>
         <p className="muted">{mode === "login" ? "Sign in to join a game." : mode === "register" ? "Create an account with just a username and password." : "Reset your password with a recovery key from an admin."}</p>
-        <label>Username<input value={username} onChange={e => setUsername(e.target.value)} autoComplete="username" required minLength={3} maxLength={20} /></label>
+        <label>Username<input value={username} onChange={e => setUsername(e.target.value)} autoComplete="username" required minLength={2} maxLength={20} /></label>
         {mode === "reset" && <label>Recovery key<input value={recoveryKey} onChange={e => setRecoveryKey(e.target.value)} placeholder="XXXX-XXXX-XXXX-XXXX" required /></label>}
         <label>{mode === "reset" ? "New password" : "Password"}<input type="password" value={password} onChange={e => setPassword(e.target.value)} autoComplete={mode === "login" ? "current-password" : "new-password"} required minLength={8} maxLength={128} /></label>
         {error && <p className="error">{error}</p>}

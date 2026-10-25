@@ -1,120 +1,85 @@
-import { useState } from "react";
-import { BoardView, parseBoard } from "../tetris/BoardView";
-import { TetrisPlayer } from "../tetris/TetrisPlayer";
+import { useCallback, useEffect, useState } from "react";
+import { AvatarsContext, Person } from "../avatar/Avatar";
+import { GameLobby } from "../games/registry";
+import type { Send } from "../games/types";
 import { useLobbyConnection } from "../useLobbyConnection";
 import type { LobbySnapshot, User } from "../types";
 
+const noop = () => undefined;
+
 export function LobbyPage({ lobbyId, user }: { lobbyId: string; user: User }) {
-  const { snapshot, status, send } = useLobbyConnection(lobbyId);
+  const { snapshot, status, send, notice, avatars } = useLobbyConnection(lobbyId);
+  const [controlling, setControlling] = useState<string | null>(null);
+
+  const gameId = snapshot?.game;
+  useEffect(() => {
+    if (!gameId) return;
+    document.body.dataset.game = gameId;
+    return () => { delete document.body.dataset.game; };
+  }, [gameId]);
+
+  const sendAsBot = useCallback<Send>(message => {
+    if (controlling && !user.isDisplay) send({ type: "bot:act", botId: controlling, message });
+  }, [controlling, send, user.isDisplay]);
 
   if (status === "closed") {
     return <div className="page"><p className="error">This lobby no longer exists or could not be joined.</p><a className="button" href="#/">Back to hub</a></div>;
   }
   if (!snapshot) return <div className="page"><p className="muted">Connecting to lobby…</p></div>;
 
-  const me = snapshot.players.find(player => player.id === user.id);
-  const isHost = snapshot.host.id === user.id;
+  const bot = snapshot.bots.find(item => item.id === controlling);
+  const botView = bot && snapshot.botViews?.[bot.id];
+  const acting = !!bot && !!botView;
+  const view = acting ? ({ ...snapshot, ...botView } as LobbySnapshot) : snapshot;
 
   return (
+    <AvatarsContext.Provider value={avatars}>
     <div className="page">
       <div className="row between">
-        <div>
-          <h1>{snapshot.name}</h1>
-          <p className="muted">Hosted by {snapshot.host.name}{status === "reconnecting" && " · reconnecting…"}</p>
+        <h1>{snapshot.name}</h1>
+        <div className="row lobby-head-right">
+          <span className="host-tag">Hosted by {snapshot.host.name}{status === "reconnecting" && " · reconnecting…"}</span>
+          <a className="button" href="#/">Leave lobby</a>
         </div>
-        <a className="button" href="#/">Leave lobby</a>
       </div>
-      {snapshot.phase === "lobby" && <Waiting snapshot={snapshot} joined={!!me} isHost={isHost} send={send} />}
-      {snapshot.phase === "playing" && <Playing snapshot={snapshot} userId={user.id} send={send} />}
-      {snapshot.phase === "results" && <Results snapshot={snapshot} userId={user.id} isHost={isHost} send={send} />}
-    </div>
-  );
-}
+      {notice && <p className="error">{notice}</p>}
 
-type Send = (message: Record<string, unknown>) => void;
+      {acting && <p className="cn-status">Controlling <strong>{bot.username}</strong>. Everything you do is done as this bot.</p>}
 
-function Waiting({ snapshot, joined, isHost, send }: { snapshot: LobbySnapshot; joined: boolean; isHost: boolean; send: Send }) {
-  const full = snapshot.players.length >= snapshot.maxPlayers;
-  return (
-    <div className="grid-2">
-      <section className="card">
-        <h2>Players <span className="pill">{snapshot.players.length}/{snapshot.maxPlayers}</span></h2>
-        {snapshot.players.length === 0 ? <p className="muted">Nobody has joined the game yet.</p> : (
-          <ul className="names">{snapshot.players.map(player => <li key={player.id} className={player.connected ? "" : "offline"}>{player.username}</li>)}</ul>
-        )}
-        {joined
-          ? <button onClick={() => send({ type: "leave" })}>Back to spectating</button>
-          : <button className="primary" disabled={full} onClick={() => send({ type: "join" })}>{full ? "Game is full" : "Join the game"}</button>}
-      </section>
-      <section className="card">
-        <h2>Spectators <span className="pill">{snapshot.spectators.length}</span></h2>
-        {snapshot.spectators.length === 0 ? <p className="muted">No spectators.</p> : <ul className="names">{snapshot.spectators.map(person => <li key={person.id}>{person.username}</li>)}</ul>}
-        {isHost && (
-          <div className="host-actions">
-            <button className="primary" disabled={snapshot.players.length === 0} onClick={() => send({ type: "start" })}>Start game</button>
-            {snapshot.players.length === 0 && <p className="muted small">At least one player must join first.</p>}
+      <GameLobby
+        key={acting ? bot.id : "me"}
+        snapshot={view}
+        userId={acting ? bot.id : user.id}
+        isHost={acting ? false : snapshot.host.id === user.id}
+        send={user.isDisplay ? noop : acting ? sendAsBot : send}
+      />
+
+      {user.isAdmin && (
+        <section className="card bot-panel">
+          <div className="row between">
+            <h2>Test bots</h2>
+            <button onClick={() => send({ type: "bot:add" })}>Add bot</button>
           </div>
-        )}
-        {!isHost && <p className="muted small">Waiting for {snapshot.host.name} to start the game.</p>}
-      </section>
-    </div>
-  );
-}
-
-function Playing({ snapshot, userId, send }: { snapshot: LobbySnapshot; userId: string; send: Send }) {
-  const me = snapshot.players.find(player => player.id === userId);
-  const [, setFinished] = useState(false);
-  const others = snapshot.players.filter(player => player.id !== userId);
-  const alive = snapshot.players.filter(player => player.alive).length;
-
-  return (
-    <div>
-      <p className="muted">{alive} player{alive === 1 ? "" : "s"} still playing.</p>
-      <div className="playing-layout">
-        {me?.alive && (
-          <section className="card">
-            <h2>Your game</h2>
-            <TetrisPlayer
-              key={snapshot.round}
-              seed={snapshot.seed}
-              onState={stats => send({ type: "state", ...stats })}
-              onGameOver={stats => { setFinished(true); send({ type: "gameover", score: stats.score, lines: stats.lines, level: stats.level }); }}
-            />
-          </section>
-        )}
-        {me && !me.alive && <section className="card"><h2>You're out</h2><p>Final score <strong>{me.score}</strong> · {me.lines} lines. Waiting for the others to finish…</p></section>}
-        {!me && <section className="card"><h2>Spectating</h2><p className="muted">A round is in progress. You'll be able to join the next one.</p></section>}
-        <section className="boards">
-          {(me ? others : snapshot.players).map(player => (
-            <div key={player.id} className={`mini-board ${player.alive ? "" : "out"}`}>
-              <BoardView cells={parseBoard(player.board)} cellSize={12} dim={!player.alive} />
-              <div className="mini-name">{player.username}{!player.alive && " · out"}</div>
-              <div className="muted small">{player.score}</div>
-            </div>
-          ))}
+          {snapshot.bots.length === 0 ? <p className="muted small">Add bots to test this game alone. You can play as any bot.</p> : (
+            <ul className="names">
+              <li className="row between">
+                <Person id={user.id} name={`You (${user.username})`} />
+                <button className={!acting ? "primary" : ""} disabled={!acting} onClick={() => setControlling(null)}>{acting ? "Play as me" : "Playing"}</button>
+              </li>
+              {snapshot.bots.map(item => (
+                <li key={item.id} className="row between">
+                  <Person id={item.id} name={item.username} />
+                  <span className="row">
+                    <button className={controlling === item.id ? "primary" : ""} disabled={controlling === item.id} onClick={() => setControlling(item.id)}>{controlling === item.id ? "Playing" : "Control"}</button>
+                    <button className="danger" onClick={() => { if (controlling === item.id) setControlling(null); send({ type: "bot:remove", botId: item.id }); }}>Remove</button>
+                  </span>
+                </li>
+              ))}
+            </ul>
+          )}
         </section>
-      </div>
+      )}
     </div>
-  );
-}
-
-function Results({ snapshot, userId, isHost, send }: { snapshot: LobbySnapshot; userId: string; isHost: boolean; send: Send }) {
-  return (
-    <section className="card results">
-      <h2>Final scores</h2>
-      <table>
-        <thead><tr><th>#</th><th>Player</th><th>Score</th><th>Lines</th><th>Level</th></tr></thead>
-        <tbody>
-          {snapshot.results.map((row, index) => (
-            <tr key={row.id} className={row.id === userId ? "me" : ""}>
-              <td>{index + 1}</td><td>{row.username}</td><td>{row.score}</td><td>{row.lines}</td><td>{row.level}</td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-      {isHost
-        ? <button className="primary" onClick={() => send({ type: "exit" })}>Back to lobby</button>
-        : <p className="muted small">Waiting for {snapshot.host.name} to return to the lobby.</p>}
-    </section>
+    </AvatarsContext.Provider>
   );
 }
