@@ -20,7 +20,7 @@ export default function App() {
   const [loading, setLoading] = useState(true);
   const [route, setRoute] = useState(readHash());
   const [menuOpen, setMenuOpen] = useState(false);
-  const [modal, setModal] = useState<"stats" | "history" | "admin" | null>(null);
+  const [modal, setModal] = useState<"stats" | "history" | "admin" | "profile" | null>(null);
   const [hasHistory, setHasHistory] = useState(false);
   const closeModal = useCallback(() => setModal(null), []);
 
@@ -48,7 +48,7 @@ export default function App() {
   const inGame = !!lobbyMatch;
   const onProfile = route === "/profile";
   const onHub = !onProfile;
-  const openModal = (event: React.MouseEvent, name: "stats" | "history" | "admin") => {
+  const openModal = (event: React.MouseEvent, name: "stats" | "history" | "admin" | "profile") => {
     event.preventDefault();
     setModal(name);
     setMenuOpen(false);
@@ -70,7 +70,7 @@ export default function App() {
         <div className="who">
           {user.isDisplay
             ? <span className="pill">display</span>
-            : <a className={`profile-link ${onProfile ? "active" : ""}`} href="#/profile" title="Edit profile"><Avatar avatar={user.avatar ?? defaultAvatar(user.id)} size={26} />{user.username}</a>}
+            : <a className={`profile-link ${onProfile ? "active" : ""}`} href="#/profile" title="Edit profile" onClick={event => openModal(event, "profile")}><Avatar avatar={user.avatar ?? defaultAvatar(user.id)} size={26} />{user.username}</a>}
           {user.isAdmin && <span className="pill">admin</span>}<button onClick={() => void logout()}>Sign out</button>
         </div>
         </div>
@@ -82,6 +82,7 @@ export default function App() {
       </main>
       {modal === "stats" && !user.isDisplay && <Modal title="Statistics" onClose={closeModal}><StatsPage userId={user.id} /></Modal>}
       {modal === "admin" && user.isAdmin && <Modal title="Admin" onClose={closeModal}><AdminPage /></Modal>}
+      {modal === "profile" && !user.isDisplay && <Modal title="Your profile" onClose={closeModal}><ProfilePage user={user} onSaved={setUser} /></Modal>}
     </div>
   );
 }
