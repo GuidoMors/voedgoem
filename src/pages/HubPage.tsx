@@ -61,7 +61,7 @@ export function HubPage({ user }: { user: User }) {
       <h1>Lobbies</h1>
       {error && <p className="error">{error}</p>}
 
-      {user.isAdmin && (
+      {(user.isAdmin || user.isHoster) && (
         <section className="card">
           <h2>Create a lobby</h2>
           <form className="row create-lobby" onSubmit={create}>
@@ -76,7 +76,7 @@ export function HubPage({ user }: { user: User }) {
       )}
 
       <section className="card">
-        {lobbies.length === 0 ? <p className="muted">No open lobbies{user.isAdmin ? " — create one above." : " yet. Ask an admin to open one."}</p> : (
+        {lobbies.length === 0 ? <p className="muted">No open lobbies{(user.isAdmin || user.isHoster) ? " — create one above." : " yet. Ask an admin or hoster to open one."}</p> : (
           <ul className="lobby-list">
             {lobbies.map(lobby => (
               <li key={lobby.id}>

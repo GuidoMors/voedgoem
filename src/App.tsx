@@ -71,6 +71,7 @@ export default function App() {
           {user.isDisplay
             ? <span className="pill">display</span>
             : <a className={`profile-link ${onProfile ? "active" : ""}`} href="#/profile" title="Edit profile" onClick={event => openModal(event, "profile")}><Avatar avatar={user.avatar ?? defaultAvatar(user.id)} size={26} />{user.username}</a>}
+          {user.isHoster && <span className="pill">hoster</span>}
           {user.isAdmin && <span className="pill">admin</span>}<button onClick={() => void logout()}>Sign out</button>
         </div>
         </div>

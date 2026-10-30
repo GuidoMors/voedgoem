@@ -8,6 +8,7 @@ export interface User {
   id: string;
   username: string;
   isAdmin: boolean;
+  isHoster: boolean;
   isDisplay: boolean;
   avatar: Avatar | null;
 }
@@ -33,6 +34,7 @@ export interface AdminUser {
   username: string;
   createdAt: string;
   isAdmin: boolean;
+  isHoster: boolean;
   isDisplay: boolean;
   hasRecoveryKey: boolean;
 }
