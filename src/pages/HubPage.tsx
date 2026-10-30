@@ -8,6 +8,7 @@ export function HubPage({ user }: { user: User }) {
   const [error, setError] = useState("");
   const [gameId, setGameId] = useState("");
   const [name, setName] = useState("");
+  const [password, setPassword] = useState("");
   const [busy, setBusy] = useState(false);
 
   const loadLobbies = useCallback(async () => {
@@ -37,7 +38,7 @@ export function HubPage({ user }: { user: User }) {
     event.preventDefault();
     setBusy(true);
     try {
-      const result = await api<{ lobby: LobbySummary }>("/api/lobbies", { method: "POST", body: JSON.stringify({ game: gameId, name }) });
+      const result = await api<{ lobby: LobbySummary }>("/api/lobbies", { method: "POST", body: JSON.stringify({ game: gameId, name, password }) });
       window.location.hash = `#/lobby/${result.lobby.id}`;
     } catch (e) {
       setError(e instanceof Error ? e.message : "Could not create lobby.");
@@ -69,6 +70,7 @@ export function HubPage({ user }: { user: User }) {
               {games.map(game => <option key={game.id} value={game.id}>{game.name}</option>)}
             </select>
             <input value={name} onChange={e => setName(e.target.value)} placeholder="Lobby name" maxLength={40} required />
+            <input type="password" value={password} onChange={e => setPassword(e.target.value)} placeholder="Password (optional)" maxLength={128} autoComplete="new-password" />
             <button className="primary" disabled={busy || !gameId}>Create lobby</button>
           </form>
           {selected && <p className="muted small">{selected.description}</p>}
@@ -81,7 +83,7 @@ export function HubPage({ user }: { user: User }) {
             {lobbies.map(lobby => (
               <li key={lobby.id}>
                 <div>
-                  <span className="pill">{gameName(lobby.game)}</span> <strong>{lobby.name}</strong>
+                  <span className="pill">{gameName(lobby.game)}</span> <strong>{lobby.name}</strong>{lobby.isPasswordProtected && <span className="pill" aria-label="Password protected">🔒 Password</span>}
                   <span className="muted"> hosted by {lobby.hostName}</span>
                 </div>
                 <div className="row">

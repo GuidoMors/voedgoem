@@ -27,6 +27,7 @@ export interface LobbySummary {
   hostId: string;
   hostName: string;
   createdAt: string;
+  isPasswordProtected: boolean;
 }
 
 export interface AdminUser {

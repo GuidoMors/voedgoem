@@ -30,6 +30,11 @@ button:disabled{opacity:.5;cursor:not-allowed}
 .auth-screen{min-height:100vh;display:grid;place-items:center;padding:20px}
 .auth-card{width:100%;max-width:380px;display:flex;flex-direction:column;gap:12px}
 .auth-card label{display:flex;flex-direction:column;gap:6px;font-size:13px;color:var(--muted)}
+.lobby-password-screen{max-width:none;min-height:calc(100vh - 49px);display:grid;place-items:center}
+.lobby-password-card{margin-bottom:0}
+.lobby-password-card form{display:flex;flex-direction:column;gap:14px}
+.lobby-password-actions{display:flex;gap:10px}
+.lobby-password-actions>*{flex:1;text-align:center}
 .auth-links{display:flex;justify-content:space-between}
 .game-head{display:flex;justify-content:space-between;gap:12px}
 .lobby-list,.names{list-style:none;padding:0;margin:0 0 12px;display:flex;flex-direction:column;gap:8px}
