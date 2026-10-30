@@ -148,6 +148,7 @@ function Table({ snapshot, seat, isHost, send }: { snapshot: CodenamesSnapshot; 
   const myTurn = playing && seat?.team === snapshot.turn;
   const canClue = myTurn && seat?.role === "spymaster" && !snapshot.clue;
   const canGuess = myTurn && seat?.role === "operative" && !!snapshot.clue;
+  const canTag = myTurn && seat?.role === "operative";
   const pressTimer = useRef<number | undefined>(undefined);
   const longPressed = useRef(false);
   const lastPointer = useRef("mouse");
@@ -194,7 +195,7 @@ function Table({ snapshot, seat, isHost, send }: { snapshot: CodenamesSnapshot; 
       </div>
       <p className="muted small">
         {seat
-          ? <>You are the <strong className={`text-${seat.team}`}>{label(seat.team)} {seat.role}</strong>.</>
+          ? <>You are <strong className={`text-${seat.team}`}>{label(seat.team)} {seat.role}</strong>.</>
           : "You are spectating."}
         {playing && seat?.role === "spymaster" && " You can see every card."}
       </p>
@@ -206,19 +207,19 @@ function Table({ snapshot, seat, isHost, send }: { snapshot: CodenamesSnapshot; 
             <button
               key={index}
               className={`cn-card ${card.color ? `c-${card.color}` : ""} ${card.revealed ? "revealed" : card.color ? "hinted" : ""} ${card.hint ? `hint-${card.hint} hint-${card.hintTeam}` : ""} ${hintable ? "hintable" : ""}`}
-              disabled={card.revealed || !(canGuess || hintable)}
+              disabled={card.revealed || !(canGuess || hintable || canTag)}
               onClick={() => {
                 if (longPressed.current) { longPressed.current = false; return; }
                 if (hintable) { send({ type: "hint", index }); setHintMode(false); }
-                else send({ type: "guess", index });
+                else if (canGuess) send({ type: "guess", index });
               }}
               onContextMenu={event => {
                 event.preventDefault();
-                if (canGuess && !card.revealed && lastPointer.current !== "touch") send({ type: "tag", index });
+                if (canTag && !card.revealed && lastPointer.current !== "touch") send({ type: "tag", index });
               }}
               onPointerDown={event => {
                 lastPointer.current = event.pointerType;
-                if (event.pointerType !== "touch" || !canGuess || card.revealed) return;
+                if (event.pointerType !== "touch" || !canTag || card.revealed) return;
                 clearTimeout(pressTimer.current);
                 pressTimer.current = window.setTimeout(() => { longPressed.current = true; send({ type: "tag", index }); }, 500);
               }}
