@@ -24,17 +24,21 @@ interface GameStats {
 const show = (value: number | null | undefined, def: StatDef) =>
   value === null || value === undefined ? "–" : def.format === "percent" ? `${value}%` : value.toLocaleString();
 
-export function StatsPage({ userId }: { userId: string }) {
+export function StatsPage({ userId, defaultGame, onGameChange }: { userId: string; defaultGame: string | null; onGameChange: (game: string | null) => void }) {
   const [games, setGames] = useState<GameInfo[]>([]);
-  const [game, setGame] = useState("");
+  const [game, setGame] = useState(defaultGame ?? "");
   const [data, setData] = useState<GameStats | null>(null);
   const [error, setError] = useState("");
 
   useEffect(() => {
     api<{ games: GameInfo[] }>("/api/games")
-      .then(result => { setGames(result.games); setGame(current => current || result.games[0]?.id || ""); })
+      .then(result => { setGames(result.games); setGame(current => current || defaultGame || result.games[0]?.id || ""); })
       .catch(e => setError(e.message));
-  }, []);
+  }, [defaultGame]);
+
+  useEffect(() => {
+    if (defaultGame) setGame(defaultGame);
+  }, [defaultGame]);
 
   useEffect(() => {
     if (!game) return;
@@ -42,14 +46,18 @@ export function StatsPage({ userId }: { userId: string }) {
     api<GameStats>(`/api/stats/${game}`).then(setData).catch(e => setError(e.message));
   }, [game]);
 
+  useEffect(() => {
+    onGameChange(game || null);
+  }, [game, onGameChange]);
+
   const name = games.find(item => item.id === game)?.name ?? game;
 
   return (
-    <div className="page">
+    <div className="page stats-page" data-game={game || undefined}>
       <h1>Statistics</h1>
       <div className="row stats-tabs" role="tablist">
         {games.map(item => (
-          <button key={item.id} role="tab" aria-selected={item.id === game} className={item.id === game ? "primary" : ""} onClick={() => setGame(item.id)}>{item.name}</button>
+          <button key={item.id} role="tab" aria-selected={item.id === game} className={`stats-tab ${item.id === game ? "active" : ""}`} onClick={() => setGame(item.id)}>{item.name}</button>
         ))}
       </div>
       {error && <p className="error">{error}</p>}

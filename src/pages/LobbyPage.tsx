@@ -7,16 +7,17 @@ import type { LobbySnapshot, User } from "../types";
 
 const noop = () => undefined;
 
-export function LobbyPage({ lobbyId, user }: { lobbyId: string; user: User }) {
+export function LobbyPage({ lobbyId, user, onGameChange }: { lobbyId: string; user: User; onGameChange: (game: string | null) => void }) {
   const { snapshot, status, send, notice, avatars } = useLobbyConnection(lobbyId);
   const [controlling, setControlling] = useState<string | null>(null);
 
   const gameId = snapshot?.game;
   useEffect(() => {
+    onGameChange(gameId ?? null);
     if (!gameId) return;
     document.body.dataset.game = gameId;
-    return () => { delete document.body.dataset.game; };
-  }, [gameId]);
+    return () => { delete document.body.dataset.game; onGameChange(null); };
+  }, [gameId, onGameChange]);
 
   const sendAsBot = useCallback<Send>(message => {
     if (controlling && !user.isDisplay) send({ type: "bot:act", botId: controlling, message });

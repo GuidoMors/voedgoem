@@ -22,7 +22,10 @@ export default function App() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [modal, setModal] = useState<"stats" | "history" | "admin" | "profile" | null>(null);
   const [hasHistory, setHasHistory] = useState(false);
+  const [lobbyGame, setLobbyGame] = useState<string | null>(null);
+  const [statsGame, setStatsGame] = useState<string | null>(null);
   const closeModal = useCallback(() => setModal(null), []);
+  const updateLobbyGame = useCallback((game: string | null) => setLobbyGame(game), []);
 
   useEffect(() => {
     const onHash = () => { setRoute(readHash()); setMenuOpen(false); setModal(null); };
@@ -50,6 +53,7 @@ export default function App() {
   const onHub = !onProfile;
   const openModal = (event: React.MouseEvent, name: "stats" | "history" | "admin" | "profile") => {
     event.preventDefault();
+    if (name === "stats") setStatsGame(inGame ? lobbyGame : null);
     setModal(name);
     setMenuOpen(false);
   };
@@ -78,10 +82,10 @@ export default function App() {
       </header>
       <main>
         <HistoryContext.Provider value={{ open: modal === "history", setAvailable: setHasHistory, close: closeModal }}>
-        {onProfile && !user.isDisplay ? <ProfilePage user={user} onSaved={setUser} /> : lobbyMatch ? <LobbyPage key={lobbyMatch[1]} lobbyId={lobbyMatch[1]} user={user} /> : <HubPage user={user} />}
+        {onProfile && !user.isDisplay ? <ProfilePage user={user} onSaved={setUser} /> : lobbyMatch ? <LobbyPage key={lobbyMatch[1]} lobbyId={lobbyMatch[1]} user={user} onGameChange={updateLobbyGame} /> : <HubPage user={user} />}
         </HistoryContext.Provider>
       </main>
-      {modal === "stats" && !user.isDisplay && <Modal title="Statistics" onClose={closeModal}><StatsPage userId={user.id} /></Modal>}
+      {modal === "stats" && !user.isDisplay && <Modal title="Statistics" onClose={closeModal} gameTheme={statsGame}><StatsPage userId={user.id} defaultGame={inGame ? lobbyGame : null} onGameChange={setStatsGame} /></Modal>}
       {modal === "admin" && user.isAdmin && <Modal title="Admin" onClose={closeModal}><AdminPage /></Modal>}
       {modal === "profile" && !user.isDisplay && <Modal title="Your profile" onClose={closeModal}><ProfilePage user={user} onSaved={setUser} /></Modal>}
     </div>
