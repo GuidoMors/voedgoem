@@ -58,7 +58,7 @@ export default function App() {
     <div className="shell">
       {user.isDisplay && <DisplayQr url={window.location.href} />}
       <header className="topbar">
-        <a className="brand" href="#/" onClick={event => inGame && event.preventDefault()}>Voedgoem</a>
+        <a className="brand" href="#/" onClick={event => inGame && event.preventDefault()}>voedgoem</a>
         <button className="burger" aria-label="Menu" aria-expanded={menuOpen} onClick={() => setMenuOpen(open => !open)}>{menuOpen ? "✕" : "☰"}</button>
         <div className={`menu ${menuOpen ? "open" : ""}`}>
         <nav>
