@@ -88,7 +88,7 @@ export function HubPage({ user }: { user: User }) {
                     {gameFaviconUrl(lobby.game) && <img className="game-favicon" src={gameFaviconUrl(lobby.game)} alt="" aria-hidden="true" />}
                     {gameName(lobby.game)}
                   </span> <strong>{lobby.name}</strong>{lobby.isPasswordProtected && <span className="pill" aria-label="Password protected">🔒 Password</span>}
-                  <span className="muted"> hosted by {lobby.hostName}</span>
+                  <span className="muted lobby-hosted-by">hosted by {lobby.hostName}</span>
                 </div>
                 <div className="row">
                   <a className="button primary" href={`#/lobby/${lobby.id}`}>{user.isDisplay ? "Show" : "Join"}</a>
