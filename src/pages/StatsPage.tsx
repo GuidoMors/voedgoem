@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { api } from "../api";
 import { Person } from "../avatar/Avatar";
+import type { Avatar } from "../avatar/model";
 import type { GameInfo } from "../types";
 
 interface StatDef {
@@ -12,6 +13,7 @@ interface StatDef {
 interface PlayerRow {
   id: string;
   username: string;
+  avatar: Avatar | null;
   values: Record<string, number | null>;
 }
 
@@ -84,7 +86,7 @@ export function StatsPage({ userId, defaultGame, onGameChange }: { userId: strin
                   <tbody>
                     {data.players.map(player => (
                       <tr key={player.id} className={player.id === userId ? "me" : ""}>
-                        <td><Person id={player.id} name={player.username} size={20} /></td>
+                        <td><Person id={player.id} name={player.username} size={20} avatar={player.avatar} /></td>
                         {data.stats.map(def => <td key={def.key}>{show(player.values[def.key], def)}</td>)}
                       </tr>
                     ))}
