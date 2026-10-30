@@ -113,9 +113,12 @@ function Waiting({ snapshot, seat, isHost, send }: { snapshot: CodenamesSnapshot
               Hints per spymaster
               <input type="number" min={0} max={10} value={hintLimit} onChange={event => setHintLimit(Number(event.target.value))} />
             </label>
-            <button onClick={() => send({ type: "scramble" })}>Scramble spymasters</button>
+            <div className="row">
+              <button onClick={() => send({ type: "scramble_teams" })}>Scramble teams</button>
+              <button onClick={() => send({ type: "scramble" })}>Scramble spymasters</button>
+            </div>
             <button className="primary" onClick={() => send({ type: "start", wordCount, hintLimit })}>Start draft</button>
-            <p className="muted small">Each team needs a spymaster. Scramble picks two random people as spymasters; operatives are then drafted from the spectators.</p>
+            <p className="muted small">Scramble teams assigns everyone connected to balanced teams with one spymaster per team. Scramble spymasters only reassigns the two spymaster roles.</p>
           </div>
         ) : <p className="muted small">Waiting for {snapshot.host.name} to start the draft.</p>}
       </section>
@@ -279,7 +282,21 @@ function Table({ snapshot, seat, isHost, send }: { snapshot: CodenamesSnapshot; 
           </div>
         );
       })}
-      {snapshot.spectators.length > 0 && <p className="muted small">{snapshot.spectators.length} spectating</p>}
+      {snapshot.spectators.length > 0 && (
+        <section className="card cn-spectators">
+          <h4>Spectators ({snapshot.spectators.length})</h4>
+          <ul className="names">
+            {snapshot.spectators.map(person => (
+              <li key={person.id} className="row between">
+                <Person id={person.id} name={person.username} size={20} />
+                {isHost && playing && <span className="row">
+                  {TEAMS.map(team => <button key={team} className={`text-${team}`} onClick={() => send({ type: "assign", userId: person.id, team })}>Add {label(team)}</button>)}
+                </span>}
+              </li>
+            ))}
+          </ul>
+        </section>
+      )}
     </aside>
     </div>
   );

@@ -83,9 +83,12 @@ function Waiting({ snapshot, seat, isHost, send }: Props) {
               Grace period after the timer (seconds)
               <input type="number" min={0} max={15} value={graceSeconds} onChange={event => setGraceSeconds(Number(event.target.value))} />
             </label>
-            <button onClick={() => send({ type: "scramble" })}>Scramble captains</button>
+            <div className="row">
+              <button onClick={() => send({ type: "scramble_teams" })}>Scramble teams</button>
+              <button onClick={() => send({ type: "scramble" })}>Scramble captains</button>
+            </div>
             <button className="primary" onClick={() => send({ type: "start", pointsToWin, graceSeconds })}>Start draft</button>
-            <p className="muted small">Each team needs a captain. Scramble picks two random people as captains; players are then drafted from the spectators.</p>
+            <p className="muted small">Scramble teams assigns everyone connected to balanced teams with one captain per team. Scramble captains only reassigns the two captain roles.</p>
           </div>
         ) : <p className="muted small">Waiting for {snapshot.host.name} to start the draft.</p>}
       </section>
@@ -253,6 +256,21 @@ function Table({ snapshot, seat, isHost, send, userId }: Props & { userId: strin
           )}
 
           {running && myTeamTurn && !isDescriber && <p className="muted">Guess what {snapshot.describer?.username} is describing!</p>}
+        </section>
+      )}
+      {playing && isHost && snapshot.spectators.length > 0 && (
+        <section className="card">
+          <h2>Spectators ({snapshot.spectators.length})</h2>
+          <ul className="names">
+            {snapshot.spectators.map(person => (
+              <li key={person.id} className="row between">
+                <Person id={person.id} name={person.username} size={20} />
+                <span className="row">
+                  {TEAMS.map(team => <button key={team} className={`text-${team}`} onClick={() => send({ type: "assign", userId: person.id, team })}>Add to {label(team)}</button>)}
+                </span>
+              </li>
+            ))}
+          </ul>
         </section>
       )}
       {isHost && playing && <AbortCard send={send} />}
