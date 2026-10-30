@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useState, type FormEvent } from "react";
 import { api } from "../api";
+import { gameFaviconUrl } from "../gameFavicon";
 import type { GameInfo, LobbySummary, User } from "../types";
 
 export function HubPage({ user }: { user: User }) {
@@ -83,7 +84,10 @@ export function HubPage({ user }: { user: User }) {
             {lobbies.map(lobby => (
               <li key={lobby.id}>
                 <div>
-                  <span className="pill">{gameName(lobby.game)}</span> <strong>{lobby.name}</strong>{lobby.isPasswordProtected && <span className="pill" aria-label="Password protected">🔒 Password</span>}
+                  <span className="pill game-pill">
+                    {gameFaviconUrl(lobby.game) && <img className="game-favicon" src={gameFaviconUrl(lobby.game)} alt="" aria-hidden="true" />}
+                    {gameName(lobby.game)}
+                  </span> <strong>{lobby.name}</strong>{lobby.isPasswordProtected && <span className="pill" aria-label="Password protected">🔒 Password</span>}
                   <span className="muted"> hosted by {lobby.hostName}</span>
                 </div>
                 <div className="row">

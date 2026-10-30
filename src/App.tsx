@@ -11,6 +11,7 @@ import { HubPage } from "./pages/HubPage";
 import { LobbyPage } from "./pages/LobbyPage";
 import { ProfilePage } from "./pages/ProfilePage";
 import { StatsPage } from "./pages/StatsPage";
+import { gameFaviconUrl } from "./gameFavicon";
 import type { User } from "./types";
 
 const readHash = () => window.location.hash.replace(/^#/, "") || "/";
@@ -32,6 +33,13 @@ export default function App() {
     window.addEventListener("hashchange", onHash);
     return () => window.removeEventListener("hashchange", onHash);
   }, []);
+
+  useEffect(() => {
+    const icon = document.querySelector<HTMLLinkElement>('link[rel="icon"]');
+    if (!icon) return;
+    const inLobby = /^\/lobby\/[A-Za-z0-9_-]+$/.test(route);
+    icon.href = (inLobby && lobbyGame ? gameFaviconUrl(lobbyGame) : undefined) ?? "/favicons/voedgoem.ico";
+  }, [lobbyGame, route]);
 
   useEffect(() => {
     api<{ user: User }>("/api/auth/me").then(result => setUser(result.user)).catch(() => setToken(null)).finally(() => setLoading(false));

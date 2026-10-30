@@ -16,6 +16,8 @@ button:disabled{opacity:.5;cursor:not-allowed}
 .muted{color:var(--muted)}.small{font-size:12px}
 .error{color:#ff8a98}.success{color:#6ee7a8}
 .pill{display:inline-block;margin-left:6px;padding:2px 8px;border-radius:99px;background:#2a3142;font-size:12px;color:var(--muted)}
+.game-pill{display:inline-flex;align-items:center;gap:6px;vertical-align:middle}
+.game-favicon{display:block;width:20px;height:20px;object-fit:contain}
 .card{padding:18px;border:1px solid var(--border);border-radius:12px;background:var(--card);margin-bottom:16px}
 .row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}.between{justify-content:space-between}
 .right{text-align:right}
