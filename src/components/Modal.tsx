@@ -1,6 +1,6 @@
 import { useEffect, type ReactNode } from "react";
 
-export function Modal({ title, onClose, children, wide }: { title: string; onClose: () => void; children: ReactNode; wide?: boolean }) {
+export function Modal({ title, onClose, children, wide, gameTheme }: { title: string; onClose: () => void; children: ReactNode; wide?: boolean; gameTheme?: string | null }) {
   useEffect(() => {
     const onKey = (event: KeyboardEvent) => event.key === "Escape" && onClose();
     window.addEventListener("keydown", onKey);
@@ -9,7 +9,7 @@ export function Modal({ title, onClose, children, wide }: { title: string; onClo
 
   return (
     <div className="modal-backdrop" onMouseDown={event => event.target === event.currentTarget && onClose()}>
-      <div className={`modal card ${wide ? "wide" : ""}`} role="dialog" aria-modal="true" aria-label={title}>
+      <div className={`modal card ${wide ? "wide" : ""} ${gameTheme ? "stats-modal" : ""}`} data-game={gameTheme ?? undefined} role="dialog" aria-modal="true" aria-label={title}>
         <div className="row between modal-head">
           <h2>{title}</h2>
           <button onClick={onClose} aria-label="Close">✕</button>

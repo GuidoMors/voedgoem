@@ -113,9 +113,12 @@ function Waiting({ snapshot, seat, isHost, send }: { snapshot: CodenamesSnapshot
               Hints per spymaster
               <input type="number" min={0} max={10} value={hintLimit} onChange={event => setHintLimit(Number(event.target.value))} />
             </label>
-            <button onClick={() => send({ type: "scramble" })}>Scramble spymasters</button>
+            <div className="row">
+              <button onClick={() => send({ type: "scramble_teams" })}>Scramble teams</button>
+              <button onClick={() => send({ type: "scramble" })}>Scramble spymasters</button>
+            </div>
             <button className="primary" onClick={() => send({ type: "start", wordCount, hintLimit })}>Start draft</button>
-            <p className="muted small">Each team needs a spymaster. Scramble picks two random people as spymasters; operatives are then drafted from the spectators.</p>
+            <p className="muted small">Scramble teams assigns everyone connected to balanced teams with one spymaster per team. Scramble spymasters only reassigns the two spymaster roles.</p>
           </div>
         ) : <p className="muted small">Waiting for {snapshot.host.name} to start the draft.</p>}
       </section>
@@ -145,6 +148,7 @@ function Table({ snapshot, seat, isHost, send }: { snapshot: CodenamesSnapshot; 
   const myTurn = playing && seat?.team === snapshot.turn;
   const canClue = myTurn && seat?.role === "spymaster" && !snapshot.clue;
   const canGuess = myTurn && seat?.role === "operative" && !!snapshot.clue;
+  const canTag = myTurn && seat?.role === "operative";
   const pressTimer = useRef<number | undefined>(undefined);
   const longPressed = useRef(false);
   const lastPointer = useRef("mouse");
@@ -191,7 +195,7 @@ function Table({ snapshot, seat, isHost, send }: { snapshot: CodenamesSnapshot; 
       </div>
       <p className="muted small">
         {seat
-          ? <>You are the <strong className={`text-${seat.team}`}>{label(seat.team)} {seat.role}</strong>.</>
+          ? <>You are <strong className={`text-${seat.team}`}>{label(seat.team)} {seat.role}</strong>.</>
           : "You are spectating."}
         {playing && seat?.role === "spymaster" && " You can see every card."}
       </p>
@@ -203,19 +207,19 @@ function Table({ snapshot, seat, isHost, send }: { snapshot: CodenamesSnapshot; 
             <button
               key={index}
               className={`cn-card ${card.color ? `c-${card.color}` : ""} ${card.revealed ? "revealed" : card.color ? "hinted" : ""} ${card.hint ? `hint-${card.hint} hint-${card.hintTeam}` : ""} ${hintable ? "hintable" : ""}`}
-              disabled={card.revealed || !(canGuess || hintable)}
+              disabled={card.revealed || !(canGuess || hintable || canTag)}
               onClick={() => {
                 if (longPressed.current) { longPressed.current = false; return; }
                 if (hintable) { send({ type: "hint", index }); setHintMode(false); }
-                else send({ type: "guess", index });
+                else if (canGuess) send({ type: "guess", index });
               }}
               onContextMenu={event => {
                 event.preventDefault();
-                if (canGuess && !card.revealed && lastPointer.current !== "touch") send({ type: "tag", index });
+                if (canTag && !card.revealed && lastPointer.current !== "touch") send({ type: "tag", index });
               }}
               onPointerDown={event => {
                 lastPointer.current = event.pointerType;
-                if (event.pointerType !== "touch" || !canGuess || card.revealed) return;
+                if (event.pointerType !== "touch" || !canTag || card.revealed) return;
                 clearTimeout(pressTimer.current);
                 pressTimer.current = window.setTimeout(() => { longPressed.current = true; send({ type: "tag", index }); }, 500);
               }}
@@ -279,7 +283,21 @@ function Table({ snapshot, seat, isHost, send }: { snapshot: CodenamesSnapshot; 
           </div>
         );
       })}
-      {snapshot.spectators.length > 0 && <p className="muted small">{snapshot.spectators.length} spectating</p>}
+      {snapshot.spectators.length > 0 && (
+        <section className="card cn-spectators">
+          <h4>Spectators ({snapshot.spectators.length})</h4>
+          <ul className="names">
+            {snapshot.spectators.map(person => (
+              <li key={person.id} className="row between">
+                <Person id={person.id} name={person.username} size={20} />
+                {isHost && playing && <span className="row">
+                  {TEAMS.map(team => <button key={team} className={`text-${team}`} onClick={() => send({ type: "assign", userId: person.id, team })}>Add {label(team)}</button>)}
+                </span>}
+              </li>
+            ))}
+          </ul>
+        </section>
+      )}
     </aside>
     </div>
   );

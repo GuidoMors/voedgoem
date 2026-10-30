@@ -34,7 +34,7 @@ export const Avatar = memo(function Avatar({ avatar, view = "front", size = 36, 
 });
 
 // A name with the person's avatar beside it; avatars come from the lobby, falling back to a stable default.
-export function Person({ id, name, size = 28 }: { id: string; name: string; size?: number }) {
+export function Person({ id, name, size = 28, avatar }: { id: string; name: string; size?: number; avatar?: AvatarData | null }) {
   const avatars = useContext(AvatarsContext);
-  return <span className="person"><Avatar avatar={avatars[id] ?? defaultAvatar(id)} size={size} /><span className="person-name">{name}</span></span>;
+  return <span className="person"><Avatar avatar={avatar ?? avatars[id] ?? defaultAvatar(id)} size={size} /><span className="person-name">{name}</span></span>;
 }

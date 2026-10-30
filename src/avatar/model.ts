@@ -9,13 +9,16 @@ export interface Avatar {
   hatColor: string;
 }
 
-export type AvatarView = "front" | "frontright" | "right" | "topright" | "top";
+export type AvatarView = "front" | "frontright" | "right" | "topright" | "top" | "topleft" | "left" | "frontleft";
 export const VIEWS: { id: AvatarView; label: string }[] = [
   { id: "front", label: "Front" },
   { id: "frontright", label: "Front right" },
   { id: "right", label: "Right" },
   { id: "topright", label: "Top right" },
-  { id: "top", label: "Top" }
+  { id: "top", label: "Top" },
+  { id: "topleft", label: "Top left" },
+  { id: "left", label: "Left" },
+  { id: "frontleft", label: "Front left" }
 ];
 
 export const SWATCHES = ["#e74c3c", "#e67e22", "#f1c40f", "#2ecc71", "#1abc9c", "#3498db", "#9b59b6", "#e84393", "#ecf0f1", "#95a5a6", "#34495e", "#8d5a3b"];

@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useState, type FormEvent } from "react";
 import { api } from "../api";
+import { gameFaviconUrl } from "../gameFavicon";
 import type { GameInfo, LobbySummary, User } from "../types";
 
 export function HubPage({ user }: { user: User }) {
@@ -8,6 +9,7 @@ export function HubPage({ user }: { user: User }) {
   const [error, setError] = useState("");
   const [gameId, setGameId] = useState("");
   const [name, setName] = useState("");
+  const [password, setPassword] = useState("");
   const [busy, setBusy] = useState(false);
 
   const loadLobbies = useCallback(async () => {
@@ -37,7 +39,7 @@ export function HubPage({ user }: { user: User }) {
     event.preventDefault();
     setBusy(true);
     try {
-      const result = await api<{ lobby: LobbySummary }>("/api/lobbies", { method: "POST", body: JSON.stringify({ game: gameId, name }) });
+      const result = await api<{ lobby: LobbySummary }>("/api/lobbies", { method: "POST", body: JSON.stringify({ game: gameId, name, password }) });
       window.location.hash = `#/lobby/${result.lobby.id}`;
     } catch (e) {
       setError(e instanceof Error ? e.message : "Could not create lobby.");
@@ -61,7 +63,7 @@ export function HubPage({ user }: { user: User }) {
       <h1>Lobbies</h1>
       {error && <p className="error">{error}</p>}
 
-      {user.isAdmin && (
+      {(user.isAdmin || user.isHoster) && (
         <section className="card">
           <h2>Create a lobby</h2>
           <form className="row create-lobby" onSubmit={create}>
@@ -69,6 +71,7 @@ export function HubPage({ user }: { user: User }) {
               {games.map(game => <option key={game.id} value={game.id}>{game.name}</option>)}
             </select>
             <input value={name} onChange={e => setName(e.target.value)} placeholder="Lobby name" maxLength={40} required />
+            <input type="password" value={password} onChange={e => setPassword(e.target.value)} placeholder="Password (optional)" maxLength={128} autoComplete="new-password" />
             <button className="primary" disabled={busy || !gameId}>Create lobby</button>
           </form>
           {selected && <p className="muted small">{selected.description}</p>}
@@ -76,13 +79,16 @@ export function HubPage({ user }: { user: User }) {
       )}
 
       <section className="card">
-        {lobbies.length === 0 ? <p className="muted">No open lobbies{user.isAdmin ? " — create one above." : " yet. Ask an admin to open one."}</p> : (
+        {lobbies.length === 0 ? <p className="muted">No open lobbies{(user.isAdmin || user.isHoster) ? " — create one above." : " yet. Ask an admin or hoster to open one."}</p> : (
           <ul className="lobby-list">
             {lobbies.map(lobby => (
               <li key={lobby.id}>
                 <div>
-                  <span className="pill">{gameName(lobby.game)}</span> <strong>{lobby.name}</strong>
-                  <span className="muted"> hosted by {lobby.hostName}</span>
+                  <span className="pill game-pill">
+                    {gameFaviconUrl(lobby.game) && <img className="game-favicon" src={gameFaviconUrl(lobby.game)} alt="" aria-hidden="true" />}
+                    {gameName(lobby.game)}
+                  </span> <strong>{lobby.name}</strong>{lobby.isPasswordProtected && <span className="pill" aria-label="Password protected">🔒 Password</span>}
+                  <span className="muted lobby-hosted-by">hosted by {lobby.hostName}</span>
                 </div>
                 <div className="row">
                   <a className="button primary" href={`#/lobby/${lobby.id}`}>{user.isDisplay ? "Show" : "Join"}</a>

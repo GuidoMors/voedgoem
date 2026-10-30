@@ -54,6 +54,12 @@ function tint(mask: HTMLImageElement, color: string): HTMLCanvasElement {
 
 const url = (kind: string, id: string, view: AvatarView, file: string) => `${import.meta.env.BASE_URL}avatars/${kind}/${id}/${view}/${file}.png`;
 
+const mirroredViews: Partial<Record<AvatarView, AvatarView>> = {
+  frontleft: "frontright",
+  left: "right",
+  topleft: "topright"
+};
+
 const cache = new Map<string, HTMLCanvasElement>();
 
 // Resolves to a 300x450 canvas, or null if any artwork failed to load.
@@ -67,8 +73,10 @@ export async function renderAvatar(avatar: Avatar, view: AvatarView): Promise<HT
     ["faces", avatar.face, avatar.faceColor],
     ["hats", avatar.hat, avatar.hatColor]
   ];
+  const sourceView = mirroredViews[view] ?? view;
+  const mirrored = sourceView !== view;
   const loaded = await Promise.all(layers.map(async ([kind, id, color]) => ({
-    color, mask: await load(url(kind, id, view, "mask")), outline: await load(url(kind, id, view, "outline"))
+    color, mask: await load(url(kind, id, sourceView, "mask")), outline: await load(url(kind, id, sourceView, "outline"))
   })));
   if (loaded.some(layer => !layer.mask || !layer.outline)) return null;
 
@@ -76,6 +84,10 @@ export async function renderAvatar(avatar: Avatar, view: AvatarView): Promise<HT
   out.width = SIZE.width;
   out.height = SIZE.height;
   const ctx = out.getContext("2d")!;
+  if (mirrored) {
+    ctx.translate(SIZE.width, 0);
+    ctx.scale(-1, 1);
+  }
   for (const layer of loaded) {
     ctx.drawImage(tint(layer.mask!, layer.color), 0, 0);
     ctx.drawImage(layer.outline!, 0, 0, SIZE.width, SIZE.height);

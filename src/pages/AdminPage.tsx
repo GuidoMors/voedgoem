@@ -47,6 +47,22 @@ export function AdminPage() {
     }
   };
 
+  const setHoster = async (target: AdminUser) => {
+    const isHoster = !target.isHoster;
+    const confirmation = isHoster ? `Make ${target.username} a hoster?` : `Remove ${target.username} as a hoster?`;
+    if (!window.confirm(confirmation)) return;
+    setError("");
+    try {
+      await api(`/api/admin/users/${encodeURIComponent(target.id)}/hoster`, {
+        method: "POST",
+        body: JSON.stringify({ isHoster })
+      });
+      await load();
+    } catch (e) {
+      setError(e instanceof Error ? e.message : `Could not ${isHoster ? "make" : "remove"} ${target.username} ${isHoster ? "a hoster" : "as a hoster"}.`);
+    }
+  };
+
   const copy = async () => {
     if (!generated) return;
     try {
@@ -95,9 +111,12 @@ export function AdminPage() {
                 <tr key={target.id}>
                   <td><strong>{target.username}</strong></td>
                   <td>{new Date(target.createdAt).toLocaleDateString()}</td>
-                  <td>{target.isAdmin ? "Admin" : target.isDisplay ? "Display" : "User"}</td>
+                  <td>{target.isAdmin ? `Admin${target.isHoster ? " · Hoster" : ""}` : target.isHoster ? "Hoster" : target.isDisplay ? "Display" : "User"}</td>
                   <td>{target.hasRecoveryKey ? "Active" : "None"}</td>
-                  <td className="right"><button onClick={() => void generate(target)}>Generate key</button></td>
+                  <td className="right">
+                    {!target.isDisplay && !target.isAdmin && <button onClick={() => void setHoster(target)}>{target.isHoster ? "Remove Hoster" : "Make Hoster"}</button>}{" "}
+                    <button onClick={() => void generate(target)}>Generate key</button>
+                  </td>
                 </tr>
               ))}
             </tbody>

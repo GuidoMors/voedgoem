@@ -8,6 +8,7 @@ export interface User {
   id: string;
   username: string;
   isAdmin: boolean;
+  isHoster: boolean;
   isDisplay: boolean;
   avatar: Avatar | null;
 }
@@ -26,6 +27,7 @@ export interface LobbySummary {
   hostId: string;
   hostName: string;
   createdAt: string;
+  isPasswordProtected: boolean;
 }
 
 export interface AdminUser {
@@ -33,6 +35,7 @@ export interface AdminUser {
   username: string;
   createdAt: string;
   isAdmin: boolean;
+  isHoster: boolean;
   isDisplay: boolean;
   hasRecoveryKey: boolean;
 }

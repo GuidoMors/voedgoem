@@ -10,6 +10,7 @@ export function useLobbyConnection(lobbyId: string) {
   const [status, setStatus] = useState<ConnectionStatus>("connecting");
   const [avatars, setAvatars] = useState<Record<string, Avatar>>({});
   const [notice, setNotice] = useState<string | null>(null);
+  const [passwordRequired, setPasswordRequired] = useState(false);
   const noticeTimer = useRef<number | undefined>(undefined);
   const socket = useRef<WebSocket | null>(null);
 
@@ -24,7 +25,15 @@ export function useLobbyConnection(lobbyId: string) {
       ws.onmessage = event => {
         try {
           const data = JSON.parse(event.data as string);
-          if (data.type === "snapshot") setSnapshot(data as LobbySnapshot);
+          if (data.type === "snapshot") {
+            setSnapshot(data as LobbySnapshot);
+            setPasswordRequired(false);
+            setNotice(null);
+          }
+          else if (data.type === "password_required") {
+            setPasswordRequired(true);
+            setNotice(typeof data.message === "string" ? data.message : null);
+          }
           else if (data.type === "avatars" && data.avatars) setAvatars(data.avatars as Record<string, Avatar>);
           else if (data.type === "error" && typeof data.message === "string") {
             setNotice(data.message);
@@ -35,7 +44,8 @@ export function useLobbyConnection(lobbyId: string) {
       };
       ws.onclose = event => {
         if (disposed) return;
-        if (event.code === 1000) {
+        if (event.code === 1000 || event.code === 1008) {
+          if (event.reason) setNotice(event.reason);
           setStatus("closed");
           return;
         }
@@ -56,5 +66,9 @@ export function useLobbyConnection(lobbyId: string) {
     if (socket.current?.readyState === WebSocket.OPEN) socket.current.send(JSON.stringify(message));
   }, []);
 
-  return { snapshot, status, send, notice, avatars };
+  const submitPassword = useCallback((password: string) => {
+    send({ type: "lobby:password", password });
+  }, [send]);
+
+  return { snapshot, status, send, notice, avatars, passwordRequired, submitPassword };
 }

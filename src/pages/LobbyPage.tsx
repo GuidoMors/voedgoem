@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useState, type FormEvent } from "react";
 import { AvatarsContext, Person } from "../avatar/Avatar";
 import { GameLobby } from "../games/registry";
 import type { Send } from "../games/types";
@@ -7,23 +7,49 @@ import type { LobbySnapshot, User } from "../types";
 
 const noop = () => undefined;
 
-export function LobbyPage({ lobbyId, user }: { lobbyId: string; user: User }) {
-  const { snapshot, status, send, notice, avatars } = useLobbyConnection(lobbyId);
+export function LobbyPage({ lobbyId, user, onGameChange }: { lobbyId: string; user: User; onGameChange: (game: string | null) => void }) {
+  const { snapshot, status, send, notice, avatars, passwordRequired, submitPassword } = useLobbyConnection(lobbyId);
   const [controlling, setControlling] = useState<string | null>(null);
+  const [password, setPassword] = useState("");
+
+  const joinWithPassword = (event: FormEvent) => {
+    event.preventDefault();
+    submitPassword(password);
+    setPassword("");
+  };
 
   const gameId = snapshot?.game;
   useEffect(() => {
+    onGameChange(gameId ?? null);
     if (!gameId) return;
     document.body.dataset.game = gameId;
-    return () => { delete document.body.dataset.game; };
-  }, [gameId]);
+    return () => { delete document.body.dataset.game; onGameChange(null); };
+  }, [gameId, onGameChange]);
 
   const sendAsBot = useCallback<Send>(message => {
     if (controlling && !user.isDisplay) send({ type: "bot:act", botId: controlling, message });
   }, [controlling, send, user.isDisplay]);
 
   if (status === "closed") {
-    return <div className="page"><p className="error">This lobby no longer exists or could not be joined.</p><a className="button" href="#/">Back to hub</a></div>;
+    return <div className="page"><p className="error">{notice ?? "This lobby no longer exists or could not be joined."}</p><a className="button" href="#/">Back to hub</a></div>;
+  }
+  if (passwordRequired) {
+    return (
+      <div className="page lobby-password-screen">
+        <section className="card auth-card lobby-password-card">
+          <h1>Lobby password</h1>
+          <p className="muted">Enter the password to join {snapshot?.name ?? "this lobby"}.</p>
+          {notice && <p className="error">{notice}</p>}
+          <form onSubmit={joinWithPassword}>
+            <label>Password<input type="password" value={password} onChange={event => setPassword(event.target.value)} maxLength={128} autoComplete="current-password" autoFocus required /></label>
+            <div className="lobby-password-actions">
+              <button className="primary" type="submit">Join lobby</button>
+              <a className="button" href="#/">Back to hub</a>
+            </div>
+          </form>
+        </section>
+      </div>
+    );
   }
   if (!snapshot) return <div className="page"><p className="muted">Connecting to lobby…</p></div>;
 
