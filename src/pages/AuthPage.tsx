@@ -47,17 +47,16 @@ export function AuthPage({ onAuthenticated }: { onAuthenticated: (user: User) =>
     <div className="auth-screen">
       <form className="card auth-card" onSubmit={submit}>
         <h1>Voedgoem</h1>
-        <p className="muted">{mode === "login" ? "Sign in to join a game." : mode === "register" ? "Create an account with just a username and password." : "Reset your password with a recovery key from an admin."}</p>
         <label>Username<input value={username} onChange={e => setUsername(e.target.value)} autoComplete="username" required minLength={2} maxLength={20} /></label>
         {mode === "reset" && <label>Recovery key<input value={recoveryKey} onChange={e => setRecoveryKey(e.target.value)} placeholder="XXXX-XXXX-XXXX-XXXX" required /></label>}
         <label>{mode === "reset" ? "New password" : "Password"}<input type="password" value={password} onChange={e => setPassword(e.target.value)} autoComplete={mode === "login" ? "current-password" : "new-password"} required minLength={8} maxLength={128} /></label>
         {error && <p className="error">{error}</p>}
         {notice && <p className="success">{notice}</p>}
-        <button className="primary" disabled={busy}>{busy ? "Please wait…" : mode === "login" ? "Sign in" : mode === "register" ? "Create account" : "Reset password"}</button>
+        <button className="primary" disabled={busy}>{busy ? "Please wait…" : mode === "login" ? "Play" : mode === "register" ? "Create account" : "Reset password"}</button>
         <div className="auth-links">
           {mode !== "login" && <button type="button" className="link" onClick={() => switchMode("login")}>Back to sign in</button>}
-          {mode === "login" && <button type="button" className="link" onClick={() => switchMode("register")}>Create an account</button>}
-          {mode === "login" && <button type="button" className="link" onClick={() => switchMode("reset")}>Use a recovery key</button>}
+          {mode === "login" && <button type="button" className="link" onClick={() => switchMode("register")}>Create account</button>}
+          {mode === "login" && <button type="button" className="link" onClick={() => switchMode("reset")}>Recover account</button>}
         </div>
       </form>
     </div>

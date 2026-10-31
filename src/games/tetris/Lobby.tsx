@@ -62,7 +62,7 @@ function Waiting({ snapshot, joined, isHost, send }: { snapshot: LobbySnapshot; 
           <div className="host-actions">
             <label className="row">Teams
               <select value={snapshot.teamCount} onChange={event => send({ type: "config", teams: Number(event.target.value) })}>
-                <option value={0}>None (everyone plays alone)</option>
+                <option value={0}>Free for all</option>
                 {Array.from({ length: 7 }, (_, index) => <option key={index} value={index + 2}>{index + 2} teams</option>)}
               </select>
             </label>
