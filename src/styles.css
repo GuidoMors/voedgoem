@@ -2567,6 +2567,10 @@ body[data-game="thirtyone"] .ts-word {
   font-weight: 700;
   box-shadow: none;
 }
+body[data-game="thirtyone"] .ts-word.hard-word {
+  border-width: 5px;
+  border-color: #e9b957;
+}
 body[data-game="thirtyone"] button.ts-word:hover:not(:disabled) {
   background: linear-gradient(#ffd25a, #e08a00);
   color: #1a1000;

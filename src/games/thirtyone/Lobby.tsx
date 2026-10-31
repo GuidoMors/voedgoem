@@ -244,7 +244,7 @@ function Table({ snapshot, seat, isHost, isAdmin, send, userId }: Props & { user
               <ul className="ts-words">
                 {snapshot.card.map((word, index) => {
                   const scoring = isJudge && stage === "judging";
-                  const classes = `ts-word ${marks[index] ? "correct" : ""}`;
+                  const classes = `ts-word ${index >= 4 ? "hard-word" : "easy-word"} ${marks[index] ? "correct" : ""}`;
                   return (
                     <li key={word}>
                       {scoring
