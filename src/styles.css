@@ -1390,6 +1390,17 @@ th {
   max-width: 100%;
   height: auto;
 }
+.team-canvas-mobile, .team-board-preview-wrap {
+  display: none;
+}
+.team-board-preview-wrap p {
+  margin: 6px 0;
+  text-align: center;
+}
+.team-board-preview {
+  display: block;
+  margin: 0 auto;
+}
 .team-card {
   border-width: 2px;
   border-style: solid;
@@ -1397,6 +1408,10 @@ th {
 }
 .team-card .tetris-main {
   flex-wrap: wrap;
+}
+.tetris-alive-count {
+  margin: 10px 0 0;
+  text-align: center;
 }
 .team-members {
   display: flex;
@@ -1804,7 +1819,7 @@ button:disabled {
     padding: 8px 10px;
   }
 }
-/* Tetris on phones: controls above the board in rows of two, other scores hidden */
+/* Tetris on phones: controls above the board in rows of two */
 .touch-controls {
   display: none;
 }
@@ -1824,7 +1839,7 @@ button:disabled {
   .tetris-player > .muted.small {
     display: none;
   }
-  .other-score, .phone-hide, .team-members {
+  .phone-hide, .team-members {
     display: none;
   }
 }
@@ -1842,9 +1857,29 @@ button:disabled {
     gap: 28px;
     width: 100%;
   }
+  .team-card .team-canvas-desktop {
+    display: none;
+  }
+  .team-card .team-canvas-mobile {
+    display: block;
+    max-width: none;
+  }
+  .team-card .team-board-preview-wrap {
+    display: block;
+    width: 100%;
+  }
+  .team-card .team-board-preview {
+    max-width: 100%;
+  }
   .tetris-player .touch-controls button svg {
     display: block;
     margin: 0 auto;
+  }
+}
+@media (min-width: 701px) {
+  .team-board-preview-wrap.team-board-preview-desktop {
+    display: block;
+    width: 100%;
   }
 }
 /* Pre-game team boxes stack on phones (score boards stay side by side) */

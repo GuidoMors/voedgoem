@@ -87,22 +87,22 @@ function TeamsPlaying({ snapshot, userId, send }: { snapshot: LobbySnapshot; use
   const alive = snapshot.teams.filter(team => team.alive).length;
   return (
     <div>
-      <p className="muted">{alive} team{alive === 1 ? "" : "s"} still playing.</p>
       <div className="playing-layout">
         {mine && (
           <section className="card team-card" style={{ borderColor: TEAM_COLORS[mine.index % TEAM_COLORS.length] }}>
             <h2 style={{ color: TEAM_COLORS[mine.index % TEAM_COLORS.length] }}>Team {mine.index + 1}{!mine.alive && " · out"}</h2>
             <TeamPlayer team={mine} userId={userId} send={send} />
+            <p className="muted small tetris-alive-count">{alive} team{alive === 1 ? "" : "s"} still playing.</p>
           </section>
         )}
-        {!mine && <section className="card"><h2>Spectating</h2><p className="muted">A round is in progress. You'll be able to join the next one.</p></section>}
+        {!mine && <section className="card"><h2>Spectating</h2><p className="muted">A round is in progress. You'll be able to join the next one.</p><p className="muted small tetris-alive-count">{alive} team{alive === 1 ? "" : "s"} still playing.</p></section>}
         <section className="boards">
           {(mine ? others : snapshot.teams).map(team => (
             <div key={team.index} className={`mini-board ${team.alive ? "" : "out"}`}>
               <TeamBoardView team={team} cellSize={Math.max(4, Math.min(12, Math.floor(360 / team.width)))} dim={!team.alive} />
               <div className="mini-name" style={{ color: TEAM_COLORS[team.index % TEAM_COLORS.length] }}>Team {team.index + 1}{!team.alive && " · out"}</div>
               <div className="muted small">{team.members.map(member => member.username).join(", ")}</div>
-              <div className="muted small other-score">{team.score}</div>
+              <div className="muted small other-score">Score: {team.score}</div>
             </div>
           ))}
         </section>
@@ -145,7 +145,6 @@ function Playing({ snapshot, userId, send }: { snapshot: LobbySnapshot; userId: 
 
   return (
     <div>
-      <p className="muted">{alive} player{alive === 1 ? "" : "s"} still playing.</p>
       <div className="playing-layout">
         {me?.alive && (
           <section className="card">
@@ -156,16 +155,17 @@ function Playing({ snapshot, userId, send }: { snapshot: LobbySnapshot; userId: 
               onState={stats => send({ type: "state", ...stats })}
               onGameOver={stats => { setFinished(true); send({ type: "gameover", score: stats.score, lines: stats.lines, level: stats.level }); }}
             />
+            <p className="muted small tetris-alive-count">{alive} player{alive === 1 ? "" : "s"} still playing.</p>
           </section>
         )}
-        {me && !me.alive && <section className="card"><h2>You're out</h2><p>Final score <strong>{me.score}</strong> · {me.lines} lines. Waiting for the others to finish…</p></section>}
-        {!me && <section className="card"><h2>Spectating</h2><p className="muted">A round is in progress. You'll be able to join the next one.</p></section>}
+        {me && !me.alive && <section className="card"><h2>You're out</h2><p>Final score <strong>{me.score}</strong> · {me.lines} lines. Waiting for the others to finish…</p><p className="muted small tetris-alive-count">{alive} player{alive === 1 ? "" : "s"} still playing.</p></section>}
+        {!me && <section className="card"><h2>Spectating</h2><p className="muted">A round is in progress. You'll be able to join the next one.</p><p className="muted small tetris-alive-count">{alive} player{alive === 1 ? "" : "s"} still playing.</p></section>}
         <section className="boards">
           {(me ? others : snapshot.players).map(player => (
             <div key={player.id} className={`mini-board ${player.alive ? "" : "out"}`}>
               <BoardView cells={parseBoard(player.board)} cellSize={12} dim={!player.alive} />
               <div className="mini-name"><Person id={player.id} name={player.username} size={22} />{!player.alive && " · out"}</div>
-              <div className="muted small other-score">{player.score}</div>
+              <div className="muted small other-score">Score: {player.score}</div>
             </div>
           ))}
         </section>
