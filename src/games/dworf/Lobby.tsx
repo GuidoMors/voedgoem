@@ -84,11 +84,23 @@ function Waiting({ snapshot, userId, isHost, send }: GameLobbyProps<DworfSnapsho
   );
 }
 
-function Table({ snapshot, userId, isHost, send }: GameLobbyProps<DworfSnapshot>) {
+function Table({ snapshot, userId, isHost, isDisplay, send }: GameLobbyProps<DworfSnapshot>) {
   const avatars = useContext(AvatarsContext);
+  const [showSecretInfo, setShowSecretInfo] = useState(false);
   const [mode, setMode] = useState<Mode>(null);
   const [notice, setNotice] = useState<string | null>(null);
   const [rots, setRots] = useState<Record<number, 0 | 1 | 2 | 3>>({});
+  const visibleSnapshot: DworfSnapshot = showSecretInfo ? snapshot : {
+    ...snapshot,
+    players: snapshot.players.map(player => ({ ...player, role: null })),
+    goals: snapshot.goals.map(goal => ({
+      ...goal,
+      type: goal.revealed ? goal.type : null,
+      monsterType: goal.revealed ? goal.monsterType : null
+    })),
+    me: null
+  };
+  snapshot = visibleSnapshot;
   const handKey = snapshot.me?.tunnels.join(",") ?? "";
   useEffect(() => setRots({}), [handKey]);
   const { cols, rows } = snapshot;
@@ -102,6 +114,10 @@ function Table({ snapshot, userId, isHost, send }: GameLobbyProps<DworfSnapshot>
 
   const choose = (next: Mode) => { setMode(current => (JSON.stringify(current) === JSON.stringify(next) ? null : next)); setNotice(null); };
   const done = () => setMode(null);
+  const toggleSecretInfo = () => {
+    setShowSecretInfo(value => !value);
+    setMode(null);
+  };
 
   const valid = new Set<number>();
   if (mode?.kind === "tunnel") for (const cell of snapshot.placeable?.[mode.index]?.[mode.rot] ?? []) valid.add(cell);
@@ -248,8 +264,26 @@ function Table({ snapshot, userId, isHost, send }: GameLobbyProps<DworfSnapshot>
           </div>
         )}
 
-        <div className="dworf-board-wrap">
-          <div className="dworf-board" style={{ gridTemplateColumns: `repeat(${cols}, 52px)`, gridTemplateRows: `repeat(${rows}, 52px)` }}>{cells}</div>
+        <div className="dworf-board-controls">
+          {!isDisplay && (
+            <button
+              type="button"
+              className="dworf-secret-toggle"
+              aria-label={showSecretInfo ? "Hide secret information" : "Show secret information"}
+              title={showSecretInfo ? "Hide secret information" : "Show secret information"}
+              aria-pressed={showSecretInfo}
+              onClick={toggleSecretInfo}
+            >
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12Z" />
+                <circle cx="12" cy="12" r="3" />
+                {!showSecretInfo && <path d="m3 3 18 18" />}
+              </svg>
+            </button>
+          )}
+          <div className="dworf-board-wrap">
+            <div className="dworf-board" style={{ gridTemplateColumns: `repeat(${cols}, 52px)`, gridTemplateRows: `repeat(${rows}, 52px)` }}>{cells}</div>
+          </div>
         </div>
 
         {me && playing && (

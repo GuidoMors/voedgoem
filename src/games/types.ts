@@ -20,5 +20,6 @@ export interface GameLobbyProps<S> {
   userId: string;
   isHost: boolean;
   isAdmin: boolean;
+  isDisplay?: boolean;
   send: Send;
 }
