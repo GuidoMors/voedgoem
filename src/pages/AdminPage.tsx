@@ -2,13 +2,22 @@ import { useCallback, useEffect, useMemo, useState, type FormEvent } from "react
 import { api } from "../api";
 import type { AdminUser } from "../types";
 
-type AdminTab = "players" | "recovery" | "hosters" | "displays";
+type AdminTab = "players" | "recovery" | "hosters" | "displays" | "wordFeedback";
+
+interface WordFeedbackEntry {
+  wordKey: string;
+  word: string;
+  reported: boolean;
+  recommended: boolean;
+  submittedAt: string;
+}
 
 const tabs: { id: AdminTab; label: string }[] = [
   { id: "players", label: "Players" },
   { id: "recovery", label: "Recovery keys" },
   { id: "hosters", label: "Hosters" },
-  { id: "displays", label: "Display accounts" }
+  { id: "displays", label: "Display accounts" },
+  { id: "wordFeedback", label: "31 Seconds words" }
 ];
 
 export function AdminPage() {
@@ -20,6 +29,7 @@ export function AdminPage() {
   const [displayMessage, setDisplayMessage] = useState("");
   const [activeTab, setActiveTab] = useState<AdminTab>("players");
   const [search, setSearch] = useState("");
+  const [wordFeedback, setWordFeedback] = useState<WordFeedbackEntry[]>([]);
 
   const load = useCallback(async () => {
     try {
@@ -32,6 +42,15 @@ export function AdminPage() {
 
   useEffect(() => { void load(); }, [load]);
 
+  const loadWordFeedback = useCallback(async () => {
+    try {
+      setWordFeedback((await api<{ words: WordFeedbackEntry[] }>("/api/admin/word-feedback")).words);
+      setError("");
+    } catch (e) {
+      setError(e instanceof Error ? e.message : "Could not load word feedback.");
+    }
+  }, []);
+
   const filteredUsers = useMemo(() => {
     const query = search.trim().toLocaleLowerCase();
     return users.filter(target => target.username.toLocaleLowerCase().includes(query));
@@ -41,6 +60,20 @@ export function AdminPage() {
     setActiveTab(tab);
     setSearch("");
     setError("");
+    if (tab === "wordFeedback") void loadWordFeedback();
+  };
+
+  const removeWordFeedback = async (entry: WordFeedbackEntry) => {
+    setError("");
+    try {
+      await api("/api/admin/word-feedback", {
+        method: "DELETE",
+        body: JSON.stringify({ wordKey: entry.wordKey })
+      });
+      setWordFeedback(entries => entries.filter(item => item.wordKey !== entry.wordKey));
+    } catch (e) {
+      setError(e instanceof Error ? e.message : `Could not remove feedback for "${entry.word}".`);
+    }
   };
 
   const createDisplay = async (event: FormEvent) => {
@@ -140,7 +173,7 @@ export function AdminPage() {
     <div className="page admin-page">
       <div className="row between">
         <h1>Admin</h1>
-        <button onClick={() => void load()}>Refresh</button>
+        <button onClick={() => activeTab === "wordFeedback" ? void loadWordFeedback() : void load()}>Refresh</button>
       </div>
       <div className="admin-tabs" role="tablist" aria-label="Admin sections">
         {tabs.map(tab => (
@@ -186,6 +219,27 @@ export function AdminPage() {
             <button className="primary">Create display</button>
           </form>
           {displayMessage && <p className="muted small">{displayMessage}</p>}
+        </>}
+        {activeTab === "wordFeedback" && <>
+          <h2>31 Seconds word feedback <span className="pill">{wordFeedback.length}</span></h2>
+          <p className="muted small">Reports and recommendations are kept separate from the active game word list. Removing a word clears both entries.</p>
+          {wordFeedback.length === 0 ? <p className="muted">No words have been reported or recommended.</p> : (
+            <div className="table-wrap">
+              <table>
+                <thead><tr><th>Word</th><th>Feedback</th><th>Submitted</th><th /></tr></thead>
+                <tbody>
+                  {wordFeedback.map(entry => (
+                    <tr key={entry.wordKey}>
+                      <td><strong>{entry.word}</strong></td>
+                      <td>{[entry.reported && "Reported", entry.recommended && "Recommended"].filter(Boolean).join(" · ")}</td>
+                      <td>{new Date(entry.submittedAt).toLocaleDateString()}</td>
+                      <td className="right"><button className="danger" title={`Remove ${entry.word} from reports and recommendations`} aria-label={`Remove ${entry.word} from reports and recommendations`} onClick={() => void removeWordFeedback(entry)}>✕</button></td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
         </>}
       </section>
     </div>

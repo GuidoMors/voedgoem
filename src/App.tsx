@@ -4,6 +4,7 @@ import { DisplayQr } from "./components/DisplayQr";
 import { HistoryContext } from "./components/HistoryPanel";
 import { ChatPanel } from "./components/ChatPanel";
 import { Modal } from "./components/Modal";
+import { WordFeedbackModal } from "./components/WordFeedbackModal";
 import { useHubChat } from "./useHubChat";
 import { Avatar } from "./avatar/Avatar";
 import { defaultAvatar } from "./avatar/model";
@@ -23,7 +24,7 @@ export default function App() {
   const [loading, setLoading] = useState(true);
   const [route, setRoute] = useState(readHash());
   const [menuOpen, setMenuOpen] = useState(false);
-  const [modal, setModal] = useState<"stats" | "history" | "chat" | "admin" | "profile" | null>(null);
+  const [modal, setModal] = useState<"stats" | "history" | "chat" | "admin" | "profile" | "wordFeedback" | null>(null);
   const [hasHistory, setHasHistory] = useState(false);
   const [lobbyGame, setLobbyGame] = useState<string | null>(null);
   const [statsGame, setStatsGame] = useState<string | null>(null);
@@ -60,7 +61,7 @@ export default function App() {
   const lobbyMatch = route.match(/^\/lobby\/([A-Za-z0-9_-]+)$/);
   const inGame = !!lobbyMatch;
   const onProfile = route === "/profile";
-  const openModal = (event: React.MouseEvent, name: "stats" | "history" | "chat" | "admin" | "profile") => {
+  const openModal = (event: React.MouseEvent, name: "stats" | "history" | "chat" | "admin" | "profile" | "wordFeedback") => {
     event.preventDefault();
     if (name === "stats") setStatsGame(inGame ? lobbyGame : null);
     setModal(name);
@@ -78,6 +79,7 @@ export default function App() {
           {!user.isDisplay && <a href="#/stats" onClick={event => openModal(event, "stats")}>Statistics</a>}
           {hasHistory && <a href="#/history" onClick={event => openModal(event, "history")}>History</a>}
           {!user.isDisplay && <a href="#/chat" onClick={event => openModal(event, "chat")}>Chat</a>}
+          {!user.isDisplay && inGame && lobbyGame === "thirtyone" && <a href="#/word-feedback" onClick={event => openModal(event, "wordFeedback")}>Words</a>}
           {user.isAdmin && <a href="#/admin" onClick={event => openModal(event, "admin")}>Admin</a>}
         </nav>
         <div className="who">
@@ -96,6 +98,7 @@ export default function App() {
       {modal === "chat" && !inGame && !user.isDisplay && <HubChatModal onClose={closeModal} />}
       {modal === "stats" && !user.isDisplay && <Modal title="Statistics" onClose={closeModal} gameTheme={statsGame}><StatsPage userId={user.id} defaultGame={inGame ? lobbyGame : null} onGameChange={setStatsGame} /></Modal>}
       {modal === "admin" && user.isAdmin && <Modal title="Admin" onClose={closeModal}><AdminPage /></Modal>}
+      {modal === "wordFeedback" && !user.isDisplay && inGame && lobbyGame === "thirtyone" && <Modal title="31 Seconds word feedback" onClose={closeModal} gameTheme="thirtyone"><WordFeedbackModal /></Modal>}
       {modal === "profile" && !user.isDisplay && <Modal title="Your profile" onClose={closeModal}><ProfilePage user={user} onSaved={setUser} /></Modal>}
     </div>
   );
