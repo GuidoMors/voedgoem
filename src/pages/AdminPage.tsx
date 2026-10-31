@@ -1,6 +1,15 @@
-import { useCallback, useEffect, useState, type FormEvent } from "react";
+import { useCallback, useEffect, useMemo, useState, type FormEvent } from "react";
 import { api } from "../api";
 import type { AdminUser } from "../types";
+
+type AdminTab = "players" | "recovery" | "hosters" | "displays";
+
+const tabs: { id: AdminTab; label: string }[] = [
+  { id: "players", label: "Players" },
+  { id: "recovery", label: "Recovery keys" },
+  { id: "hosters", label: "Hosters" },
+  { id: "displays", label: "Display accounts" }
+];
 
 export function AdminPage() {
   const [users, setUsers] = useState<AdminUser[]>([]);
@@ -9,6 +18,30 @@ export function AdminPage() {
   const [copied, setCopied] = useState(false);
   const [display, setDisplay] = useState({ username: "", password: "" });
   const [displayMessage, setDisplayMessage] = useState("");
+  const [activeTab, setActiveTab] = useState<AdminTab>("players");
+  const [search, setSearch] = useState("");
+
+  const load = useCallback(async () => {
+    try {
+      setUsers((await api<{ users: AdminUser[] }>("/api/admin/users")).users);
+      setError("");
+    } catch (e) {
+      setError(e instanceof Error ? e.message : "Could not load users.");
+    }
+  }, []);
+
+  useEffect(() => { void load(); }, [load]);
+
+  const filteredUsers = useMemo(() => {
+    const query = search.trim().toLocaleLowerCase();
+    return users.filter(target => target.username.toLocaleLowerCase().includes(query));
+  }, [search, users]);
+
+  const changeTab = (tab: AdminTab) => {
+    setActiveTab(tab);
+    setSearch("");
+    setError("");
+  };
 
   const createDisplay = async (event: FormEvent) => {
     event.preventDefault();
@@ -23,16 +56,6 @@ export function AdminPage() {
       setError(e instanceof Error ? e.message : "Could not create the display account.");
     }
   };
-
-  const load = useCallback(async () => {
-    try {
-      setUsers((await api<{ users: AdminUser[] }>("/api/admin/users")).users);
-    } catch (e) {
-      setError(e instanceof Error ? e.message : "Could not load users.");
-    }
-  }, []);
-
-  useEffect(() => { void load(); }, [load]);
 
   const generate = async (target: AdminUser) => {
     if (!window.confirm(`Generate a new recovery key for ${target.username}? Any previous key stops working.`)) return;
@@ -73,55 +96,97 @@ export function AdminPage() {
     }
   };
 
+  const playerTable = (mode: "players" | "recovery" | "hosters") => (
+    <>
+      <label className="admin-search">
+        <span className="muted small">Search players</span>
+        <input type="search" value={search} onChange={event => setSearch(event.target.value)} placeholder="Search by username" />
+      </label>
+      <div className="table-wrap">
+        <table>
+          <thead>
+            {mode === "players" && <tr><th>Player</th><th>Joined</th><th>Role</th></tr>}
+            {mode === "recovery" && <tr><th>Player</th><th>Recovery key</th><th /></tr>}
+            {mode === "hosters" && <tr><th>Player</th><th>Role</th><th /></tr>}
+          </thead>
+          <tbody>
+            {filteredUsers.map(target => (
+              <tr key={target.id}>
+                <td><strong>{target.username}</strong></td>
+                {mode === "players" && <>
+                  <td>{new Date(target.createdAt).toLocaleDateString()}</td>
+                  <td>{target.isAdmin ? `Admin${target.isHoster ? " · Hoster" : ""}` : target.isHoster ? "Hoster" : target.isDisplay ? "Display" : "User"}</td>
+                </>}
+                {mode === "recovery" && <>
+                  <td>{target.hasRecoveryKey ? "Active" : "None"}</td>
+                  <td className="right"><button onClick={() => void generate(target)}>Generate key</button></td>
+                </>}
+                {mode === "hosters" && <>
+                  <td>{target.isAdmin ? "Admin" : target.isHoster ? "Hoster" : target.isDisplay ? "Display" : "User"}</td>
+                  <td className="right">
+                    {!target.isDisplay && !target.isAdmin && <button onClick={() => void setHoster(target)}>{target.isHoster ? "Remove Hoster" : "Make Hoster"}</button>}
+                  </td>
+                </>}
+              </tr>
+            ))}
+            {filteredUsers.length === 0 && <tr><td colSpan={3} className="muted">No players found.</td></tr>}
+          </tbody>
+        </table>
+      </div>
+    </>
+  );
+
   return (
-    <div className="page">
+    <div className="page admin-page">
       <div className="row between">
         <h1>Admin</h1>
         <button onClick={() => void load()}>Refresh</button>
       </div>
+      <div className="admin-tabs" role="tablist" aria-label="Admin sections">
+        {tabs.map(tab => (
+          <button key={tab.id} id={`admin-tab-${tab.id}`} role="tab" aria-selected={activeTab === tab.id} aria-controls={`admin-panel-${tab.id}`}
+            className={activeTab === tab.id ? "active" : ""} onClick={() => changeTab(tab.id)}>
+            {tab.label}
+          </button>
+        ))}
+      </div>
       {error && <p className="error">{error}</p>}
-      {generated && (
-        <section className="card key-card">
-          <strong>Recovery key for {generated.username}</strong>
-          <p className="muted">Shown only once. Share it privately; whoever has it can reset this account's password.</p>
-          <code>{generated.key}</code>
-          <div className="row">
-            <button className="primary" onClick={() => void copy()}>{copied ? "Copied" : "Copy key"}</button>
-            <button onClick={() => setGenerated(null)}>Dismiss</button>
-          </div>
-        </section>
-      )}
-      <section className="card">
-        <h2>Create a display account</h2>
-        <p className="muted small">Display accounts can't join games. They show a lobby on a big screen, with a QR code people can scan to log in on their phone.</p>
-        <form className="row create-lobby" onSubmit={createDisplay}>
-          <input value={display.username} onChange={e => setDisplay({ ...display, username: e.target.value })} placeholder="Username" maxLength={20} required />
-          <input type="password" value={display.password} onChange={e => setDisplay({ ...display, password: e.target.value })} placeholder="Password (8+ characters)" minLength={8} required />
-          <button className="primary">Create display</button>
-        </form>
-        {displayMessage && <p className="muted small">{displayMessage}</p>}
-      </section>
-      <section className="card">
-        <h2>Users <span className="pill">{users.length}</span></h2>
-        <div className="table-wrap">
-          <table>
-            <thead><tr><th>User</th><th>Joined</th><th>Role</th><th>Recovery key</th><th /></tr></thead>
-            <tbody>
-              {users.map(target => (
-                <tr key={target.id}>
-                  <td><strong>{target.username}</strong></td>
-                  <td>{new Date(target.createdAt).toLocaleDateString()}</td>
-                  <td>{target.isAdmin ? `Admin${target.isHoster ? " · Hoster" : ""}` : target.isHoster ? "Hoster" : target.isDisplay ? "Display" : "User"}</td>
-                  <td>{target.hasRecoveryKey ? "Active" : "None"}</td>
-                  <td className="right">
-                    {!target.isDisplay && !target.isAdmin && <button onClick={() => void setHoster(target)}>{target.isHoster ? "Remove Hoster" : "Make Hoster"}</button>}{" "}
-                    <button onClick={() => void generate(target)}>Generate key</button>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+      <section id={`admin-panel-${activeTab}`} role="tabpanel" aria-labelledby={`admin-tab-${activeTab}`} className="card admin-panel">
+        {activeTab === "players" && <>
+          <h2>All players <span className="pill">{users.length}</span></h2>
+          {playerTable("players")}
+        </>}
+        {activeTab === "recovery" && <>
+          <h2>Generate recovery keys</h2>
+          <p className="muted small">A new key invalidates any previous key and is shown only once.</p>
+          {generated && (
+            <section className="key-card">
+              <strong>Recovery key for {generated.username}</strong>
+              <p className="muted">Share it privately; whoever has it can reset this account's password.</p>
+              <code>{generated.key}</code>
+              <div className="row">
+                <button className="primary" onClick={() => void copy()}>{copied ? "Copied" : "Copy key"}</button>
+                <button onClick={() => setGenerated(null)}>Dismiss</button>
+              </div>
+            </section>
+          )}
+          {playerTable("recovery")}
+        </>}
+        {activeTab === "hosters" && <>
+          <h2>Set hosters</h2>
+          <p className="muted small">Hosters can create lobbies. Admin accounts already have this permission.</p>
+          {playerTable("hosters")}
+        </>}
+        {activeTab === "displays" && <>
+          <h2>Create a display account</h2>
+          <p className="muted small">Display accounts can't join games. They show a lobby on a big screen, with a QR code people can scan to log in on their phone.</p>
+          <form className="row create-lobby" onSubmit={createDisplay}>
+            <input value={display.username} onChange={event => setDisplay({ ...display, username: event.target.value })} placeholder="Username" maxLength={20} required />
+            <input type="password" value={display.password} onChange={event => setDisplay({ ...display, password: event.target.value })} placeholder="Password (8+ characters)" minLength={8} required />
+            <button className="primary">Create display</button>
+          </form>
+          {displayMessage && <p className="muted small">{displayMessage}</p>}
+        </>}
       </section>
     </div>
   );
