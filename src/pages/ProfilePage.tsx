@@ -12,9 +12,9 @@ interface PartRow {
 }
 
 const ROWS: PartRow[] = [
-  { label: "Body", part: "body", list: PARTS.bodies },
+  { label: "Hat", part: "hat", list: PARTS.hats },
   { label: "Face", part: "face", list: PARTS.faces },
-  { label: "Hat", part: "hat", list: PARTS.hats }
+  { label: "Body", part: "body", list: PARTS.bodies }
 ];
 
 const same = (a: AvatarData, b: AvatarData) => JSON.stringify(a) === JSON.stringify(b);
