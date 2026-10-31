@@ -60,12 +60,12 @@ export function HubPage({ user }: { user: User }) {
 
   return (
     <div className="page">
-      <h1>Lobbies</h1>
+      <h1>lobbies</h1>
       {error && <p className="error">{error}</p>}
 
       {(user.isAdmin || user.isHoster) && (
         <section className="card">
-          <h2>Create a lobby</h2>
+          <h2>create a lobby</h2>
           <form className="row create-lobby" onSubmit={create}>
             <select value={gameId} onChange={e => setGameId(e.target.value)} required>
               {games.map(game => <option key={game.id} value={game.id}>{game.name}</option>)}

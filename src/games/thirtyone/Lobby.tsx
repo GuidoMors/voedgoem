@@ -214,7 +214,8 @@ function Table({ snapshot, seat, isHost, send, userId }: Props & { userId: strin
 
           {stage === "ready" && (isDescriber ? (
             <div className="ts-center">
-              <p>Your team guesses the words you describe. Don't say any word on the card.</p>
+              <p>Get ready to describe the words on your card!
+                Don't say the word on the card, or parts of it, or guessing it doesn't count.</p>
               <button className="primary ts-big" onClick={() => send({ type: "open" })}>Open card and start {snapshot.turnSeconds}s</button>
               <button onClick={() => send({ type: "skip" })}>Pass to a teammate</button>
             </div>

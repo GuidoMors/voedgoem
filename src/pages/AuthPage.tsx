@@ -45,8 +45,8 @@ export function AuthPage({ onAuthenticated }: { onAuthenticated: (user: User) =>
 
   return (
     <div className="auth-screen">
+      <h1 className="auth-title">voedgoem</h1>
       <form className="card auth-card" onSubmit={submit}>
-        <h1>Voedgoem</h1>
         <label>Username<input value={username} onChange={e => setUsername(e.target.value)} autoComplete="username" required minLength={2} maxLength={20} /></label>
         {mode === "reset" && <label>Recovery key<input value={recoveryKey} onChange={e => setRecoveryKey(e.target.value)} placeholder="XXXX-XXXX-XXXX-XXXX" required /></label>}
         <label>{mode === "reset" ? "New password" : "Password"}<input type="password" value={password} onChange={e => setPassword(e.target.value)} autoComplete={mode === "login" ? "current-password" : "new-password"} required minLength={8} maxLength={128} /></label>
@@ -54,7 +54,7 @@ export function AuthPage({ onAuthenticated }: { onAuthenticated: (user: User) =>
         {notice && <p className="success">{notice}</p>}
         <button className="primary" disabled={busy}>{busy ? "Please wait…" : mode === "login" ? "Play" : mode === "register" ? "Create account" : "Reset password"}</button>
         <div className="auth-links">
-          {mode !== "login" && <button type="button" className="link" onClick={() => switchMode("login")}>Back to sign in</button>}
+          {mode !== "login" && <button type="button" className="link" onClick={() => switchMode("login")}>Back</button>}
           {mode === "login" && <button type="button" className="link" onClick={() => switchMode("register")}>Create account</button>}
           {mode === "login" && <button type="button" className="link" onClick={() => switchMode("reset")}>Recover account</button>}
         </div>
