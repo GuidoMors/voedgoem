@@ -2,6 +2,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { lobbySocketUrl } from "./api";
 import type { Avatar } from "./avatar/model";
 import type { LobbySnapshot } from "./types";
+import type { ChatMessage } from "./components/ChatPanel";
 
 export type ConnectionStatus = "connecting" | "open" | "reconnecting" | "closed";
 
@@ -9,6 +10,7 @@ export function useLobbyConnection(lobbyId: string) {
   const [snapshot, setSnapshot] = useState<LobbySnapshot | null>(null);
   const [status, setStatus] = useState<ConnectionStatus>("connecting");
   const [avatars, setAvatars] = useState<Record<string, Avatar>>({});
+  const [chatMessages, setChatMessages] = useState<ChatMessage[]>([]);
   const [notice, setNotice] = useState<string | null>(null);
   const [passwordRequired, setPasswordRequired] = useState(false);
   const noticeTimer = useRef<number | undefined>(undefined);
@@ -35,6 +37,8 @@ export function useLobbyConnection(lobbyId: string) {
             setNotice(typeof data.message === "string" ? data.message : null);
           }
           else if (data.type === "avatars" && data.avatars) setAvatars(data.avatars as Record<string, Avatar>);
+          else if (data.type === "chat:history" && Array.isArray(data.messages)) setChatMessages(data.messages as ChatMessage[]);
+          else if (data.type === "chat:message" && data.message) setChatMessages(current => [...current, data.message as ChatMessage].slice(-100));
           else if (data.type === "error" && typeof data.message === "string") {
             setNotice(data.message);
             window.clearTimeout(noticeTimer.current);
@@ -70,5 +74,5 @@ export function useLobbyConnection(lobbyId: string) {
     send({ type: "lobby:password", password });
   }, [send]);
 
-  return { snapshot, status, send, notice, avatars, passwordRequired, submitPassword };
+  return { snapshot, status, send, notice, avatars, chatMessages, passwordRequired, submitPassword };
 }

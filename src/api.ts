@@ -31,3 +31,8 @@ export function lobbySocketUrl(lobbyId: string) {
   const base = API_BASE || window.location.origin;
   return `${base.replace(/^http/, "ws")}/api/lobbies/${encodeURIComponent(lobbyId)}/ws?token=${encodeURIComponent(getToken() ?? "")}`;
 }
+
+export function hubChatSocketUrl() {
+  const base = API_BASE || window.location.origin;
+  return `${base.replace(/^http/, "ws")}/api/chat/hub/ws?token=${encodeURIComponent(getToken() ?? "")}`;
+}

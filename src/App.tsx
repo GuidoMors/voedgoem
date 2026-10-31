@@ -2,7 +2,9 @@ import { useCallback, useEffect, useState } from "react";
 import { api, setToken } from "./api";
 import { DisplayQr } from "./components/DisplayQr";
 import { HistoryContext } from "./components/HistoryPanel";
+import { ChatPanel } from "./components/ChatPanel";
 import { Modal } from "./components/Modal";
+import { useHubChat } from "./useHubChat";
 import { Avatar } from "./avatar/Avatar";
 import { defaultAvatar } from "./avatar/model";
 import { AdminPage } from "./pages/AdminPage";
@@ -21,7 +23,7 @@ export default function App() {
   const [loading, setLoading] = useState(true);
   const [route, setRoute] = useState(readHash());
   const [menuOpen, setMenuOpen] = useState(false);
-  const [modal, setModal] = useState<"stats" | "history" | "admin" | "profile" | null>(null);
+  const [modal, setModal] = useState<"stats" | "history" | "chat" | "admin" | "profile" | null>(null);
   const [hasHistory, setHasHistory] = useState(false);
   const [lobbyGame, setLobbyGame] = useState<string | null>(null);
   const [statsGame, setStatsGame] = useState<string | null>(null);
@@ -58,8 +60,7 @@ export default function App() {
   const lobbyMatch = route.match(/^\/lobby\/([A-Za-z0-9_-]+)$/);
   const inGame = !!lobbyMatch;
   const onProfile = route === "/profile";
-  const onHub = !onProfile;
-  const openModal = (event: React.MouseEvent, name: "stats" | "history" | "admin" | "profile") => {
+  const openModal = (event: React.MouseEvent, name: "stats" | "history" | "chat" | "admin" | "profile") => {
     event.preventDefault();
     if (name === "stats") setStatsGame(inGame ? lobbyGame : null);
     setModal(name);
@@ -74,9 +75,9 @@ export default function App() {
         <button className="burger" aria-label="Menu" aria-expanded={menuOpen} onClick={() => setMenuOpen(open => !open)}>{menuOpen ? "✕" : "☰"}</button>
         <div className={`menu ${menuOpen ? "open" : ""}`}>
         <nav>
-          <a className={onHub ? "active" : ""} href="#/" onClick={event => { if (inGame) { event.preventDefault(); setMenuOpen(false); } }}>{inGame ? "Game" : "Hub"}</a>
           {!user.isDisplay && <a href="#/stats" onClick={event => openModal(event, "stats")}>Statistics</a>}
           {hasHistory && <a href="#/history" onClick={event => openModal(event, "history")}>History</a>}
+          {!user.isDisplay && <a href="#/chat" onClick={event => openModal(event, "chat")}>Chat</a>}
           {user.isAdmin && <a href="#/admin" onClick={event => openModal(event, "admin")}>Admin</a>}
         </nav>
         <div className="who">
@@ -89,12 +90,18 @@ export default function App() {
       </header>
       <main>
         <HistoryContext.Provider value={{ open: modal === "history", setAvailable: setHasHistory, close: closeModal }}>
-        {onProfile && !user.isDisplay ? <ProfilePage user={user} onSaved={setUser} /> : lobbyMatch ? <LobbyPage key={lobbyMatch[1]} lobbyId={lobbyMatch[1]} user={user} onGameChange={updateLobbyGame} /> : <HubPage user={user} />}
+        {onProfile && !user.isDisplay ? <ProfilePage user={user} onSaved={setUser} /> : lobbyMatch ? <LobbyPage key={lobbyMatch[1]} lobbyId={lobbyMatch[1]} user={user} onGameChange={updateLobbyGame} chatOpen={modal === "chat"} onChatClose={closeModal} /> : <HubPage user={user} />}
         </HistoryContext.Provider>
       </main>
+      {modal === "chat" && !inGame && !user.isDisplay && <HubChatModal onClose={closeModal} />}
       {modal === "stats" && !user.isDisplay && <Modal title="Statistics" onClose={closeModal} gameTheme={statsGame}><StatsPage userId={user.id} defaultGame={inGame ? lobbyGame : null} onGameChange={setStatsGame} /></Modal>}
       {modal === "admin" && user.isAdmin && <Modal title="Admin" onClose={closeModal}><AdminPage /></Modal>}
       {modal === "profile" && !user.isDisplay && <Modal title="Your profile" onClose={closeModal}><ProfilePage user={user} onSaved={setUser} /></Modal>}
     </div>
   );
+}
+
+function HubChatModal({ onClose }: { onClose: () => void }) {
+  const { messages, status, error, send } = useHubChat();
+  return <Modal title="Hub chat" onClose={onClose} wide className="chat-modal"><ChatPanel messages={messages} status={status} error={error} onSend={send} /></Modal>;
 }

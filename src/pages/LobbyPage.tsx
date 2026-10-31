@@ -1,14 +1,16 @@
 import { useCallback, useEffect, useState, type FormEvent } from "react";
 import { AvatarsContext, Person } from "../avatar/Avatar";
+import { ChatPanel } from "../components/ChatPanel";
 import { GameLobby } from "../games/registry";
 import type { Send } from "../games/types";
 import { useLobbyConnection } from "../useLobbyConnection";
+import { Modal } from "../components/Modal";
 import type { LobbySnapshot, User } from "../types";
 
 const noop = () => undefined;
 
-export function LobbyPage({ lobbyId, user, onGameChange }: { lobbyId: string; user: User; onGameChange: (game: string | null) => void }) {
-  const { snapshot, status, send, notice, avatars, passwordRequired, submitPassword } = useLobbyConnection(lobbyId);
+export function LobbyPage({ lobbyId, user, onGameChange, chatOpen, onChatClose }: { lobbyId: string; user: User; onGameChange: (game: string | null) => void; chatOpen: boolean; onChatClose: () => void }) {
+  const { snapshot, status, send, notice, avatars, chatMessages, passwordRequired, submitPassword } = useLobbyConnection(lobbyId);
   const [controlling, setControlling] = useState<string | null>(null);
   const [password, setPassword] = useState("");
 
@@ -79,6 +81,8 @@ export function LobbyPage({ lobbyId, user, onGameChange }: { lobbyId: string; us
         isHost={acting ? false : snapshot.host.id === user.id}
         send={user.isDisplay ? noop : acting ? sendAsBot : send}
       />
+
+      {chatOpen && !user.isDisplay && <Modal title="Chat" onClose={onChatClose} wide themeGame={gameId} className="chat-modal"><ChatPanel messages={chatMessages} status={status === "open" ? undefined : status === "connecting" ? "Connecting…" : "Reconnecting…"} error={notice} onSend={text => send({ type: "chat:send", text })} /></Modal>}
 
       {user.isAdmin && (
         <section className="card bot-panel">
