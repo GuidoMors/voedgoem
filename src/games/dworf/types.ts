@@ -8,6 +8,8 @@ export interface DworfPlayer {
   id: string;
   username: string;
   connected: boolean;
+  cell: number | null;
+  dead: boolean;
   tunnels: number;
   abilities: number;
   pickaxeBroken: boolean;
@@ -38,7 +40,7 @@ export interface DworfSnapshot extends BaseSnapshot {
   deckCount: number;
   log: string[];
   winner: Role | null;
-  endReason: "gold" | "monster" | "tunnels" | null;
+  endReason: "gold" | "monster" | "tunnels" | "elimination" | null;
   me: { role: Role; tunnels: string[]; abilities: AbilityType[] } | null;
   // Hand index -> rotation (0 or 1, a half turn) -> cells where that card fits. Only for the dwarf whose turn it is.
   placeable: Record<number, Record<number, number[]>> | null;

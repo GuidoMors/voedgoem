@@ -8,10 +8,11 @@ interface AvatarProps {
   avatar: AvatarData;
   view?: AvatarView;
   size?: number;
+  resolutionScale?: number;
   className?: string;
 }
 
-export const Avatar = memo(function Avatar({ avatar, view = "front", size = 36, className }: AvatarProps) {
+export const Avatar = memo(function Avatar({ avatar, view = "front", size = 36, resolutionScale = 1, className }: AvatarProps) {
   const ref = useRef<HTMLCanvasElement>(null);
   const { body, bodyColor, face, faceColor, hat, hatColor } = avatar;
 
@@ -27,7 +28,7 @@ export const Avatar = memo(function Avatar({ avatar, view = "front", size = 36, 
     return () => { stale = true; };
   }, [body, bodyColor, face, faceColor, hat, hatColor, view]);
 
-  const ratio = Math.min((window.devicePixelRatio || 1) * 1.3, 3);
+  const ratio = Math.min((window.devicePixelRatio || 1) * 1.3, 3) * resolutionScale;
   const width = Math.round(size * ratio);
   const height = Math.round(size * 1.5 * ratio);
   return <canvas ref={ref} className={`avatar ${className ?? ""}`} width={width} height={height} style={{ width: size, height: size * 1.5 }} />;

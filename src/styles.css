@@ -1246,12 +1246,39 @@ th {
   opacity: 0.9;
   pointer-events: none;
 }
-.dworf-monster {
+.dworf-occupants {
   position: absolute;
-  font-size: 1.5rem;
-  z-index: 2;
+  z-index: 3;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1px;
   filter: drop-shadow(0 0 4px #000);
   pointer-events: none;
+}
+.dworf-occupant-avatar,
+.dworf-occupant-monster {
+  flex: 0 0 auto;
+  line-height: 1;
+}
+.dworf-occupant-avatar .avatar {
+  display: block;
+}
+.dworf-occupant-avatar {
+  position: relative;
+}
+.dworf-avatar-skull {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 9.75px;
+  line-height: 1;
+}
+.dworf-occupant-monster {
+  font-size: 14px;
 }
 .dworf-hand {
   display: flex;
@@ -2408,6 +2435,11 @@ body[data-game="dworf"] .dworf-card.ability {
   background: #5b4a7a;
   box-shadow: inset 4px 4px 0 #8a76b0, inset -4px -4px 0 #3b2f52;
 }
+body[data-game="dworf"] .dworf-card.dworf-shop-card.ability {
+  background: #d5aa32;
+  box-shadow: inset 4px 4px 0 #f3d66f, inset -4px -4px 0 #947018;
+  color: #241a05;
+}
 body[data-game="dworf"] .dworf-card.selected {
   border-color: #ffd84a;
 }
@@ -2421,13 +2453,16 @@ body[data-game="dworf"] .dworf-side .dworf-player.turn {
   border-color: #ffd84a;
   background: rgba(255,216,74,.1);
 }
+body[data-game="dworf"] .dworf-side .dworf-player.eliminated {
+  opacity: .65;
+}
 body[data-game="dworf"] .dworf-role.cultist {
   background: #8e2d22;
 }
 body[data-game="dworf"] .dworf-role.explorer {
   background: #2f5d8a;
 }
-body[data-game="dworf"] .dworf-icon, body[data-game="dworf"] .dworf-gem, body[data-game="dworf"] .dworf-monster, body[data-game="dworf"] .dworf-goal {
+body[data-game="dworf"] .dworf-icon, body[data-game="dworf"] .dworf-gem, body[data-game="dworf"] .dworf-occupant-monster, body[data-game="dworf"] .dworf-goal {
   image-rendering: pixelated;
   filter: contrast(1.1) saturate(1.2);
 }
@@ -3019,7 +3054,7 @@ body[data-game="thirtyone"] button:not(.cn-card):not(.dworf-card):not(.dworf-cel
 .dworf-arrow {
   z-index: 5;
 }
-.dworf-monster {
+.dworf-occupants {
   z-index: 6;
 }
 /* Active dwarf: a lighter brown instead of a see-through highlight */

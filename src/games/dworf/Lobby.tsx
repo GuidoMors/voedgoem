@@ -1,5 +1,6 @@
-import { useEffect, useState } from "react";
-import { Person } from "../../avatar/Avatar";
+import { useContext, useEffect, useState } from "react";
+import { Avatar, AvatarsContext, Person } from "../../avatar/Avatar";
+import { defaultAvatar } from "../../avatar/model";
 import { HostControlsTab } from "../../components/HostControlsTab";
 import { HistoryPanel } from "../../components/HistoryPanel";
 import { KickButton } from "../../components/KickButton";
@@ -84,6 +85,7 @@ function Waiting({ snapshot, userId, isHost, send }: GameLobbyProps<DworfSnapsho
 }
 
 function Table({ snapshot, userId, isHost, send }: GameLobbyProps<DworfSnapshot>) {
+  const avatars = useContext(AvatarsContext);
   const [mode, setMode] = useState<Mode>(null);
   const [notice, setNotice] = useState<string | null>(null);
   const [rots, setRots] = useState<Record<number, 0 | 1 | 2 | 3>>({});
@@ -159,7 +161,8 @@ function Table({ snapshot, userId, isHost, send }: GameLobbyProps<DworfSnapshot>
     const sides = tunnelAt.get(cell);
     const goal = goalAt.get(cell);
     const isGem = snapshot.gems.includes(cell);
-    const monster = snapshot.monsters.filter(item => item === cell).length;
+    const monsters = snapshot.monsters.flatMap((item, index) => item === cell ? [index] : []);
+    const occupants = snapshot.players.filter(player => player.cell === cell);
     const highlight = valid.has(cell);
     const arrows = (snapshot.monsterNext ?? []).filter(item => item.from === cell);
     const targeted = (snapshot.monsterNext ?? []).some(item => item.to === cell);
@@ -174,13 +177,23 @@ function Table({ snapshot, userId, isHost, send }: GameLobbyProps<DworfSnapshot>
           const [angle, shift] = delta === 1 ? [0, "50%, 0"] : delta === -1 ? [180, "-50%, 0"] : delta > 0 ? [90, "0, 50%"] : [270, "0, -50%"];
           return <svg key={item.to} className="dworf-arrow" viewBox="0 0 56 56" aria-hidden style={{ transform: `translate(${shift}) rotate(${angle}deg)` }}><path d="M12 28 H44 M33 17 L44 28 L33 39" fill="none" stroke="#ff3b30" strokeWidth="5" strokeLinecap="square" /></svg>;
         })}
-        {monster > 0 && <span className="dworf-monster">👹{monster > 1 ? `×${monster}` : ""}</span>}
+        {(occupants.length > 0 || monsters.length > 0) && (
+          <span className="dworf-occupants">
+            {occupants.map(player => (
+              <span className="dworf-occupant-avatar" key={player.id} title={player.username}>
+                <Avatar avatar={avatars[player.id] ?? defaultAvatar(player.id)} size={16.8} resolutionScale={1.25} />
+                {player.dead && <span className="dworf-avatar-skull" aria-label="Eliminated">💀</span>}
+              </span>
+            ))}
+            {monsters.map(index => <span className="dworf-occupant-monster" key={index} title="Monster">👹</span>)}
+          </span>
+        )}
         {mode?.kind === "tunnel" && highlight && <span className="dworf-ghost"><TunnelPiece sides={turned(me!.tunnels[mode.index], mode.rot)} size={44} /></span>}
       </button>
     );
   }
 
-  const reason = snapshot.endReason === "gold" ? "The tunnel reached the gold!" : snapshot.endReason === "monster" ? "A monster reached the ladder!" : "The tunnel cards ran out!";
+  const reason = snapshot.endReason === "gold" ? "The tunnel reached the gold!" : snapshot.endReason === "monster" ? "A monster reached the ladder!" : snapshot.endReason === "elimination" ? "The monsters eliminated all explorers!" : "The tunnel cards ran out!";
 
   return (
     <div className="cn-layout">
@@ -267,7 +280,7 @@ function Table({ snapshot, userId, isHost, send }: GameLobbyProps<DworfSnapshot>
               {snapshot.row.map((card, index) => {
                 const giving = myTurn && snapshot.step === "gift";
                 return (
-                  <button key={index} className={`dworf-card ability ${mode?.kind === "gift" && mode.card === card ? "selected" : ""}`} disabled={!giving} title={ABILITY_HELP[card]} onClick={() => choose({ kind: "gift", card })}>
+                  <button key={index} className={`dworf-card dworf-shop-card ability ${mode?.kind === "gift" && mode.card === card ? "selected" : ""}`} disabled={!giving} title={ABILITY_HELP[card]} onClick={() => choose({ kind: "gift", card })}>
                     <span className="dworf-icon big">{ABILITY_ICON[card]}</span>
                     <span className="small">{snapshot.abilityNames[card]}</span>
                   </button>
@@ -297,10 +310,11 @@ function Table({ snapshot, userId, isHost, send }: GameLobbyProps<DworfSnapshot>
         <h3>Dwarves</h3>
         <ul className="names">
           {snapshot.players.map(player => (
-            <li key={player.id} className={`dworf-player ${player.id === snapshot.turnId && playing ? "turn" : ""} ${player.connected ? "" : "offline"}`}>
+            <li key={player.id} className={`dworf-player ${player.id === snapshot.turnId && playing ? "turn" : ""} ${player.connected ? "" : "offline"} ${player.dead ? "eliminated" : ""}`}>
               <Person id={player.id} name={player.username} size={22} />
               <div className="dworf-badges">
-                {player.role && <span className={`pill ${player.role}`}>{player.role === "cultist" ? "cultist" : "explorer"}</span>}
+                {(player.role || player.dead) && <span className={`pill ${player.role ?? "explorer"}`}>{player.role === "cultist" ? "cultist" : "explorer"}</span>}
+                {player.dead && <span title="Eliminated">💀</span>}
                 {player.pickaxeBroken && <span title="Pickaxe broken">⛏️✖</span>}
                 {player.lanternBroken && <span title="Lantern broken">🏮✖</span>}
                 {playing && <span className="muted small" title="Tunnel and ability cards in hand">{player.tunnels}+{player.abilities}</span>}
