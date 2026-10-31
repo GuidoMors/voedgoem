@@ -2440,6 +2440,10 @@ body[data-game="dworf"] .dworf-card.dworf-shop-card.ability {
   box-shadow: inset 4px 4px 0 #f3d66f, inset -4px -4px 0 #947018;
   color: #241a05;
 }
+body[data-game="dworf"] .dworf-card.dworf-shop-card.shop-selectable {
+  border-color: #fff0a3;
+  box-shadow: inset 4px 4px 0 #f3d66f, inset -4px -4px 0 #947018, 0 0 10px 3px #ffd84a;
+}
 body[data-game="dworf"] .dworf-card.selected {
   border-color: #ffd84a;
 }
@@ -2950,7 +2954,8 @@ body[data-game="thirtyone"] .ts-words-inline .yes {
 /* Ladder start tile: four-way tunnel with the ladder on top */
 .dworf-cell.ladder .dworf-ladder-icon {
   position: absolute;
-  font-size: 1.3rem;
+  width: 23px;
+  height: 29px;
   pointer-events: none;
   filter: drop-shadow(0 0 2px #000);
 }

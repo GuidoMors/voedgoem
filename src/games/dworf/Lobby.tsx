@@ -160,6 +160,7 @@ function Table({ snapshot, userId, isHost, send }: GameLobbyProps<DworfSnapshot>
   for (let cell = 0; cell < rows * cols; cell++) {
     const sides = tunnelAt.get(cell);
     const goal = goalAt.get(cell);
+    const goalCard = goal && !(goal.revealed && goal.type === "monster") ? goal : null;
     const isGem = snapshot.gems.includes(cell);
     const monsters = snapshot.monsters.flatMap((item, index) => item === cell ? [index] : []);
     const occupants = snapshot.players.filter(player => player.cell === cell);
@@ -167,10 +168,17 @@ function Table({ snapshot, userId, isHost, send }: GameLobbyProps<DworfSnapshot>
     const arrows = (snapshot.monsterNext ?? []).filter(item => item.from === cell);
     const targeted = (snapshot.monsterNext ?? []).some(item => item.to === cell);
     cells.push(
-      <button key={cell} className={`dworf-cell ${highlight ? "valid" : ""} ${goal ? "goal" : ""} ${cell === snapshot.ladder ? "ladder" : ""} ${targeted ? "monster-target" : ""}`} disabled={!highlight && !(mode?.kind === "ability" && mode.card === "lookGoal" && goal && !goal.revealed)} onClick={() => onCell(cell)}>
-        {cell === snapshot.ladder && <><TunnelPiece sides="NESW" size={44} /><span className="dworf-icon dworf-ladder-icon">🪜</span></>}
+      <button key={cell} className={`dworf-cell ${highlight ? "valid" : ""} ${goalCard ? "goal" : ""} ${cell === snapshot.ladder ? "ladder" : ""} ${targeted ? "monster-target" : ""}`} disabled={!highlight && !(mode?.kind === "ability" && mode.card === "lookGoal" && goal && !goal.revealed)} onClick={() => onCell(cell)}>
+        {cell === snapshot.ladder && (
+          <>
+            <TunnelPiece sides="NESW" size={44} />
+            <svg className="dworf-ladder-icon" viewBox="0 0 32 40" role="img" aria-label="Ladder">
+              <path d="M7 3 12 37M25 3 20 37M9 10h14M10 18h12M11 26h10M12 34h8" fill="none" stroke="#f3e3c3" strokeWidth="3" strokeLinecap="square" />
+            </svg>
+          </>
+        )}
         {sides && <TunnelPiece sides={sides} size={44} />}
-        {goal && <span className={`dworf-goal ${goal.revealed ? "open" : ""}`}>{goal.type === "gold" ? "💰" : goal.type === "monster" ? "🪨" : "?"}{!goal.revealed && goal.type && <small>{goal.type === "gold" ? "gold" : "coal"}</small>}</span>}
+        {goalCard && <span className={`dworf-goal ${goalCard.revealed ? "open" : ""}`}>{goalCard.type === "gold" ? "💰" : goalCard.type === "monster" ? "👹" : "?"}{goalCard.type && <small>{goalCard.type}</small>}</span>}
         {isGem && !sides && <span className="dworf-gem">💎</span>}
         {arrows.map(item => {
           const delta = item.to - cell;
@@ -280,7 +288,7 @@ function Table({ snapshot, userId, isHost, send }: GameLobbyProps<DworfSnapshot>
               {snapshot.row.map((card, index) => {
                 const giving = myTurn && snapshot.step === "gift";
                 return (
-                  <button key={index} className={`dworf-card dworf-shop-card ability ${mode?.kind === "gift" && mode.card === card ? "selected" : ""}`} disabled={!giving} title={ABILITY_HELP[card]} onClick={() => choose({ kind: "gift", card })}>
+                  <button key={index} className={`dworf-card dworf-shop-card ability ${giving ? "shop-selectable" : ""} ${mode?.kind === "gift" && mode.card === card ? "selected" : ""}`} disabled={!giving} title={ABILITY_HELP[card]} onClick={() => choose({ kind: "gift", card })}>
                     <span className="dworf-icon big">{ABILITY_ICON[card]}</span>
                     <span className="small">{snapshot.abilityNames[card]}</span>
                   </button>
