@@ -75,7 +75,6 @@ export function StatsPage({ userId, defaultGame, onGameChange }: { userId: strin
                 </div>
               ))}
             </div>
-            <p className="muted small">Only finished games with real players count. Aborted games and bots are ignored.</p>
           </section>
           <section className="card">
             <h2>All players <span className="pill">{data.players.length}</span></h2>
