@@ -332,7 +332,7 @@ function Table({ snapshot, userId, isHost, send }: GameLobbyProps<DworfSnapshot>
             <li key={player.id} className={`dworf-player ${player.id === snapshot.turnId && playing ? "turn" : ""} ${player.connected ? "" : "offline"} ${player.dead ? "eliminated" : ""}`}>
               <Person id={player.id} name={player.username} size={22} />
               <div className="dworf-badges">
-                {(player.role || player.dead) && <span className={`pill ${player.role ?? "explorer"}`}>{player.role === "cultist" ? "cultist" : "explorer"}</span>}
+                {player.role && <span className={`pill ${player.role}`}>{player.role === "cultist" ? "cultist" : "explorer"}</span>}
                 {player.dead && <span title="Eliminated">💀</span>}
                 {player.pickaxeBroken && <span title="Pickaxe broken">⛏️✖</span>}
                 {player.lanternBroken && <span title="Lantern broken">🏮✖</span>}
