@@ -1568,6 +1568,245 @@ body[data-game="tetris"] {
   --accent: var(--neon);
   --muted: #c18b90;
 }
+body[data-game="blokus"] {
+  --themegreen: #c084fc;
+  --themesubgreen: #7e22ce;
+  --themeblack: #080411;
+  --themegrey: #1a1025;
+  --themelog: #0e0818;
+  --neon-rgb: 192, 132, 252;
+  --neon: rgb(var(--neon-rgb));
+  --neon-soft: #dfb9ff;
+  --danger-rgb: 255, 60, 90;
+  --font-big: var(--font-small);
+  --card: var(--themelog);
+  --border: rgba(var(--neon-rgb), .5);
+  --accent: var(--neon);
+  --muted: #b6a2c9;
+}
+body[data-game="blokus"] ::selection {
+  background: #c084fc;
+  color: #080411;
+}
+body[data-game="blokus"] .blokus-seats {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+body[data-game="blokus"] .blokus-seat {
+  display: grid;
+  align-content: start;
+  gap: 10px;
+  padding: 12px;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: rgba(var(--neon-rgb), .06);
+}
+body[data-game="blokus"] .blokus-seat > strong {
+  color: var(--neon-soft);
+  text-shadow: 0 0 .4em var(--neon);
+}
+body[data-game="blokus"] .blokus-color-button.blue, body[data-game="blokus"] .blokus-player-list .blue {
+  --player-color: #60a5fa;
+}
+body[data-game="blokus"] .blokus-color-button.yellow, body[data-game="blokus"] .blokus-player-list .yellow {
+  --player-color: #facc15;
+}
+body[data-game="blokus"] .blokus-color-button.red, body[data-game="blokus"] .blokus-player-list .red {
+  --player-color: #fb7185;
+}
+body[data-game="blokus"] .blokus-color-button.green, body[data-game="blokus"] .blokus-player-list .green {
+  --player-color: #4ade80;
+}
+body[data-game="blokus"] .blokus-color-button {
+  color: var(--player-color);
+  border-color: var(--player-color);
+}
+body[data-game="blokus"] .blokus-rules {
+  padding-left: 22px;
+}
+body[data-game="blokus"] .blokus-rules li {
+  margin: 8px 0;
+}
+body[data-game="blokus"] .blokus-turn-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 12px;
+  padding: 10px 14px;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: rgba(var(--neon-rgb), .08);
+  box-shadow: 0 0 14px rgba(var(--neon-rgb), .18);
+}
+body[data-game="blokus"] .blokus-turn-bar strong {
+  color: var(--neon-soft);
+  text-shadow: 0 0 .5em var(--neon);
+}
+body[data-game="blokus"] .blokus-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(240px, 320px);
+  align-items: start;
+  gap: 14px;
+}
+body[data-game="blokus"] .blokus-board-card {
+  min-width: 0;
+}
+body[data-game="blokus"] .blokus-board {
+  display: grid;
+  grid-template-columns: repeat(20, minmax(0, 1fr));
+  width: min(100%, 680px);
+  aspect-ratio: 1;
+  margin: 0 auto;
+  overflow: hidden;
+  border: 2px solid rgba(var(--neon-rgb), .85);
+  background: #080411;
+  box-shadow: 0 0 18px rgba(var(--neon-rgb), .25);
+}
+body[data-game="blokus"] .blokus-cell {
+  min-width: 0;
+  min-height: 0;
+  padding: 0;
+  border: 1px solid rgba(192, 132, 252, .16);
+  border-radius: 0;
+  background: rgba(255,255,255,.025);
+  box-shadow: none;
+}
+body[data-game="blokus"] .blokus-cell:hover:not(:disabled) {
+  background: rgba(var(--neon-rgb), .1);
+  box-shadow: none;
+}
+body[data-game="blokus"] .blokus-cell.occupied.blue {
+  background: #2563eb;
+  box-shadow: inset 0 0 5px rgba(255,255,255,.38);
+}
+body[data-game="blokus"] .blokus-cell.occupied.yellow {
+  background: #eab308;
+  box-shadow: inset 0 0 5px rgba(255,255,255,.38);
+}
+body[data-game="blokus"] .blokus-cell.occupied.red {
+  background: #e11d48;
+  box-shadow: inset 0 0 5px rgba(255,255,255,.38);
+}
+body[data-game="blokus"] .blokus-cell.occupied.green {
+  background: #16a34a;
+  box-shadow: inset 0 0 5px rgba(255,255,255,.38);
+}
+body[data-game="blokus"] .blokus-cell.preview.legal {
+  background: #c084fc;
+  box-shadow: inset 0 0 0 1px #f3e8ff, 0 0 8px #c084fc;
+}
+body[data-game="blokus"] .blokus-cell.preview.illegal {
+  background: rgba(248, 113, 113, .8);
+  box-shadow: inset 0 0 0 1px #fecaca;
+}
+body[data-game="blokus"] .blokus-placement-tools {
+  display: grid;
+  justify-items: center;
+  gap: 10px;
+  margin-top: 12px;
+}
+body[data-game="blokus"] .blokus-placement-tools .row {
+  flex-wrap: wrap;
+  justify-content: center;
+}
+body[data-game="blokus"] .blokus-sidebar {
+  display: grid;
+  gap: 12px;
+}
+body[data-game="blokus"] .blokus-player-list {
+  display: grid;
+  gap: 6px;
+  padding: 0;
+  list-style: none;
+}
+body[data-game="blokus"] .blokus-player-list li {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 4px 10px;
+  align-items: center;
+  padding: 7px;
+  border-left: 3px solid var(--player-color, var(--neon));
+  background: rgba(var(--neon-rgb), .04);
+}
+body[data-game="blokus"] .blokus-player-list li .person {
+  grid-column: 1 / -1;
+}
+body[data-game="blokus"] .blokus-player-list li.on-turn {
+  outline: 1px solid var(--neon);
+  box-shadow: 0 0 10px rgba(var(--neon-rgb), .2);
+}
+body[data-game="blokus"] .blokus-player-list li.out {
+  opacity: .55;
+}
+body[data-game="blokus"] .blokus-piece-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(76px, 1fr));
+  gap: 6px;
+}
+body[data-game="blokus"] .blokus-piece-choice {
+  display: grid;
+  justify-items: center;
+  gap: 4px;
+  min-height: 72px;
+  padding: 5px;
+  border: 1px solid var(--border);
+  background: rgba(var(--neon-rgb), .04);
+  box-shadow: none;
+}
+body[data-game="blokus"] .blokus-piece-choice.selected {
+  border-color: var(--neon-soft);
+  background: rgba(var(--neon-rgb), .2);
+  box-shadow: 0 0 10px rgba(var(--neon-rgb), .35);
+}
+body[data-game="blokus"] .blokus-piece-shape {
+  display: inline-grid;
+  grid-auto-rows: 9px;
+  gap: 1px;
+}
+body[data-game="blokus"] .blokus-piece-shape i {
+  width: 9px;
+  height: 9px;
+  background: transparent;
+}
+body[data-game="blokus"] .blokus-piece-shape i.filled {
+  border: 1px solid rgba(var(--neon-rgb), .9);
+  background: var(--neon);
+  box-shadow: 0 0 4px rgba(var(--neon-rgb), .6);
+}
+body[data-game="blokus"] .blokus-player-list .blue > span, body[data-game="blokus"] .blokus-results tr.blokus-winner {
+  color: #93c5fd;
+}
+body[data-game="blokus"] .blokus-player-list .yellow > span {
+  color: #fde047;
+}
+body[data-game="blokus"] .blokus-player-list .red > span {
+  color: #fda4af;
+}
+body[data-game="blokus"] .blokus-player-list .green > span {
+  color: #86efac;
+}
+@media (max-width: 760px) {
+  body[data-game="blokus"] .blokus-layout {
+    grid-template-columns: 1fr;
+  }
+  body[data-game="blokus"] .blokus-sidebar {
+    grid-row: 1;
+  }
+  body[data-game="blokus"] .blokus-player-list {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+@media (max-width: 480px) {
+  body[data-game="blokus"] .blokus-seats {
+    grid-template-columns: 1fr;
+  }
+  body[data-game="blokus"] .blokus-turn-bar {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+}
 body[data-game="tetris"] ::selection {
   background: #ff263b;
   color: #080304;
