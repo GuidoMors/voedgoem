@@ -19,5 +19,6 @@ export interface GameLobbyProps<S> {
   snapshot: S;
   userId: string;
   isHost: boolean;
+  isAdmin: boolean;
   send: Send;
 }

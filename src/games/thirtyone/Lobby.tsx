@@ -10,13 +10,13 @@ import type { Role, ThirtyOneHistoryEntry, ThirtyOneSeat, ThirtyOneSnapshot, Tea
 const TEAMS: Team[] = ["red", "blue"];
 const label = (team: Team) => (team === "red" ? "Red" : "Blue");
 
-type Props = { snapshot: ThirtyOneSnapshot; seat?: ThirtyOneSeat; isHost: boolean; send: Send };
+type Props = { snapshot: ThirtyOneSnapshot; seat?: ThirtyOneSeat; isHost: boolean; isAdmin: boolean; send: Send };
 
-export function ThirtyOneLobby({ snapshot, userId, isHost, send }: GameLobbyProps<ThirtyOneSnapshot>) {
+export function ThirtyOneLobby({ snapshot, userId, isHost, isAdmin, send }: GameLobbyProps<ThirtyOneSnapshot>) {
   const seat = snapshot.seats.find(item => item.id === userId);
-  if (snapshot.phase === "lobby") return <Waiting {...{ snapshot, seat, isHost, send }} />;
-  if (snapshot.phase === "draft") return <Draft {...{ snapshot, seat, isHost, send }} />;
-  return <Table {...{ snapshot, seat, isHost, send }} userId={userId} />;
+  if (snapshot.phase === "lobby") return <Waiting {...{ snapshot, seat, isHost, isAdmin, send }} />;
+  if (snapshot.phase === "draft") return <Draft {...{ snapshot, seat, isHost, isAdmin, send }} />;
+  return <Table {...{ snapshot, seat, isHost, isAdmin, send }} userId={userId} />;
 }
 
 function TeamBoxes({ snapshot, isHost, send }: { snapshot: ThirtyOneSnapshot; isHost: boolean; send: Send }) {
@@ -160,7 +160,7 @@ function Scoreboard({ snapshot }: { snapshot: ThirtyOneSnapshot }) {
     <>
     <div className="teams">
       {TEAMS.map(team => (
-        <div key={team} className={`team-box team-${team} score-box`}>
+        <div key={team} className={`team-box team-${team} score-box ${snapshot.phase === "playing" && snapshot.turn === team ? "active-turn" : "inactive-turn"}`}>
           <h3>{label(team)}</h3>
           <div className="score">{snapshot.scores[team]}<span className="muted small"> / {snapshot.pointsToWin}</span></div>
         </div>
@@ -188,7 +188,7 @@ function History({ entries }: { entries: ThirtyOneHistoryEntry[] }) {
   );
 }
 
-function Table({ snapshot, seat, isHost, send, userId }: Props & { userId: string }) {
+function Table({ snapshot, seat, isHost, isAdmin, send, userId }: Props & { userId: string }) {
   const playing = snapshot.phase === "playing";
   const running = playing && snapshot.turnPhase === "running";
   const now = useServerClock(snapshot, running);
@@ -213,11 +213,8 @@ function Table({ snapshot, seat, isHost, send, userId }: Props & { userId: strin
           {isHost ? <button className="primary" onClick={() => send({ type: "exit" })}>Back to lobby</button> : <p className="muted small">Waiting for {snapshot.host.name} to return to the lobby.</p>}
         </section>
       ) : (
-        <section className="card">
-          <p className={`cn-status team-${snapshot.turn}`}>
-            <strong>{label(snapshot.turn)} team's turn</strong>
-            {snapshot.describer && <> · describing: <Person id={snapshot.describer.id} name={snapshot.describer.username} /></>}
-          </p>
+        <section className="card ts-main-card">
+          {snapshot.describer && <div className={`ts-current-player team-${snapshot.turn}`}><Person id={snapshot.describer.id} name={snapshot.describer.username} /></div>}
 
           {stage === "ready" && (isDescriber ? (
             <div className="ts-center">
@@ -266,19 +263,20 @@ function Table({ snapshot, seat, isHost, send, userId }: Props & { userId: strin
           {running && myTeamTurn && !isDescriber && <p className="muted">Guess what {snapshot.describer?.username} is describing!</p>}
         </section>
       )}
-      {playing && isHost && snapshot.spectators.length > 0 && (
+      {playing && snapshot.spectators.length > 0 && (
         <section className="card">
           <h2>Spectators ({snapshot.spectators.length})</h2>
           <ul className="names">
             {snapshot.spectators.map(person => (
               <li key={person.id} className="row between">
                 <Person id={person.id} name={person.username} size={20} />
-                <span className="row">
-                  {TEAMS.map(team => <button key={team} className={`text-${team}`} onClick={() => send({ type: "assign", userId: person.id, team })}>Add to {label(team)}</button>)}
-                </span>
+                {(isHost || isAdmin) && <span className="row">
+                    {TEAMS.map(team => <button key={team} className={`text-${team}`} onClick={() => send({ type: "assign", userId: person.id, team })}>Add to {label(team)}</button>)}
+                  </span>}
               </li>
             ))}
           </ul>
+          {!isHost && !isAdmin && <p className="muted small">The lobby host or an admin can assign spectators to a team.</p>}
         </section>
       )}
       {isHost && playing && <AbortCard send={send} />}

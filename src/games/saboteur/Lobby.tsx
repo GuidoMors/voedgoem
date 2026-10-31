@@ -45,9 +45,9 @@ type Mode =
   | { kind: "gift"; card: AbilityType | null }
   | null;
 
-export function SaboteurLobby({ snapshot, userId, isHost, send }: GameLobbyProps<SaboteurSnapshot>) {
-  if (snapshot.phase === "lobby") return <Waiting {...{ snapshot, userId, isHost, send }} />;
-  return <Table {...{ snapshot, userId, isHost, send }} />;
+export function SaboteurLobby({ snapshot, userId, isHost, isAdmin, send }: GameLobbyProps<SaboteurSnapshot>) {
+  if (snapshot.phase === "lobby") return <Waiting {...{ snapshot, userId, isHost, isAdmin, send }} />;
+  return <Table {...{ snapshot, userId, isHost, isAdmin, send }} />;
 }
 
 function Waiting({ snapshot, userId, isHost, send }: GameLobbyProps<SaboteurSnapshot>) {

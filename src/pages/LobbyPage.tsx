@@ -79,6 +79,7 @@ export function LobbyPage({ lobbyId, user, onGameChange, chatOpen, onChatClose }
         snapshot={view}
         userId={acting ? bot.id : user.id}
         isHost={acting ? false : snapshot.host.id === user.id}
+        isAdmin={!acting && user.isAdmin}
         send={user.isDisplay ? noop : acting ? sendAsBot : send}
       />
 

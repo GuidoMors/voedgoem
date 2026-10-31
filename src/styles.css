@@ -2411,6 +2411,65 @@ body[data-game="thirtyone"] .card, body[data-game="thirtyone"] .team-box, body[d
   border-radius: 14px;
   box-shadow: 0 0 18px rgba(80,110,255,.35), inset 0 0 14px rgba(0,0,10,.5);
 }
+body[data-game="thirtyone"] .ts-table .score-box {
+  transition: transform .2s ease, border-width .2s ease, box-shadow .2s ease;
+}
+body[data-game="thirtyone"] .ts-table .score-box.active-turn {
+  border-width: 5px;
+  transform: scale(1.02);
+  z-index: 1;
+}
+body[data-game="thirtyone"] .ts-table .score-box.team-red {
+  background: linear-gradient(#781c3b, #3d1028);
+}
+body[data-game="thirtyone"] .ts-table .score-box.team-blue {
+  background: linear-gradient(#0e1a78, #070e45);
+}
+body[data-game="thirtyone"] .ts-table .score-box.active-turn.team-red {
+  border-color: #ff6a6a;
+  box-shadow: 0 0 20px rgba(255,106,106,.55), inset 0 0 14px rgba(255,106,106,.18);
+}
+body[data-game="thirtyone"] .ts-table .score-box.active-turn.team-blue {
+  border-color: #6aa8ff;
+  box-shadow: 0 0 20px rgba(106,168,255,.55), inset 0 0 14px rgba(106,168,255,.18);
+}
+body[data-game="thirtyone"] .ts-table .score-box.inactive-turn {
+  border-width: 2px;
+  padding: 8px;
+  transform: scale(.96);
+}
+body[data-game="thirtyone"] .ts-table .ts-main-card {
+  width: 100%;
+  max-width: 760px;
+  margin: 0 auto 16px;
+  padding: 0;
+  background: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+}
+body[data-game="thirtyone"] .ts-current-player {
+  display: flex;
+  justify-content: center;
+  margin: 0 auto 12px;
+}
+body[data-game="thirtyone"] .ts-current-player .person {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+body[data-game="thirtyone"] .ts-current-player.team-red .person-name {
+  color: #ff6a6a;
+}
+body[data-game="thirtyone"] .ts-current-player.team-blue .person-name {
+  color: #6aa8ff;
+}
+body[data-game="thirtyone"] .ts-main-card .ts-words {
+  width: min(100%, 520px);
+  margin: 20px auto;
+}
+body[data-game="thirtyone"] .ts-main-card .ts-word {
+  text-align: center;
+}
 body[data-game="thirtyone"] .names li {
   background: rgba(10,20,110,.6);
   border: 1px solid #5568d8;
