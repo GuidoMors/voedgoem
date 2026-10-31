@@ -28,6 +28,8 @@ export interface LobbySummary {
   hostName: string;
   createdAt: string;
   isPasswordProtected: boolean;
+  playerCount: number;
+  maxPlayers: number;
 }
 
 export interface AdminUser {

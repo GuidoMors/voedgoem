@@ -19,6 +19,7 @@ button:disabled{opacity:.5;cursor:not-allowed}
 .game-pill{margin-right:5px;display:inline-flex;align-items:center;gap:6px;vertical-align:middle}
 .game-favicon{display:block;width:20px;height:20px;object-fit:contain}
 .lobby-hosted-by{display:inline-block;margin-left:20px;font-size:.75em;font-style:italic}
+.lobby-player-count{font-weight:400;margin-left:6px;color:var(--muted)}
 .card{padding:18px;border:1px solid var(--border);border-radius:12px;background:var(--card);margin-bottom:16px}
 .row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}.between{justify-content:space-between}
 .right{text-align:right}

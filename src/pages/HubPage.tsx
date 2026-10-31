@@ -87,7 +87,7 @@ export function HubPage({ user }: { user: User }) {
                   <span className="pill game-pill">
                     {gameFaviconUrl(lobby.game) && <img className="game-favicon" src={gameFaviconUrl(lobby.game)} alt="" aria-hidden="true" />}
                     {gameName(lobby.game)}
-                  </span> <strong>{lobby.name}</strong>{lobby.isPasswordProtected && <span className="pill" aria-label="Password protected">🔒 Password</span>}
+                  </span> <strong>{lobby.name}</strong><span className="lobby-player-count">({lobby.playerCount}/{lobby.maxPlayers})</span>{lobby.isPasswordProtected && <span className="pill" aria-label="Password protected">🔒 Password</span>}
                   <span className="muted lobby-hosted-by">hosted by {lobby.hostName}</span>
                 </div>
                 <div className="row">
