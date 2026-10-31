@@ -32,7 +32,7 @@ const ABILITY_ICON: Record<AbilityType, string> = {
 const ABILITY_HELP: Record<AbilityType, string> = {
   lookGoal: "Secretly check one of the three goal cards.",
   lookDwarf: "Secretly check another dwarf's role.",
-  destroyTunnel: "Remove a tunnel from the board.",
+  destroyTunnel: "Remove a tunnel from the board. Any monster on it will be killed.",
   destroyPickaxe: "A dwarf can't place tunnels until it's fixed.",
   fixPickaxe: "Repair another dwarf's pickaxe.",
   destroyLantern: "A dwarf can't place tunnels until it's fixed.",
@@ -141,7 +141,7 @@ function Table({ snapshot, userId, isHost, isDisplay, send }: GameLobbyProps<Dwo
 
   const valid = new Set<number>();
   if (mode?.kind === "tunnel") for (const cell of snapshot.placeable?.[mode.index]?.[mode.rot] ?? []) valid.add(cell);
-  if (mode?.kind === "ability" && mode.card === "destroyTunnel") for (const item of snapshot.tunnels) if (!snapshot.monsters.includes(item.cell)) valid.add(item.cell);
+  if (mode?.kind === "ability" && mode.card === "destroyTunnel") for (const item of snapshot.tunnels) valid.add(item.cell);
   if (mode?.kind === "ability" && mode.card === "lookGoal") for (const goal of snapshot.goals) if (!goal.revealed) valid.add(goal.cell);
   if (snapshot.monsterOptions) for (const cell of snapshot.monsterOptions) valid.add(cell);
 
@@ -171,7 +171,7 @@ function Table({ snapshot, userId, isHost, isDisplay, send }: GameLobbyProps<Dwo
   else if (snapshot.step === "gift") prompt = "You found a gem! Pick a card from The Shop, then the dwarf who gets it.";
   else if (mode?.kind === "tunnel") prompt = "Click a highlighted spot to place the tunnel. Use Turn to flip it.";
   else if (mode?.kind === "pass") prompt = "Pick a tunnel card from your hand to discard.";
-  else if (mode?.kind === "ability") prompt = mode.card === "destroyTunnel" ? "Click the tunnel to destroy." : mode.card === "lookGoal" ? "Click a goal card to peek at." : "Pick a dwarf on the right.";
+  else if (mode?.kind === "ability") prompt = mode.card === "destroyTunnel" ? "Click a tunnel to destroy; any monster on it will be killed." : mode.card === "lookGoal" ? "Click a goal card to peek at." : "Pick a dwarf on the right.";
   else prompt = "Your turn: place a tunnel, play an ability card, or pass.";
 
   const handClick = (kind: "tunnel" | "ability", index: number, card?: AbilityType) => {
@@ -390,6 +390,7 @@ function Table({ snapshot, userId, isHost, isDisplay, send }: GameLobbyProps<Dwo
 
         {isHost && playing && (
           <div className="row">
+            {snapshot.step === "turn" && <button onClick={() => send({ type: "forcepass" })}>Force pass {turnPlayer?.username ?? "current player"}</button>}
             {turnPlayer && !turnPlayer.connected && <button onClick={() => send({ type: "forceskip" })}>Skip {turnPlayer.username} (offline)</button>}
             <button onClick={() => send({ type: "abort" })}>Abort game</button>
           </div>
