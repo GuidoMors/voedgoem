@@ -1312,6 +1312,25 @@ th {
   border: 2px solid #334155;
   background: #1e2433;
 }
+.dworf-pass-card {
+  box-sizing: border-box;
+  justify-content: center;
+  flex: 0 0 92px;
+  width: 92px;
+  height: 94px;
+  background: #ffd84a;
+  color: #241a05;
+  border-color: #1a1109;
+  box-shadow: inset 4px 4px 0 #fff0a3, inset -4px -4px 0 #947018;
+}
+.dworf-pass-card strong {
+  font-size: 1.05rem;
+}
+.dworf-pass-card span {
+  font-size: .68rem;
+  line-height: 1.1;
+  text-align: center;
+}
 .dworf-card.ability {
   background: #2a2540;
 }
@@ -2504,6 +2523,17 @@ body[data-game="dworf"] .dworf-card {
   box-shadow: inset 4px 4px 0 #9a9a9a, inset -4px -4px 0 #444;
   color: #fff;
 }
+body[data-game="dworf"] .dworf-card.dworf-pass-card,
+body[data-game="dworf"] .dworf-card.dworf-pass-card:hover {
+  background: #ffd84a !important;
+  color: #241a05 !important;
+  border-color: #1a1109 !important;
+  box-shadow: inset 4px 4px 0 #fff0a3, inset -4px -4px 0 #947018 !important;
+}
+body[data-game="dworf"] .dworf-card.dworf-pass-card.selected {
+  border-color: #fff0a3 !important;
+  box-shadow: inset 4px 4px 0 #fff0a3, inset -4px -4px 0 #947018, 0 0 0 3px #ffd84a !important;
+}
 body[data-game="dworf"] .dworf-card.ability {
   background: #5b4a7a;
   box-shadow: inset 4px 4px 0 #8a76b0, inset -4px -4px 0 #3b2f52;
@@ -3258,6 +3288,11 @@ html body[data-game="thirtyone"] button:not(.cn-card):not(.dworf-card):not(.dwor
     min-width: 0;
     padding: 6px 2px;
     font-size: .75rem;
+  }
+  .dworf-hand .dworf-card.dworf-pass-card {
+    grid-column: 2;
+    flex: initial;
+    height: 88px;
   }
   .dworf-hand .dworf-card .dworf-piece {
     width: 40px;

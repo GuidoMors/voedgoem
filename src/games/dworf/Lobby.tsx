@@ -293,7 +293,7 @@ function Table({ snapshot, userId, isHost, isDisplay, send }: GameLobbyProps<Dwo
               <span className="muted small">Tunnel Draw Pile: {snapshot.deckCount}</span>
             </div>
             <div className="dworf-hand-split">
-            <div className="dworf-hand">
+            <div className="dworf-hand dworf-tunnel-hand">
               {me.tunnels.map((sides, index) => {
                 const selected = mode?.kind === "tunnel" && mode.index === index;
                 const shown = turned(sides, rots[index] ?? 0);
@@ -308,6 +308,20 @@ function Table({ snapshot, userId, isHost, isDisplay, send }: GameLobbyProps<Dwo
                   </div>
                 );
               })}
+              {myTurn && snapshot.step === "turn" && (
+                <button
+                  type="button"
+                  className={`dworf-card dworf-pass-card ${mode?.kind === "pass" ? "selected" : ""}`}
+                  onClick={() => (mode?.kind === "pass"
+                    ? done()
+                    : me.tunnels.length === 0
+                      ? send({ type: "pass" })
+                      : choose({ kind: "pass" }))}
+                >
+                  <strong>Pass</strong>
+                  <span>{me.tunnels.length === 0 ? "Nothing to discard" : "Discard a tunnel"}</span>
+                </button>
+              )}
             </div>
             <div className="dworf-hand dworf-hand-abilities">
               {me.abilities.map((card, index) => (
@@ -320,7 +334,6 @@ function Table({ snapshot, userId, isHost, isDisplay, send }: GameLobbyProps<Dwo
             </div>
             {myTurn && snapshot.step === "turn" && (
               <div className="row">
-                <button className={mode?.kind === "pass" ? "primary" : ""} onClick={() => (me.tunnels.length === 0 ? send({ type: "pass" }) : choose({ kind: "pass" }))}>{mode?.kind === "pass" ? "Cancel pass" : me.tunnels.length === 0 ? "Pass (nothing to discard)" : "Pass (discard a tunnel)"}</button>
                 {mode && mode.kind !== "pass" && <button onClick={done}>Cancel</button>}
               </div>
             )}
