@@ -2359,6 +2359,11 @@ body[data-game="codenames"] .cn-card.revealed.c-assassin {
 body[data-game="codenames"] .cn-card.hinted {
   box-shadow: 0 3px 5px rgba(60,40,10,.35), inset 0 0 0 2px #fffdf5;
 }
+@media (min-width: 701px) {
+  body[data-game="codenames"] .cn-card {
+    font-size: clamp(1rem, calc(.75rem + .5vw), 1.4rem);
+  }
+}
 /* ===== 31 Seconds: Millionaire studio ===== */
 body[data-game="thirtyone"] {
   --neon-rgb: 255, 190, 60;
