@@ -82,7 +82,7 @@ export function HubPage({ user }: { user: User }) {
         {lobbies.length === 0 ? <p className="muted">No open lobbies{(user.isAdmin || user.isHoster) ? " — create one above." : " yet. Ask an admin or hoster to open one."}</p> : (
           <ul className="lobby-list">
             {lobbies.map(lobby => (
-              <li key={lobby.id}>
+              <li key={lobby.id} className="hub-lobby" data-game={lobby.game}>
                 <div>
                   <span className="pill game-pill">
                     {gameFaviconUrl(lobby.game) && <img className="game-favicon" src={gameFaviconUrl(lobby.game)} alt="" aria-hidden="true" />}
@@ -91,7 +91,7 @@ export function HubPage({ user }: { user: User }) {
                   <span className="muted lobby-hosted-by">hosted by {lobby.hostName}</span>
                 </div>
                 <div className="row">
-                  <a className="button primary" href={`#/lobby/${lobby.id}`}>{user.isDisplay ? "Show" : "Join"}</a>
+                  <a className="button primary hub-join" href={`#/lobby/${lobby.id}`}>{user.isDisplay ? "Show" : "Join"}</a>
                   {(user.isAdmin || lobby.hostId === user.id) && <button className="danger" onClick={() => void close(lobby)}>Close</button>}
                 </div>
               </li>
