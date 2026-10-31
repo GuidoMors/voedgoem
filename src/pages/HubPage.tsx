@@ -84,7 +84,7 @@ export function HubPage({ user }: { user: User }) {
             {lobbies.map(lobby => (
               <li key={lobby.id} className="hub-lobby" data-game={lobby.game}>
                 <div>
-                  <span className="pill game-pill">
+                  <span className="pill game-pill" title={games.find(game => game.id === lobby.game)?.description}>
                     {gameFaviconUrl(lobby.game) && <img className="game-favicon" src={gameFaviconUrl(lobby.game)} alt="" aria-hidden="true" />}
                     {gameName(lobby.game)}
                   </span> <strong>{lobby.name}</strong><span className="lobby-player-count">({lobby.playerCount}/{lobby.maxPlayers})</span>{lobby.isPasswordProtected && <span className="pill" aria-label="Password protected">🔒 Password</span>}

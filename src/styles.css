@@ -280,6 +280,17 @@ th{color:var(--muted);font-size:12px;text-transform:uppercase}
 .stats-table th, .stats-table td { padding: 4px 10px; white-space: nowrap; text-align: left; }
 .stats-table th:not(:first-child), .stats-table td:not(:first-child) { text-align: center; }
 .stats-table tr.me td { background: rgba(250, 204, 21, 0.1); font-weight: 600; }
+.stats-player-tools { justify-content: space-between; margin: 12px 0; }
+.stats-player-tools form { flex-wrap: nowrap; }
+.stats-player-tools input { width: auto; min-width: 0; }
+.stats-player-tools form:first-child input { width: min(220px, 42vw); }
+.stats-player-tools .stats-page-input { width: 76px; }
+.stats-pagination { margin-top: 12px; }
+.stats-pagination span { text-align: center; }
+@media (max-width: 560px) {
+  .stats-player-tools { align-items: stretch; flex-direction: column; }
+  .stats-player-tools form:first-child input { flex: 1; width: auto; }
+}
 
 .stats-tabs { margin-bottom: 12px; flex-wrap: wrap; }
 .stats-table th { white-space: normal; max-width: 110px; font-size: 0.8rem; }
@@ -825,6 +836,77 @@ html body .cn-card:disabled, html body .sb-card:disabled, html body .sb-cell:dis
   background: var(--stats-surface) !important;
   border-color: var(--stats-edge) !important;
 }
+.modal.stats-modal[data-game] .stats-page .stats-player-tools label,
+.modal.stats-modal[data-game] .stats-page .stats-pagination,
+.modal.stats-modal[data-game] .stats-page .stats-pagination .muted { color: var(--stats-muted) !important; }
+.modal.stats-modal[data-game] .stats-page .stats-player-tools input {
+  color: var(--stats-text) !important;
+  background: var(--stats-surface) !important;
+  border: 2px solid var(--stats-edge) !important;
+  box-shadow: inset 0 0 6px var(--stats-glow) !important;
+  font-family: var(--font-small);
+}
+.modal.stats-modal[data-game] .stats-page .stats-player-tools input:focus {
+  border-color: var(--stats-accent) !important;
+  box-shadow: 0 0 10px var(--stats-glow), inset 0 0 6px var(--stats-glow) !important;
+}
+.modal.stats-modal[data-game] .stats-page .stats-player-tools input::placeholder { color: var(--stats-muted) !important; opacity: .8; }
+.modal.stats-modal[data-game] .stats-page .stats-player-tools button,
+.modal.stats-modal[data-game] .stats-page .stats-pagination button {
+  color: var(--stats-accent) !important;
+  background: var(--stats-surface) !important;
+  border: 2px solid var(--stats-edge) !important;
+  box-shadow: 0 0 6px var(--stats-glow), inset 0 0 5px var(--stats-glow) !important;
+  font-family: var(--font-small);
+  text-shadow: none !important;
+}
+.modal.stats-modal[data-game] .stats-page .stats-player-tools button:hover:not(:disabled),
+.modal.stats-modal[data-game] .stats-page .stats-pagination button:hover:not(:disabled) {
+  color: var(--stats-surface) !important;
+  background: var(--stats-accent) !important;
+  border-color: var(--stats-accent) !important;
+  box-shadow: 0 0 12px var(--stats-glow) !important;
+}
+.modal.stats-modal[data-game] .stats-page .stats-pagination button:disabled {
+  color: var(--stats-muted) !important;
+  border-color: var(--stats-edge) !important;
+  box-shadow: none !important;
+  filter: grayscale(1);
+}
+.modal.stats-modal[data-game="codenames"] .stats-page .stats-player-tools button,
+.modal.stats-modal[data-game="codenames"] .stats-page .stats-pagination button,
+.modal.stats-modal[data-game="codenames"] .stats-page .stats-player-tools input { border-radius: 6px !important; }
+.modal.stats-modal[data-game="thirtyone"] .stats-page .stats-player-tools button,
+.modal.stats-modal[data-game="thirtyone"] .stats-page .stats-pagination button,
+.modal.stats-modal[data-game="thirtyone"] .stats-page .stats-player-tools input { border-radius: 30px !important; }
+.modal.stats-modal[data-game="saboteur"] .stats-page .stats-player-tools button,
+.modal.stats-modal[data-game="saboteur"] .stats-page .stats-pagination button,
+.modal.stats-modal[data-game="saboteur"] .stats-page .stats-player-tools input { border-radius: 0 !important; }
+.modal.stats-modal[data-game="saboteur"] .stats-page .stats-player-tools button,
+.modal.stats-modal[data-game="saboteur"] .stats-page .stats-pagination button {
+  border: 3px solid #111 !important;
+  background: #7d7d7d !important;
+  color: #fff !important;
+  box-shadow: inset -3px -3px 0 #4a4a4a, inset 3px 3px 0 #b5b5b5 !important;
+  font-family: var(--font-big);
+  font-size: 12px;
+  text-transform: uppercase;
+}
+.modal.stats-modal[data-game="saboteur"] .stats-page .stats-player-tools button:hover:not(:disabled),
+.modal.stats-modal[data-game="saboteur"] .stats-page .stats-pagination button:hover:not(:disabled) {
+  background: #8f9a6a !important;
+  color: #fff !important;
+  box-shadow: inset -3px -3px 0 #55603a, inset 3px 3px 0 #c4d09a !important;
+}
+.modal.stats-modal[data-game="saboteur"] .stats-page .stats-player-tools button:disabled,
+.modal.stats-modal[data-game="saboteur"] .stats-page .stats-pagination button:disabled {
+  background: #3a342c !important;
+  color: #8a7d68 !important;
+  border-color: #111 !important;
+  box-shadow: inset 3px 3px 0 #1f1a14 !important;
+  filter: none;
+}
+.modal.stats-modal[data-game] .stats-page p.error { color: var(--stats-accent) !important; }
 .modal.stats-modal[data-game="codenames"] .modal-head button,
 .modal.stats-modal[data-game="codenames"] .stats-page .stats-tab { border-radius: 4px !important; }
 .modal.stats-modal[data-game="saboteur"] .modal-head button,
