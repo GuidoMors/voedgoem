@@ -217,21 +217,23 @@ function Table({ snapshot, userId, isHost, send }: GameLobbyProps<DworfSnapshot>
   return (
     <div className="cn-layout">
       <div className="cn-main">
+        {me && snapshot.phase !== "lobby" && (
+          <div className={`dworf-role-banner ${me.role}`}>
+            <strong>{me.role === "cultist" ? "CULTIST" : "EXPLORER"}</strong>
+            <span>{me.role === "cultist"
+              ? "Keep the gold hidden and help a monster reach the ladder."
+              : "Reach the gold before a monster reaches the ladder."}</span>
+          </div>
+        )}
         {snapshot.phase === "results" ? (
           <div className={`cn-status ${snapshot.winner === "explorer" ? "team-blue" : "team-red"}`}>
             <strong>{snapshot.winner === "explorer" ? "The explorers win!" : "The cultists win!"}</strong> {reason}
           </div>
         ) : (
           <>
+          <div className={`cn-status dworf-current-turn ${myTurn ? "team-blue" : ""}`}><strong>{prompt}</strong></div>
           <div className="cn-status dworf-last-turn"><span className="muted small">Previous turn: </span>{snapshot.lastTurn?.length ? snapshot.lastTurn.join(" ") : "none yet"}</div>
-          <div className={`cn-status ${myTurn ? "team-blue" : ""}`}><strong>{prompt}</strong></div>
           </>
-        )}
-        {me && snapshot.phase === "playing" && (
-          <p className={`dworf-role ${me.role}`}>
-            You are {me.role === "cultist" ? "a Cultist" : "an Explorer"}.
-            {me.role === "cultist" ? " Keep the gold hidden and wake a monster. Your goals and fellow cultists are marked." : " Dig to the gold and watch for cultists."}
-          </p>
         )}
         {notice && <p className="error">{notice}</p>}
 

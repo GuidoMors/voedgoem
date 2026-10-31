@@ -740,6 +740,9 @@ th {
 .cn-status.dworf-last-turn .small {
   display: block;
 }
+.cn-status.dworf-last-turn {
+  font-size: .9rem;
+}
 .cn-status.team-red {
   border-color: #dc2626;
 }
@@ -1323,16 +1326,32 @@ th {
   cursor: default;
   opacity: 0.85;
 }
-.dworf-role {
-  padding: 6px 10px;
-  border-radius: 6px;
-  font-size: 0.9rem;
+.dworf-role-banner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 5px;
+  padding: 14px 16px;
+  margin-bottom: 8px;
+  border: 3px solid;
+  border-radius: 8px;
+  text-align: center;
 }
-.dworf-role.cultist {
-  background: rgba(220, 38, 38, 0.2);
+.dworf-role-banner strong {
+  font-size: 1.5rem;
+  line-height: 1.1;
+  letter-spacing: .08em;
 }
-.dworf-role.explorer {
-  background: rgba(37, 99, 235, 0.2);
+.dworf-role-banner span {
+  font-size: .95rem;
+}
+.dworf-role-banner.cultist {
+  border-color: #b83a2f;
+  background: rgba(142, 45, 34, .35);
+}
+.dworf-role-banner.explorer {
+  border-color: #4383bd;
+  background: rgba(47, 93, 138, .35);
 }
 .dworf-side .dworf-player {
   display: grid;
@@ -2472,11 +2491,18 @@ body[data-game="dworf"] .dworf-side .dworf-player.turn {
 body[data-game="dworf"] .dworf-side .dworf-player.eliminated {
   opacity: .65;
 }
-body[data-game="dworf"] .dworf-role.cultist {
-  background: #8e2d22;
+body[data-game="dworf"] .dworf-role-banner.cultist {
+  background: rgba(142, 45, 34, .35);
 }
-body[data-game="dworf"] .dworf-role.explorer {
-  background: #2f5d8a;
+body[data-game="dworf"] .dworf-role-banner.explorer {
+  background: rgba(47, 93, 138, .35);
+}
+body[data-game="dworf"] .cn-status.dworf-current-turn {
+  background: #7d7d7d;
+  color: #fff;
+  border: 3px solid #111;
+  border-radius: 4px;
+  box-shadow: inset -3px -3px 0 #4a4a4a, inset 3px 3px 0 #b5b5b5;
 }
 body[data-game="dworf"] .dworf-icon, body[data-game="dworf"] .dworf-gem, body[data-game="dworf"] .dworf-occupant-monster, body[data-game="dworf"] .dworf-goal {
   image-rendering: pixelated;
