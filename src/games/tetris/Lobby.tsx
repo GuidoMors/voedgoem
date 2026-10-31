@@ -68,10 +68,11 @@ function Waiting({ snapshot, joined, isHost, send }: { snapshot: LobbySnapshot; 
         <label className="row">Teams
           <select value={snapshot.teamCount} onChange={event => send({ type: "config", teams: Number(event.target.value) })}>
             <option value={0}>Free for all</option>
+            <option value={1}>1 team (everyone together)</option>
             {Array.from({ length: 7 }, (_, index) => <option key={index} value={index + 2}>{index + 2} teams</option>)}
           </select>
         </label>
-        {teamMode && <p className="muted small">Teammates share one board, 10 columns per player. Each player's pieces drop in at their own lane.</p>}
+        {teamMode && <p className="muted small">{snapshot.teamCount === 1 ? "Everyone shares one board, 10 columns per player. Each player's pieces drop in at their own lane." : "Teammates share one board, 10 columns per player. Each player's pieces drop in at their own lane."}</p>}
         {teamMode && <button disabled={snapshot.players.length < 2} onClick={() => send({ type: "shuffle" })}>Shuffle teams</button>}
         <button className="primary" disabled={snapshot.players.length === 0} onClick={() => send({ type: "start" })}>Start game</button>
         {snapshot.players.length === 0 && <p className="muted small">At least one player must join first.</p>}

@@ -9,7 +9,9 @@ import type { TeamSnapshot } from "./types";
 export const TEAM_COLORS = ["#ef4444", "#3b82f6", "#22c55e", "#eab308", "#a855f7", "#f97316", "#14b8a6", "#ec4899"];
 
 const KEYS: Record<string, string> = {
-  ArrowLeft: "left", ArrowRight: "right", ArrowDown: "down", ArrowUp: "rotate", x: "rotate", z: "rotateBack", " ": "hard"
+  ArrowLeft: "left", ArrowRight: "right", ArrowDown: "down", ArrowUp: "rotate",
+  a: "left", d: "right", s: "down", w: "rotate",
+  x: "rotate", z: "rotateBack", " ": "hard"
 };
 
 // The shared board lives on the server; this only sends key presses and draws the result.
@@ -64,13 +66,13 @@ export function TeamPlayer({ team, userId, send }: { team: TeamSnapshot; userId:
       </div>
       {active && (
         <>
-          <p className="muted small">Your piece has a white outline. ← → move · ↑ / X rotate · Z rotate back · ↓ soft drop · Space hard drop</p>
+          <p className="muted small">Your piece has a white outline. ← → / A D move · ↑ / W / X rotate · Z rotate back · ↓ / S soft drop · Space hard drop</p>
         </>
       )}
       <ul className="names team-members">
         {team.members.map((member, index) => (
           <li key={member.id} className={member.out ? "offline" : ""}>
-            <Person id={member.id} name={member.username} size={22} /> <span className="muted small">lane {index + 1}{member.out ? " · out" : ""}</span>
+            <Person id={member.id} name={member.username} size={22} /> <span className="muted small">lane {index + 1}{member.out ? " · out" : !member.connected ? " · reconnecting" : ""}</span>
           </li>
         ))}
       </ul>

@@ -1,6 +1,6 @@
 import { CodenamesLobby } from "./codenames/Lobby";
 import { BlokusLobby } from "./blokus/Lobby";
-import { SaboteurLobby } from "./saboteur/Lobby";
+import { DworfLobby } from "./dworf/Lobby";
 import { TetrisLobby } from "./tetris/Lobby";
 import { ThirtyOneLobby } from "./thirtyone/Lobby";
 import type { LobbySnapshot } from "../types";
@@ -13,6 +13,6 @@ export function GameLobby({ snapshot, userId, isHost, isAdmin, send }: { snapsho
     case "blokus": return <BlokusLobby {...{ snapshot, userId, isHost, isAdmin, send }} />;
     case "codenames": return <CodenamesLobby {...{ snapshot, userId, isHost, isAdmin, send }} />;
     case "thirtyone": return <ThirtyOneLobby {...{ snapshot, userId, isHost, isAdmin, send }} />;
-    case "saboteur": return <SaboteurLobby {...{ snapshot, userId, isHost, isAdmin, send }} />;
+    case "dworf": return <DworfLobby {...{ snapshot, userId, isHost, isAdmin, send }} />;
   }
 }

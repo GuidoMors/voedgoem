@@ -1,10 +1,10 @@
 import type { BaseSnapshot } from "../types";
 
-export type Role = "saboteur" | "explorer";
+export type Role = "cultist" | "explorer";
 export type GoalType = "gold" | "monster";
 export type AbilityType = "lookGoal" | "lookDwarf" | "destroyTunnel" | "destroyPickaxe" | "fixPickaxe" | "destroyLantern" | "fixLantern";
 
-export interface SaboteurPlayer {
+export interface DworfPlayer {
   id: string;
   username: string;
   connected: boolean;
@@ -16,8 +16,8 @@ export interface SaboteurPlayer {
   role: Role | null;
 }
 
-export interface SaboteurSnapshot extends BaseSnapshot {
-  game: "saboteur";
+export interface DworfSnapshot extends BaseSnapshot {
+  game: "dworf";
   round: number;
   minPlayers: number;
   seats: { id: string; username: string; connected: boolean }[];
@@ -25,7 +25,7 @@ export interface SaboteurSnapshot extends BaseSnapshot {
   cols: number;
   ladder: number;
   abilityNames: Record<AbilityType, string>;
-  players: SaboteurPlayer[];
+  players: DworfPlayer[];
   turnId: string | null;
   step: "turn" | "gift" | "monster";
   tunnels: { cell: number; sides: string }[];
