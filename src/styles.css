@@ -3214,6 +3214,63 @@ html body[data-game="thirtyone"] button:not(.cn-card):not(.dworf-card):not(.dwor
     height: calc(100vh - 24px);
   }
 }
+@media (max-width: 700px) {
+  .dworf-board-controls {
+    flex-direction: column-reverse;
+    width: 100%;
+  }
+  .dworf-board-controls .dworf-board-wrap {
+    width: 100%;
+    max-width: 100%;
+    overflow-x: auto;
+    overflow-y: hidden;
+    -webkit-overflow-scrolling: touch;
+    touch-action: pan-x pan-y;
+  }
+  .dworf-board-controls .dworf-board {
+    width: max-content;
+    margin: 0;
+  }
+  .dworf-board-controls .dworf-secret-toggle {
+    align-self: center;
+  }
+  .dworf-hand-split {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 8px;
+  }
+  .dworf-hand-split .dworf-hand,
+  .dworf-hand {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 4px;
+    width: 100%;
+  }
+  .dworf-hand-abilities {
+    margin-left: 0;
+  }
+  .dworf-card-wrap {
+    min-width: 0;
+  }
+  .dworf-hand .dworf-card {
+    box-sizing: border-box;
+    width: 100%;
+    min-width: 0;
+    padding: 6px 2px;
+    font-size: .75rem;
+  }
+  .dworf-hand .dworf-card .dworf-piece {
+    width: 40px;
+    height: 40px;
+  }
+  .dworf-hand .dworf-card .small {
+    max-width: 100%;
+    font-size: .65rem;
+    line-height: 1.15;
+    overflow-wrap: anywhere;
+    text-align: center;
+  }
+}
 /* Spymaster key and hints must stay visible in the card theme */
 body[data-game="codenames"] .cn-card.hinted {
   border-width: 8px;
