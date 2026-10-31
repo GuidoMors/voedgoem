@@ -704,3 +704,70 @@ html body .cn-card:disabled, html body .sb-card:disabled, html body .sb-cell:dis
 .modal.stats-modal[data-game="saboteur"] .stats-page .stat,
 .modal.stats-modal[data-game="saboteur"] .stats-page .stats-tab,
 .modal.stats-modal[data-game="saboteur"] .stats-page .pill { border-radius: 0 !important; }
+
+/* Keep every statistics-modal control and text element inside the selected game's palette. */
+.modal.stats-modal[data-game] {
+  color: var(--stats-text);
+  background: var(--stats-surface) !important;
+  border-color: var(--stats-edge) !important;
+  --neon: var(--stats-accent);
+  --accent: var(--stats-accent);
+  --muted: var(--stats-muted);
+}
+.modal.stats-modal[data-game] .modal-head button {
+  background: var(--stats-surface) !important;
+  color: var(--stats-accent) !important;
+  border: 2px solid var(--stats-edge) !important;
+  box-shadow: 0 0 6px var(--stats-glow) !important;
+  text-shadow: none !important;
+}
+.modal.stats-modal[data-game] .modal-head button:hover {
+  background: var(--stats-accent) !important;
+  color: var(--stats-surface) !important;
+  box-shadow: 0 0 12px var(--stats-glow) !important;
+}
+.modal.stats-modal[data-game] .modal-head h2,
+.modal.stats-modal[data-game] .stats-page h1,
+.modal.stats-modal[data-game] .stats-page h2 { color: var(--stats-accent) !important; }
+.modal.stats-modal[data-game] .stats-page,
+.modal.stats-modal[data-game] .stats-page p,
+.modal.stats-modal[data-game] .stats-page td,
+.modal.stats-modal[data-game] .stats-page .person-name { color: var(--stats-text) !important; }
+.modal.stats-modal[data-game] .stats-page .muted,
+.modal.stats-modal[data-game] .stats-page .stat span { color: var(--stats-muted) !important; }
+.modal.stats-modal[data-game] .stats-page th { color: var(--stats-accent) !important; }
+.modal.stats-modal[data-game] .stats-page .stats-table tr.me td {
+  background: var(--stats-glow) !important;
+  color: var(--stats-text) !important;
+}
+.modal.stats-modal[data-game] .stats-page .stats-tab {
+  color: var(--stats-text) !important;
+  background: var(--stats-surface) !important;
+  border-color: var(--stats-edge) !important;
+  box-shadow: 0 0 5px var(--stats-glow) !important;
+}
+.modal.stats-modal[data-game] .stats-page .stats-tab:hover:not(:disabled) {
+  background: var(--stats-panel) !important;
+  color: var(--stats-accent) !important;
+  box-shadow: 0 0 10px var(--stats-glow) !important;
+}
+.modal.stats-modal[data-game] .stats-page .stats-tab[aria-selected="true"],
+.modal.stats-modal[data-game] .stats-page .stats-tab[aria-selected="true"]:hover {
+  background: var(--stats-accent) !important;
+  color: var(--stats-surface) !important;
+  border-color: var(--stats-accent) !important;
+  box-shadow: 0 0 14px var(--stats-glow), inset 0 0 0 2px var(--stats-surface) !important;
+}
+.modal.stats-modal[data-game] .stats-page .pill {
+  color: var(--stats-accent) !important;
+  background: var(--stats-surface) !important;
+  border-color: var(--stats-edge) !important;
+}
+.modal.stats-modal[data-game="codenames"] .modal-head button,
+.modal.stats-modal[data-game="codenames"] .stats-page .stats-tab { border-radius: 4px !important; }
+.modal.stats-modal[data-game="saboteur"] .modal-head button,
+.modal.stats-modal[data-game="saboteur"] .stats-page .stats-tab { border-radius: 0 !important; }
+.modal.stats-modal[data-game="tetris"] { --neon-rgb: 94,255,0; --themeblack: #050705; }
+.modal.stats-modal[data-game="codenames"] { --neon-rgb: 122,28,28; --themeblack: #e8dcc0; }
+.modal.stats-modal[data-game="thirtyone"] { --neon-rgb: 255,217,138; --themeblack: #050b2e; }
+.modal.stats-modal[data-game="saboteur"] { --neon-rgb: 243,227,195; --themeblack: #2a1d12; }
