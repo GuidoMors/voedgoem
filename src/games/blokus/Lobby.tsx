@@ -201,6 +201,24 @@ function Playing({ snapshot, userId, isHost, send }: GameLobbyProps<BlokusSnapsh
     setFlipped(false);
   }, [snapshot.turn, snapshot.round]);
 
+  useEffect(() => {
+    if (!canAct || !selectedPiece) return;
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.altKey || event.ctrlKey || event.metaKey) return;
+      const target = event.target;
+      if (target instanceof HTMLElement && (target.isContentEditable || target.matches("input, textarea, select"))) return;
+      if (!["ArrowLeft", "ArrowRight", "ArrowUp", "ArrowDown"].includes(event.key)) return;
+
+      event.preventDefault();
+      setAnchor(null);
+      if (event.key === "ArrowLeft") setRotation(value => (value + 3) % 4);
+      else if (event.key === "ArrowRight") setRotation(value => (value + 1) % 4);
+      else setFlipped(value => !value);
+    };
+    window.addEventListener("keydown", onKeyDown);
+    return () => window.removeEventListener("keydown", onKeyDown);
+  }, [canAct, selectedPiece]);
+
   const choosePiece = (pieceId: string) => {
     setSelectedId(pieceId);
     setRotation(0);
@@ -225,7 +243,7 @@ function Playing({ snapshot, userId, isHost, send }: GameLobbyProps<BlokusSnapsh
           <Board snapshot={snapshot} piece={selectedPiece} rotation={rotation} flipped={flipped} anchor={anchor} setAnchor={setAnchor} canPlace={canPlace} onPlace={placeAt} />
           {canAct && selectedPiece && (
             <div className="blokus-placement-tools">
-              <p className="muted small">Click a board square to place {selectedPiece.id}{anchor ? ` at column ${anchor.x + 1}, row ${anchor.y + 1}` : ""}. {canPlace ? "Legal placement." : "Choose a legal corner placement."}</p>
+              <p className="muted small">Click a board square to place {selectedPiece.id}{anchor ? ` at column ${anchor.x + 1}, row ${anchor.y + 1}` : ""}. Use ←/→ to rotate and ↑/↓ to flip. {canPlace ? "Legal placement." : "Choose a legal corner placement."}</p>
               <div className="row">
                 <button onClick={() => { setRotation(value => (value + 3) % 4); setAnchor(null); }}>Rotate left</button>
                 <button onClick={() => { setRotation(value => (value + 1) % 4); setAnchor(null); }}>Rotate right</button>
