@@ -67,7 +67,14 @@ function PiecePreview({ cells, className = "" }: { cells: Cell[]; className?: st
   );
 }
 
+function SpectatorList({ snapshot }: { snapshot: BlokusSnapshot }) {
+  return snapshot.spectators.length === 0
+    ? <p className="muted">No spectators.</p>
+    : <ul className="names">{snapshot.spectators.map(person => <li key={person.id}><Person id={person.id} name={person.username} /></li>)}</ul>;
+}
+
 function Waiting({ snapshot, userId, isHost, send }: GameLobbyProps<BlokusSnapshot>) {
+  const [lobbyTab, setLobbyTab] = useState<"rules" | "spectators">("rules");
   const me = snapshot.players.find(player => player.id === userId);
   const full = snapshot.players.length >= snapshot.maxPlayers;
   return (
@@ -102,15 +109,23 @@ function Waiting({ snapshot, userId, isHost, send }: GameLobbyProps<BlokusSnapsh
           </div>
         </section>
         <section className="card">
-          <h2>Rules</h2>
-          <ul className="blokus-rules">
-            <li>Place one piece each turn, in Blue, Yellow, Red, Green order.</li>
-            <li>Your first piece must cover any free board corner.</li>
-            <li>Later pieces must touch your color at a corner, never along an edge.</li>
-            <li>Pieces may touch other colors in any way. No legal moves means you are out.</li>
-            <li>The player with the fewest unplaced squares wins.</li>
-          </ul>
-          {!isHost && <p className="muted small">Waiting for {snapshot.host.name} to start the game.</p>}
+          <div className="blokus-tabs" role="tablist" aria-label="Lobby information">
+            <button type="button" role="tab" aria-selected={lobbyTab === "rules"} className={lobbyTab === "rules" ? "active" : ""} onClick={() => setLobbyTab("rules")}>Rules</button>
+            <button type="button" role="tab" aria-selected={lobbyTab === "spectators"} className={lobbyTab === "spectators" ? "active" : ""} onClick={() => setLobbyTab("spectators")}>Spectators <span className="pill">{snapshot.spectators.length}</span></button>
+          </div>
+          {lobbyTab === "rules" ? (
+            <>
+              <h2>Rules</h2>
+              <ul className="blokus-rules">
+                <li>Place one piece each turn, in Blue, Yellow, Red, Green order.</li>
+                <li>Your first piece must cover any free board corner.</li>
+                <li>Later pieces must touch your color at a corner, never along an edge.</li>
+                <li>Pieces may touch other colors in any way. No legal moves means you are out.</li>
+                <li>The player with the fewest unplaced squares wins.</li>
+              </ul>
+              {!isHost && <p className="muted small">Waiting for {snapshot.host.name} to start the game.</p>}
+            </>
+          ) : <><h2>Spectators</h2><SpectatorList snapshot={snapshot} /></>}
         </section>
       </div>
       {isHost && <HostControlsTab>
@@ -123,7 +138,7 @@ function Waiting({ snapshot, userId, isHost, send }: GameLobbyProps<BlokusSnapsh
   );
 }
 
-function Board({ snapshot, piece, rotation, flipped, anchor, setAnchor, canPlace }: {
+function Board({ snapshot, piece, rotation, flipped, anchor, setAnchor, canPlace, onPlace }: {
   snapshot: BlokusSnapshot;
   piece: BlokusPiece | undefined;
   rotation: number;
@@ -131,6 +146,7 @@ function Board({ snapshot, piece, rotation, flipped, anchor, setAnchor, canPlace
   anchor: Anchor | null;
   setAnchor: (anchor: Anchor) => void;
   canPlace: boolean;
+  onPlace: (anchor: Anchor) => void;
 }) {
   const shape = piece ? orient(piece.cells, rotation, flipped) : [];
   const preview = new Set(anchor && piece ? shape.map(([dx, dy]) => `${anchor.x + dx},${anchor.y + dy}`) : []);
@@ -150,7 +166,12 @@ function Board({ snapshot, piece, rotation, flipped, anchor, setAnchor, canPlace
             aria-label={`Row ${y + 1}, column ${x + 1}${owner ? `, ${COLOR_NAMES[owner]}` : ""}${isPreview ? ", proposed placement" : ""}`}
             onMouseEnter={() => piece && setAnchor({ x, y })}
             onFocus={() => piece && setAnchor({ x, y })}
-            onClick={() => piece && setAnchor({ x, y })}
+            onClick={() => {
+              if (!piece) return;
+              const target = { x, y };
+              setAnchor(target);
+              onPlace(target);
+            }}
             type="button"
           />
         );
@@ -166,6 +187,7 @@ function Playing({ snapshot, userId, isHost, send }: GameLobbyProps<BlokusSnapsh
   const [rotation, setRotation] = useState(0);
   const [flipped, setFlipped] = useState(false);
   const [anchor, setAnchor] = useState<Anchor | null>(null);
+  const [sidebarTab, setSidebarTab] = useState<"players" | "spectators">("players");
   const selectedPiece = snapshot.pieces.find(piece => piece.id === selectedId);
   const shape = useMemo(() => selectedPiece ? orient(selectedPiece.cells, rotation, flipped) : [], [selectedPiece, rotation, flipped]);
   const canAct = !!player && !player.out && snapshot.turn === userId;
@@ -185,9 +207,9 @@ function Playing({ snapshot, userId, isHost, send }: GameLobbyProps<BlokusSnapsh
     setFlipped(false);
     setAnchor(null);
   };
-  const place = () => {
-    if (!selectedId || !anchor || !canPlace) return;
-    send({ type: "place", pieceId: selectedId, x: anchor.x, y: anchor.y, rotation, flipped });
+  const placeAt = (target: Anchor) => {
+    if (!canAct || !player || !selectedId || !validPlacement(snapshot, player, shape, target)) return;
+    send({ type: "place", pieceId: selectedId, x: target.x, y: target.y, rotation, flipped });
     setSelectedId(null);
     setAnchor(null);
   };
@@ -200,18 +222,14 @@ function Playing({ snapshot, userId, isHost, send }: GameLobbyProps<BlokusSnapsh
       </div>
       <div className="blokus-layout">
         <section className="card blokus-board-card">
-          <Board snapshot={snapshot} piece={selectedPiece} rotation={rotation} flipped={flipped} anchor={anchor} setAnchor={setAnchor} canPlace={canPlace} />
+          <Board snapshot={snapshot} piece={selectedPiece} rotation={rotation} flipped={flipped} anchor={anchor} setAnchor={setAnchor} canPlace={canPlace} onPlace={placeAt} />
           {canAct && selectedPiece && (
             <div className="blokus-placement-tools">
-              <p className="muted small">Select a top-left square for {selectedPiece.id}{anchor ? ` at column ${anchor.x + 1}, row ${anchor.y + 1}` : ""}. {canPlace ? "Legal placement." : "Choose a legal corner placement."}</p>
+              <p className="muted small">Click a board square to place {selectedPiece.id}{anchor ? ` at column ${anchor.x + 1}, row ${anchor.y + 1}` : ""}. {canPlace ? "Legal placement." : "Choose a legal corner placement."}</p>
               <div className="row">
                 <button onClick={() => { setRotation(value => (value + 3) % 4); setAnchor(null); }}>Rotate left</button>
                 <button onClick={() => { setRotation(value => (value + 1) % 4); setAnchor(null); }}>Rotate right</button>
                 <button onClick={() => { setFlipped(value => !value); setAnchor(null); }}>Flip</button>
-              </div>
-              <div className="row">
-                <button className="primary" disabled={!canPlace} onClick={place}>Place piece</button>
-                <button onClick={() => setAnchor(null)}>Clear position</button>
               </div>
               <PiecePreview cells={shape} className={player.color} />
               <span className="muted small">Preview: {usedCells.length} squares</span>
@@ -226,16 +244,24 @@ function Playing({ snapshot, userId, isHost, send }: GameLobbyProps<BlokusSnapsh
         </section>
         <aside className="blokus-sidebar">
           <section className="card">
-            <h2>Players</h2>
-            <ol className="blokus-player-list">
-              {snapshot.players.map(item => (
-                <li key={item.id} className={`${item.color} ${item.out ? "out" : ""} ${item.id === snapshot.turn ? "on-turn" : ""}`}>
-                  <Person id={item.id} name={item.username} size={22} />
-                  <span>{COLOR_NAMES[item.color]}{item.out ? " · out" : ""}</span>
-                  <strong>{item.remainingSquares}</strong>
-                </li>
-              ))}
-            </ol>
+            <div className="blokus-tabs" role="tablist" aria-label="Game information">
+              <button type="button" role="tab" aria-selected={sidebarTab === "players"} className={sidebarTab === "players" ? "active" : ""} onClick={() => setSidebarTab("players")}>Players</button>
+              <button type="button" role="tab" aria-selected={sidebarTab === "spectators"} className={sidebarTab === "spectators" ? "active" : ""} onClick={() => setSidebarTab("spectators")}>Spectators <span className="pill">{snapshot.spectators.length}</span></button>
+            </div>
+            {sidebarTab === "players" ? (
+              <>
+                <h2>Players</h2>
+                <ol className="blokus-player-list">
+                  {snapshot.players.map(item => (
+                    <li key={item.id} className={`${item.color} ${item.out ? "out" : ""} ${item.id === snapshot.turn ? "on-turn" : ""}`}>
+                      <Person id={item.id} name={item.username} size={22} />
+                      <span>{COLOR_NAMES[item.color]}{item.out ? " · out" : ""}</span>
+                      <strong>{item.remainingSquares}</strong>
+                    </li>
+                  ))}
+                </ol>
+              </>
+            ) : <><h2>Spectators</h2><SpectatorList snapshot={snapshot} /></>}
           </section>
           {canAct && (
             <section className="card blokus-hand">

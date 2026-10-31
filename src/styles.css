@@ -1628,6 +1628,24 @@ body[data-game="blokus"] .blokus-rules {
 body[data-game="blokus"] .blokus-rules li {
   margin: 8px 0;
 }
+body[data-game="blokus"] .blokus-tabs {
+  display: flex;
+  gap: 6px;
+  overflow-x: auto;
+  margin: 0 0 12px;
+}
+body[data-game="blokus"] .blokus-tabs button {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  white-space: nowrap;
+}
+body[data-game="blokus"] .blokus-tabs button.active {
+  border-color: var(--neon);
+  background: rgba(var(--neon-rgb), .2);
+  color: var(--neon-soft);
+  box-shadow: 0 0 10px rgba(var(--neon-rgb), .2);
+}
 body[data-game="blokus"] .blokus-turn-bar {
   display: flex;
   justify-content: space-between;
@@ -1928,7 +1946,7 @@ option {
   color: #fff;
 }
 /* Neon sign buttons */
-button:not([class*="cn-"]):not([class*="sb-"]):not(.swatch):not(.link):not(.ts-word),
+button:not([class*="cn-"]):not([class*="sb-"]):not(.swatch):not(.link):not(.ts-word):not(.blokus-cell),
 .button {
   position: relative;
   background: transparent;
@@ -1940,7 +1958,7 @@ button:not([class*="cn-"]):not([class*="sb-"]):not(.swatch):not(.link):not(.ts-w
   box-shadow: 0 0 .7em rgba(var(--neon-rgb), .55), inset 0 0 .7em rgba(var(--neon-rgb), .3);
   transition: background .15s, color .15s, box-shadow .15s;
 }
-button:not([class*="cn-"]):not([class*="sb-"]):not(.swatch):not(.link):not(.ts-word):hover:not(:disabled),
+button:not([class*="cn-"]):not([class*="sb-"]):not(.swatch):not(.link):not(.ts-word):not(.blokus-cell):hover:not(:disabled),
 .button:hover {
   background: var(--neon);
   color: var(--themeblack);
