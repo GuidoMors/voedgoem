@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Person } from "../../avatar/Avatar";
+import { HostControlsTab } from "../../components/HostControlsTab";
 import { KickButton } from "../../components/KickButton";
 import type { GameLobbyProps, Send } from "../types";
 import { BoardView, parseBoard } from "./BoardView";
@@ -29,6 +30,7 @@ function Waiting({ snapshot, joined, isHost, send }: { snapshot: LobbySnapshot; 
   const full = snapshot.players.length >= snapshot.maxPlayers;
   const teamMode = snapshot.teamCount > 0;
   return (
+    <>
     <div className="grid-2">
       <section className="card">
         <h2>Players <span className="pill">{snapshot.players.length}/{snapshot.maxPlayers}</span></h2>
@@ -58,23 +60,24 @@ function Waiting({ snapshot, joined, isHost, send }: { snapshot: LobbySnapshot; 
       <section className="card">
         <h2>Spectators <span className="pill">{snapshot.spectators.length}</span></h2>
         {snapshot.spectators.length === 0 ? <p className="muted">No spectators.</p> : <ul className="names">{snapshot.spectators.map(person => <li key={person.id}><Person id={person.id} name={person.username} /></li>)}</ul>}
-        {isHost && (
-          <div className="host-actions">
-            <label className="row">Teams
-              <select value={snapshot.teamCount} onChange={event => send({ type: "config", teams: Number(event.target.value) })}>
-                <option value={0}>Free for all</option>
-                {Array.from({ length: 7 }, (_, index) => <option key={index} value={index + 2}>{index + 2} teams</option>)}
-              </select>
-            </label>
-            {teamMode && <p className="muted small">Teammates share one board, 10 columns per player. Each player's pieces drop in at their own lane.</p>}
-            {teamMode && <button disabled={snapshot.players.length < 2} onClick={() => send({ type: "shuffle" })}>Shuffle teams</button>}
-            <button className="primary" disabled={snapshot.players.length === 0} onClick={() => send({ type: "start" })}>Start game</button>
-            {snapshot.players.length === 0 && <p className="muted small">At least one player must join first.</p>}
-          </div>
-        )}
         {!isHost && <p className="muted small">{teamMode ? `Teams game (${snapshot.teamCount} teams). ` : ""}Waiting for {snapshot.host.name} to start the game.</p>}
       </section>
     </div>
+    {isHost && <HostControlsTab>
+      <div className="host-actions">
+        <label className="row">Teams
+          <select value={snapshot.teamCount} onChange={event => send({ type: "config", teams: Number(event.target.value) })}>
+            <option value={0}>Free for all</option>
+            {Array.from({ length: 7 }, (_, index) => <option key={index} value={index + 2}>{index + 2} teams</option>)}
+          </select>
+        </label>
+        {teamMode && <p className="muted small">Teammates share one board, 10 columns per player. Each player's pieces drop in at their own lane.</p>}
+        {teamMode && <button disabled={snapshot.players.length < 2} onClick={() => send({ type: "shuffle" })}>Shuffle teams</button>}
+        <button className="primary" disabled={snapshot.players.length === 0} onClick={() => send({ type: "start" })}>Start game</button>
+        {snapshot.players.length === 0 && <p className="muted small">At least one player must join first.</p>}
+      </div>
+    </HostControlsTab>}
+    </>
   );
 }
 

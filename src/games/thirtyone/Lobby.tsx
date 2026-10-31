@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { Person } from "../../avatar/Avatar";
+import { HostControlsTab } from "../../components/HostControlsTab";
 import { HistoryPanel } from "../../components/HistoryPanel";
 import { KickButton } from "../../components/KickButton";
 import { Modal } from "../../components/Modal";
@@ -45,6 +46,7 @@ function Waiting({ snapshot, seat, isHost, send }: Props) {
   const full = snapshot.seats.length >= snapshot.maxPlayers;
 
   return (
+    <>
     <div className="grid-2">
       <section className="card">
         <h2>Teams <span className="pill">{snapshot.seats.length}/{snapshot.maxPlayers}</span></h2>
@@ -73,32 +75,35 @@ function Waiting({ snapshot, seat, isHost, send }: Props) {
       <section className="card">
         <h2>Spectators <span className="pill">{snapshot.spectators.length}</span></h2>
         {snapshot.spectators.length === 0 ? <p className="muted">No spectators.</p> : <ul className="names">{snapshot.spectators.map(person => <li key={person.id}><Person id={person.id} name={person.username} /></li>)}</ul>}
-        {isHost ? (
-          <div className="host-actions">
-            <label className="field">
-              Points to win
-              <input type="number" min={1} max={200} value={pointsToWin} onChange={event => setPointsToWin(Number(event.target.value))} />
-            </label>
-            <label className="field">
-              Grace period after the timer (seconds)
-              <input type="number" min={0} max={15} value={graceSeconds} onChange={event => setGraceSeconds(Number(event.target.value))} />
-            </label>
-            <div className="row">
-              <button onClick={() => send({ type: "scramble_teams" })}>Scramble teams</button>
-              <button onClick={() => send({ type: "scramble" })}>Scramble captains</button>
-            </div>
-            <button className="primary" onClick={() => send({ type: "start", pointsToWin, graceSeconds })}>Start draft</button>
-            <p className="muted small">Scramble teams assigns everyone connected to balanced teams with one captain per team. Scramble captains only reassigns the two captain roles.</p>
-          </div>
-        ) : <p className="muted small">Waiting for {snapshot.host.name} to start the draft.</p>}
+        {!isHost && <p className="muted small">Waiting for {snapshot.host.name} to start the draft.</p>}
       </section>
     </div>
+    {isHost && <HostControlsTab>
+      <div className="host-actions">
+        <label className="field">
+          Points to win
+          <input type="number" min={1} max={200} value={pointsToWin} onChange={event => setPointsToWin(Number(event.target.value))} />
+        </label>
+        <label className="field">
+          Grace period after the timer (seconds)
+          <input type="number" min={0} max={15} value={graceSeconds} onChange={event => setGraceSeconds(Number(event.target.value))} />
+        </label>
+        <div className="row">
+          <button onClick={() => send({ type: "scramble_teams" })}>Scramble teams</button>
+          <button onClick={() => send({ type: "scramble" })}>Scramble captains</button>
+        </div>
+        <button className="primary" onClick={() => send({ type: "start", pointsToWin, graceSeconds })}>Start draft</button>
+        <p className="muted small">Scramble teams assigns everyone connected to balanced teams with one captain per team. Scramble captains only reassigns the two captain roles.</p>
+      </div>
+    </HostControlsTab>}
+    </>
   );
 }
 
 function Draft({ snapshot, seat, isHost, send }: Props) {
   const canPick = seat?.role === "captain" && seat.team === snapshot.draftTurn;
   return (
+    <>
     <div className="grid-2">
       <section className="card">
         <h2>Draft</h2>
@@ -117,15 +122,17 @@ function Draft({ snapshot, seat, isHost, send }: Props) {
             ))}
           </ul>
         )}
-        {isHost ? (
-          <div className="host-actions">
-            <button className="primary" onClick={() => send({ type: "begin" })}>Start game</button>
-            <button onClick={() => send({ type: "abort" })}>Back to lobby</button>
-            <p className="muted small">You can start at any point; each team needs at least two players.</p>
-          </div>
-        ) : <p className="muted small">Captains take turns drafting. {snapshot.host.name} starts the game.</p>}
+        {!isHost && <p className="muted small">Captains take turns drafting. {snapshot.host.name} starts the game.</p>}
       </section>
     </div>
+    {isHost && <HostControlsTab>
+      <div className="host-actions">
+        <button className="primary" onClick={() => send({ type: "begin" })}>Start game</button>
+        <button onClick={() => send({ type: "abort" })}>Back to lobby</button>
+        <p className="muted small">You can start at any point; each team needs at least two players.</p>
+      </div>
+    </HostControlsTab>}
+    </>
   );
 }
 

@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { Person } from "../../avatar/Avatar";
+import { HostControlsTab } from "../../components/HostControlsTab";
 import { HistoryPanel } from "../../components/HistoryPanel";
 import { KickButton } from "../../components/KickButton";
 import type { GameLobbyProps } from "../types";
@@ -54,6 +55,7 @@ function Waiting({ snapshot, userId, isHost, send }: GameLobbyProps<SaboteurSnap
   const full = snapshot.seats.length >= snapshot.maxPlayers;
   const enough = snapshot.seats.length >= snapshot.minPlayers;
   return (
+    <>
     <div className="grid-2">
       <section className="card">
         <h2>Dwarves <span className="pill">{snapshot.seats.length}/{snapshot.maxPlayers}</span></h2>
@@ -68,14 +70,16 @@ function Waiting({ snapshot, userId, isHost, send }: GameLobbyProps<SaboteurSnap
       <section className="card">
         <h2>Spectators <span className="pill">{snapshot.spectators.length}</span></h2>
         {snapshot.spectators.length === 0 ? <p className="muted">No spectators.</p> : <ul className="names">{snapshot.spectators.map(person => <li key={person.id}><Person id={person.id} name={person.username} /></li>)}</ul>}
-        {isHost ? (
-          <div className="host-actions">
-            <button className="primary" disabled={!enough} onClick={() => send({ type: "start" })}>Start game</button>
-            {!enough && <p className="muted small">Needs at least {snapshot.minPlayers} dwarves.</p>}
-          </div>
-        ) : <p className="muted small">Waiting for {snapshot.host.name} to start the game.</p>}
+        {!isHost && <p className="muted small">Waiting for {snapshot.host.name} to start the game.</p>}
       </section>
     </div>
+    {isHost && <HostControlsTab>
+      <div className="host-actions">
+        <button className="primary" disabled={!enough} onClick={() => send({ type: "start" })}>Start game</button>
+        {!enough && <p className="muted small">Needs at least {snapshot.minPlayers} dwarves.</p>}
+      </div>
+    </HostControlsTab>}
+    </>
   );
 }
 
