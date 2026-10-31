@@ -2,6 +2,7 @@ import type { BaseSnapshot } from "../types";
 
 export type Role = "cultist" | "explorer";
 export type GoalType = "gold" | "monster";
+export type MonsterType = "bull" | "cyclops" | "ghost" | "ogre" | "werewolf";
 export type AbilityType = "lookGoal" | "lookDwarf" | "destroyTunnel" | "destroyPickaxe" | "fixPickaxe" | "destroyLantern" | "fixLantern";
 
 export interface DworfPlayer {
@@ -31,9 +32,10 @@ export interface DworfSnapshot extends BaseSnapshot {
   turnId: string | null;
   step: "turn" | "gift" | "monster";
   tunnels: { cell: number; sides: string }[];
-  goals: { index: number; cell: number; type: GoalType | null; revealed: boolean }[];
+  goals: { index: number; cell: number; type: GoalType | null; monsterType: MonsterType | null; revealed: boolean }[];
   gems: number[];
   monsters: number[];
+  monsterTypes: MonsterType[];
   lastTurn: string[];
   monsterNext: { from: number; to: number }[];
   row: AbilityType[];

@@ -1240,6 +1240,11 @@ th {
   font-size: 0.55rem;
   opacity: 0.8;
 }
+.dworf-goal img {
+  width: 28px;
+  height: 28px;
+  object-fit: contain;
+}
 .dworf-gem {
   position: absolute;
   font-size: 1.3rem;
@@ -1279,6 +1284,13 @@ th {
 }
 .dworf-occupant-monster {
   font-size: 14px;
+}
+.dworf-occupant-monster img {
+  display: block;
+  width: 23.4px;
+  height: 23.4px;
+  object-fit: contain;
+  filter: drop-shadow(0 0 3px #f00) drop-shadow(0 0 5px rgba(255, 0, 0, .75));
 }
 .dworf-hand {
   display: flex;

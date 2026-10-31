@@ -9,6 +9,30 @@ import type { LobbySnapshot, User } from "../types";
 
 const noop = () => undefined;
 
+function getTurnBotId(snapshot: LobbySnapshot): string | null {
+  const botIds = new Set(snapshot.bots.map(bot => bot.id));
+
+  switch (snapshot.game) {
+    case "blokus":
+      return snapshot.phase === "playing" && snapshot.turn && botIds.has(snapshot.turn) ? snapshot.turn : null;
+    case "dworf":
+      return snapshot.phase === "playing" && snapshot.turnId && botIds.has(snapshot.turnId) ? snapshot.turnId : null;
+    case "thirtyone": {
+      if (snapshot.phase !== "playing") return null;
+      const judging = snapshot.turnPhase === "running" && snapshot.judgeAt !== null && snapshot.now >= snapshot.judgeAt;
+      const turnPlayerId = judging ? snapshot.judge?.id : snapshot.describer?.id;
+      return turnPlayerId && botIds.has(turnPlayerId) ? turnPlayerId : null;
+    }
+    case "codenames": {
+      if (snapshot.phase !== "playing") return null;
+      const role = snapshot.clue ? "operative" : "spymaster";
+      return snapshot.seats.find(seat => botIds.has(seat.id) && seat.team === snapshot.turn && seat.role === role)?.id ?? null;
+    }
+    case "tetris":
+      return null;
+  }
+}
+
 export function LobbyPage({ lobbyId, user, onGameChange, chatOpen, onChatClose }: { lobbyId: string; user: User; onGameChange: (game: string | null) => void; chatOpen: boolean; onChatClose: () => void }) {
   const { snapshot, status, send, notice, avatars, chatMessages, passwordRequired, submitPassword } = useLobbyConnection(lobbyId);
   const [controlling, setControlling] = useState<string | null>(null);
@@ -59,6 +83,7 @@ export function LobbyPage({ lobbyId, user, onGameChange, chatOpen, onChatClose }
   const botView = bot && snapshot.botViews?.[bot.id];
   const acting = !!bot && !!botView;
   const view = acting ? ({ ...snapshot, ...botView } as LobbySnapshot) : snapshot;
+  const turnBotId = getTurnBotId(snapshot);
 
   return (
     <AvatarsContext.Provider value={avatars}>
@@ -89,7 +114,10 @@ export function LobbyPage({ lobbyId, user, onGameChange, chatOpen, onChatClose }
         <section className="card bot-panel">
           <div className="row between">
             <h2>Test bots</h2>
-            <button onClick={() => send({ type: "bot:add" })}>Add bot</button>
+            <span className="row">
+              <button disabled={!turnBotId || controlling === turnBotId} onClick={() => turnBotId && setControlling(turnBotId)}>Control bot whose turn it is</button>
+              <button onClick={() => send({ type: "bot:add" })}>Add bot</button>
+            </span>
           </div>
           {snapshot.bots.length === 0 ? <p className="muted small">Add bots to test this game alone. You can play as any bot.</p> : (
             <ul className="names">

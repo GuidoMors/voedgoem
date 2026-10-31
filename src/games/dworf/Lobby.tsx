@@ -178,7 +178,12 @@ function Table({ snapshot, userId, isHost, send }: GameLobbyProps<DworfSnapshot>
           </>
         )}
         {sides && <TunnelPiece sides={sides} size={44} />}
-        {goalCard && <span className={`dworf-goal ${goalCard.revealed ? "open" : ""}`}>{goalCard.type === "gold" ? "💰" : goalCard.type === "monster" ? "👹" : "?"}{goalCard.type && <small>{goalCard.type}</small>}</span>}
+        {goalCard && <span className={`dworf-goal ${goalCard.revealed ? "open" : ""}`}>
+          {goalCard.type === "gold" ? "💰" : goalCard.type === "monster" && goalCard.monsterType
+            ? <img src={`${import.meta.env.BASE_URL}dworf/monsters/${goalCard.monsterType}.svg`} alt="" />
+            : "?"}
+          {goalCard.type && <small>{goalCard.type}</small>}
+        </span>}
         {isGem && !sides && <span className="dworf-gem">💎</span>}
         {arrows.map(item => {
           const delta = item.to - cell;
@@ -193,7 +198,13 @@ function Table({ snapshot, userId, isHost, send }: GameLobbyProps<DworfSnapshot>
                 {player.dead && <span className="dworf-avatar-skull" aria-label="Eliminated">💀</span>}
               </span>
             ))}
-            {monsters.map(index => <span className="dworf-occupant-monster" key={index} title="Monster">👹</span>)}
+            {monsters.map(index => (
+              <span className="dworf-occupant-monster" key={index} title="Monster">
+                {snapshot.monsterTypes[index]
+                  ? <img src={`${import.meta.env.BASE_URL}dworf/monsters/${snapshot.monsterTypes[index]}.svg`} alt="" />
+                  : "👹"}
+              </span>
+            ))}
           </span>
         )}
         {mode?.kind === "tunnel" && highlight && <span className="dworf-ghost"><TunnelPiece sides={turned(me!.tunnels[mode.index], mode.rot)} size={44} /></span>}
