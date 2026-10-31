@@ -189,6 +189,8 @@ function History({ entries }: { entries: ThirtyOneHistoryEntry[] }) {
 }
 
 function Table({ snapshot, seat, isHost, isAdmin, send, userId }: Props & { userId: string }) {
+  const [confirmPass, setConfirmPass] = useState(false);
+  const [selectedPassPlayer, setSelectedPassPlayer] = useState("");
   const playing = snapshot.phase === "playing";
   const running = playing && snapshot.turnPhase === "running";
   const now = useServerClock(snapshot, running);
@@ -221,12 +223,10 @@ function Table({ snapshot, seat, isHost, isAdmin, send, userId }: Props & { user
               <p>Get ready to describe the words on your card!
                 Don't say the word on the card, or parts of it, or guessing it doesn't count.</p>
               <button className="primary ts-big" onClick={() => send({ type: "open" })}>Open card and start {snapshot.turnSeconds}s</button>
-              <button onClick={() => send({ type: "skip" })}>Pass to a teammate</button>
             </div>
           ) : (
             <div className="ts-center">
               <p className="muted">Waiting for {snapshot.describer?.username ?? "the describer"} to open the card.</p>
-              {isHost && <button onClick={() => send({ type: "skip" })}>Pass card to next player</button>}
             </div>
           ))}
 
@@ -279,16 +279,31 @@ function Table({ snapshot, seat, isHost, isAdmin, send, userId }: Props & { user
           {!isHost && !isAdmin && <p className="muted small">The lobby host or an admin can assign spectators to a team.</p>}
         </section>
       )}
-      {isHost && playing && <AbortCard send={send} />}
+      {(isHost || isAdmin) && playing && <AdminControls snapshot={snapshot} send={send} isHost={isHost} onRequestPass={() => { setSelectedPassPlayer(""); setConfirmPass(true); }} />}
+      {confirmPass && playing && snapshot.turnPhase === "ready" && <PassCardModal
+        snapshot={snapshot}
+        selectedPlayer={selectedPassPlayer}
+        onSelect={setSelectedPassPlayer}
+        onClose={() => setConfirmPass(false)}
+        onConfirm={() => {
+          if (!selectedPassPlayer) return;
+          setConfirmPass(false);
+          send({ type: "pass_card", userId: selectedPassPlayer });
+        }}
+      />}
     </div>
   );
 }
 
-function AbortCard({ send }: { send: Send }) {
+function AdminControls({ snapshot, send, isHost, onRequestPass }: { snapshot: ThirtyOneSnapshot; send: Send; isHost: boolean; onRequestPass: () => void }) {
   const [asking, setAsking] = useState(false);
   return (
     <section className="card abort-card">
-      <button className="danger" onClick={() => setAsking(true)}>Abort game</button>
+      <h2>Admin controls</h2>
+      <div className="row">
+        {snapshot.phase === "playing" && snapshot.turnPhase === "ready" && <button onClick={onRequestPass}>Pass card</button>}
+        {isHost && <button className="danger" onClick={() => setAsking(true)}>Abort game</button>}
+      </div>
       {asking && (
         <Modal title="Abort game?" onClose={() => setAsking(false)}>
           <p>Are you sure? The game ends for everyone and nobody gets a result.</p>
@@ -299,5 +314,38 @@ function AbortCard({ send }: { send: Send }) {
         </Modal>
       )}
     </section>
+  );
+}
+
+function PassCardModal({ snapshot, selectedPlayer, onSelect, onClose, onConfirm }: {
+  snapshot: ThirtyOneSnapshot;
+  selectedPlayer: string;
+  onSelect: (id: string) => void;
+  onClose: () => void;
+  onConfirm: () => void;
+}) {
+  const recipients = snapshot.seats.filter(player => player.team === snapshot.turn && player.id !== snapshot.describer?.id);
+
+  return (
+    <Modal title="Pass card" onClose={onClose}>
+      <p>Select a player from the {label(snapshot.turn)} team to receive this card.</p>
+      {recipients.length === 0 ? <p className="muted">There are no other players on this team.</p> : (
+        <ul className="names pass-card-players">
+          {recipients.map(player => (
+            <li key={player.id} className="row">
+              <label>
+                <input type="radio" name="pass-card-player" value={player.id} checked={selectedPlayer === player.id} onChange={() => onSelect(player.id)} />
+                <Person id={player.id} name={player.username} size={20} />
+                {!player.connected && <span className="muted small">Offline</span>}
+              </label>
+            </li>
+          ))}
+        </ul>
+      )}
+      <div className="row">
+        <button className="primary" disabled={!selectedPlayer || recipients.every(player => player.id !== selectedPlayer)} onClick={onConfirm}>OK</button>
+        <button onClick={onClose}>Cancel</button>
+      </div>
+    </Modal>
   );
 }
