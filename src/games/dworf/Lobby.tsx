@@ -87,6 +87,7 @@ function Waiting({ snapshot, userId, isHost, send }: GameLobbyProps<DworfSnapsho
 function Table({ snapshot, userId, isHost, isDisplay, send }: GameLobbyProps<DworfSnapshot>) {
   const avatars = useContext(AvatarsContext);
   const [showSecretInfo, setShowSecretInfo] = useState(false);
+  const [shopOpen, setShopOpen] = useState(false);
   const [mode, setMode] = useState<Mode>(null);
   const [notice, setNotice] = useState<string | null>(null);
   const [rots, setRots] = useState<Record<number, 0 | 1 | 2 | 3>>({});
@@ -103,6 +104,9 @@ function Table({ snapshot, userId, isHost, isDisplay, send }: GameLobbyProps<Dwo
   snapshot = visibleSnapshot;
   const handKey = snapshot.me?.tunnels.join(",") ?? "";
   useEffect(() => setRots({}), [handKey]);
+  useEffect(() => {
+    if (snapshot.step === "gift") setShopOpen(true);
+  }, [snapshot.step]);
   const { cols, rows } = snapshot;
   const me = snapshot.me;
   const playing = snapshot.phase === "playing";
@@ -118,6 +122,22 @@ function Table({ snapshot, userId, isHost, isDisplay, send }: GameLobbyProps<Dwo
     setShowSecretInfo(value => !value);
     setMode(null);
   };
+  const renderSecretToggle = () => (
+    <button
+      type="button"
+      className="dworf-secret-toggle"
+      aria-label={showSecretInfo ? "Hide secret information" : "Show secret information"}
+      title={showSecretInfo ? "Hide secret information" : "Show secret information"}
+      aria-pressed={showSecretInfo}
+      onClick={toggleSecretInfo}
+    >
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12Z" />
+        <circle cx="12" cy="12" r="3" />
+        {!showSecretInfo && <path d="m3 3 18 18" />}
+      </svg>
+    </button>
+  );
 
   const valid = new Set<number>();
   if (mode?.kind === "tunnel") for (const cell of snapshot.placeable?.[mode.index]?.[mode.rot] ?? []) valid.add(cell);
@@ -146,7 +166,7 @@ function Table({ snapshot, userId, isHost, isDisplay, send }: GameLobbyProps<Dwo
 
   let prompt = "";
   if (!playing) prompt = "";
-  else if (!myTurn) prompt = `${turnPlayer?.username ?? "Someone"} is taking their turn.`;
+  else if (!myTurn) prompt = turnPlayer ? "is taking their turn." : "Someone is taking their turn.";
   else if (snapshot.step === "monster") prompt = "Two routes are equally short. Click where the monster should crawl.";
   else if (snapshot.step === "gift") prompt = "You found a gem! Pick a card from The Shop, then the dwarf who gets it.";
   else if (mode?.kind === "tunnel") prompt = "Click a highlighted spot to place the tunnel. Use Turn to flip it.";
@@ -247,7 +267,10 @@ function Table({ snapshot, userId, isHost, isDisplay, send }: GameLobbyProps<Dwo
           </div>
         ) : (
           <>
-          <div className={`cn-status dworf-current-turn ${myTurn ? "team-blue" : ""}`}><strong>{prompt}</strong></div>
+          <div className={`cn-status dworf-current-turn ${myTurn ? "team-blue" : ""}`}>
+            {turnPlayer && <Person id={turnPlayer.id} name={turnPlayer.username} size={22} />}
+            <strong>{prompt}</strong>
+          </div>
           <div className="cn-status dworf-last-turn"><span className="muted small">Previous turn: </span>{snapshot.lastTurn?.length ? snapshot.lastTurn.join(" ") : "none yet"}</div>
           </>
         )}
@@ -266,20 +289,7 @@ function Table({ snapshot, userId, isHost, isDisplay, send }: GameLobbyProps<Dwo
 
         <div className="dworf-board-controls">
           {!isDisplay && (
-            <button
-              type="button"
-              className="dworf-secret-toggle"
-              aria-label={showSecretInfo ? "Hide secret information" : "Show secret information"}
-              title={showSecretInfo ? "Hide secret information" : "Show secret information"}
-              aria-pressed={showSecretInfo}
-              onClick={toggleSecretInfo}
-            >
-              <svg viewBox="0 0 24 24" aria-hidden="true">
-                <path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12Z" />
-                <circle cx="12" cy="12" r="3" />
-                {!showSecretInfo && <path d="m3 3 18 18" />}
-              </svg>
-            </button>
+            <div className="dworf-secret-toggle-mobile">{renderSecretToggle()}</div>
           )}
           <div className="dworf-board-wrap">
             <div className="dworf-board" style={{ gridTemplateColumns: `repeat(${cols}, 52px)`, gridTemplateRows: `repeat(${rows}, 52px)` }}>{cells}</div>
@@ -341,23 +351,38 @@ function Table({ snapshot, userId, isHost, isDisplay, send }: GameLobbyProps<Dwo
           </section>
         )}
 
-        <section className="card">
-          <h2>The Shop</h2>
-          {snapshot.row.length === 0 ? <p className="muted">None left.</p> : (
-            <div className="dworf-hand">
-              {snapshot.row.map((card, index) => {
-                const giving = myTurn && snapshot.step === "gift";
-                return (
-                  <button key={index} className={`dworf-card dworf-shop-card ability ${giving ? "shop-selectable" : ""} ${mode?.kind === "gift" && mode.card === card ? "selected" : ""}`} disabled={!giving} title={ABILITY_HELP[card]} onClick={() => choose({ kind: "gift", card })}>
-                    <span className="dworf-icon big">{ABILITY_ICON[card]}</span>
-                    <span className="small">{snapshot.abilityNames[card]}</span>
-                  </button>
-                );
-              })}
-            </div>
-          )}
-          {myTurn && snapshot.step === "gift" && <div className="row"><button onClick={() => { send({ type: "skipgift" }); done(); }}>Don't give a card</button></div>}
-        </section>
+        <div className="dworf-shop-controls">
+          <section className="card dworf-shop">
+            <button
+              type="button"
+              className="dworf-shop-toggle"
+              aria-expanded={shopOpen}
+              onClick={() => setShopOpen(open => !open)}
+            >
+              <span>The Shop</span>
+              <span aria-hidden="true">{shopOpen ? "−" : "+"}</span>
+            </button>
+            {shopOpen && (
+              <>
+                {snapshot.row.length === 0 ? <p className="muted">None left.</p> : (
+                  <div className="dworf-hand">
+                    {snapshot.row.map((card, index) => {
+                      const giving = myTurn && snapshot.step === "gift";
+                      return (
+                        <button key={index} className={`dworf-card dworf-shop-card ability ${giving ? "shop-selectable" : ""} ${mode?.kind === "gift" && mode.card === card ? "selected" : ""}`} disabled={!giving} title={ABILITY_HELP[card]} onClick={() => choose({ kind: "gift", card })}>
+                          <span className="dworf-icon big">{ABILITY_ICON[card]}</span>
+                          <span className="small">{snapshot.abilityNames[card]}</span>
+                        </button>
+                      );
+                    })}
+                  </div>
+                )}
+                {myTurn && snapshot.step === "gift" && <div className="row"><button onClick={() => { send({ type: "skipgift" }); done(); }}>Don't give a card</button></div>}
+              </>
+            )}
+          </section>
+          {!isDisplay && <div className="dworf-secret-toggle-desktop">{renderSecretToggle()}</div>}
+        </div>
 
         <HistoryPanel title="Log">
           <ul className="names dworf-log">{[...snapshot.log].reverse().map((line, index) => <li key={index}>{line}</li>)}</ul>

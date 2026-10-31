@@ -1331,6 +1331,24 @@ th {
   line-height: 1.1;
   text-align: center;
 }
+.dworf-shop-toggle {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  padding: 8px 10px;
+  background: #5b4228;
+  color: #f3e3c3;
+  border: 2px solid #1a1109;
+  border-radius: 6px;
+  font: inherit;
+  font-weight: 700;
+  text-align: left;
+}
+.dworf-shop-toggle > span:last-child {
+  font-size: 1.4rem;
+  line-height: 1;
+}
 .dworf-card.ability {
   background: #2a2540;
 }
@@ -1362,6 +1380,21 @@ th {
   justify-content: center;
   gap: 12px;
   min-width: 0;
+}
+.dworf-shop-controls {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+}
+.dworf-shop {
+  flex: 1;
+  min-width: 0;
+}
+.dworf-secret-toggle-mobile {
+  display: none;
+}
+.dworf-secret-toggle-desktop {
+  flex: 0 0 72px;
 }
 .dworf-board-controls .dworf-board-wrap {
   min-width: 0;
@@ -2530,6 +2563,16 @@ body[data-game="dworf"] .dworf-card.dworf-pass-card:hover {
   border-color: #1a1109 !important;
   box-shadow: inset 4px 4px 0 #fff0a3, inset -4px -4px 0 #947018 !important;
 }
+body[data-game="dworf"] .dworf-shop-toggle {
+  background: #5b4228 !important;
+  color: #f3e3c3 !important;
+  border: 2px solid #1a1109 !important;
+  box-shadow: inset 3px 3px 0 #80603d, inset -3px -3px 0 #352313 !important;
+}
+body[data-game="dworf"] .dworf-shop-toggle:hover {
+  background: #6b4d30 !important;
+  color: #fff0d0 !important;
+}
 body[data-game="dworf"] .dworf-card.dworf-pass-card.selected {
   border-color: #fff0a3 !important;
   box-shadow: inset 4px 4px 0 #fff0a3, inset -4px -4px 0 #947018, 0 0 0 3px #ffd84a !important;
@@ -2570,6 +2613,11 @@ body[data-game="dworf"] .dworf-role-banner.explorer {
   background: rgba(47, 93, 138, .35);
 }
 body[data-game="dworf"] .cn-status.dworf-current-turn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 8px;
   background: #7d7d7d;
   color: #fff;
   border: 3px solid #111;
@@ -2585,7 +2633,7 @@ body[data-game="dworf"] .dworf-piece {
   shape-rendering: crispEdges;
 }
 /* Dworf overrides: beat the neon button and nav rules */
-body[data-game="dworf"] button:not(.swatch):not(.link):not(.dworf-card):not(.dworf-cell):not(.dworf-secret-toggle),
+body[data-game="dworf"] button:not(.swatch):not(.link):not(.dworf-card):not(.dworf-cell):not(.dworf-secret-toggle):not(.dworf-shop-toggle),
 body[data-game="dworf"] .button {
   background: #7d7d7d !important;
   color: #fff !important;
@@ -2594,7 +2642,7 @@ body[data-game="dworf"] .button {
   filter: none;
   padding: 8px 14px;
 }
-body[data-game="dworf"] button:not(.swatch):not(.link):not(.dworf-card):not(.dworf-cell):not(.dworf-secret-toggle):hover:not(:disabled),
+body[data-game="dworf"] button:not(.swatch):not(.link):not(.dworf-card):not(.dworf-cell):not(.dworf-secret-toggle):not(.dworf-shop-toggle):hover:not(:disabled),
 body[data-game="dworf"] .button:hover {
   background: #8f9a6a !important;
   color: #fff !important;
@@ -3263,6 +3311,16 @@ html body[data-game="thirtyone"] button:not(.cn-card):not(.dworf-card):not(.dwor
   }
   .dworf-board-controls .dworf-secret-toggle {
     align-self: center;
+  }
+  .dworf-shop-controls {
+    display: block;
+  }
+  .dworf-secret-toggle-mobile {
+    display: block;
+    align-self: center;
+  }
+  .dworf-secret-toggle-desktop {
+    display: none;
   }
   .dworf-hand-split {
     display: grid;
