@@ -42,6 +42,7 @@ button:disabled{opacity:.5;cursor:not-allowed}
 .lobby-password-actions{display:flex;gap:10px}
 .lobby-password-actions>*{flex:1;text-align:center}
 .auth-links{display:flex;justify-content:space-between}
+.auth-links button.link,.auth-links button.link:hover{background:transparent!important;box-shadow:none!important}
 .game-head{display:flex;justify-content:space-between;gap:12px}
 .lobby-list,.names{list-style:none;padding:0;margin:0 0 12px;display:flex;flex-direction:column;gap:8px}
 .lobby-list li{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:10px 12px;border:1px solid var(--border);border-radius:8px}
