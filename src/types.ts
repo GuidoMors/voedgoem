@@ -2,6 +2,7 @@ import type { Avatar } from "./avatar/model";
 import type { CodenamesSnapshot } from "./games/codenames/types";
 import type { SaboteurSnapshot } from "./games/saboteur/types";
 import type { BlokusSnapshot } from "./games/blokus/types";
+import type { KinSnapshot } from "./games/kin/types";
 import type { TetrisSnapshot } from "./games/tetris/types";
 import type { ThirtyOneSnapshot } from "./games/thirtyone/types";
 
@@ -44,4 +45,4 @@ export interface AdminUser {
 }
 
 // Add each game's snapshot type here; they are discriminated by `game`.
-export type LobbySnapshot = TetrisSnapshot | CodenamesSnapshot | ThirtyOneSnapshot | SaboteurSnapshot | BlokusSnapshot;
+export type LobbySnapshot = TetrisSnapshot | CodenamesSnapshot | ThirtyOneSnapshot | SaboteurSnapshot | BlokusSnapshot | KinSnapshot;

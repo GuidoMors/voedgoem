@@ -3535,3 +3535,486 @@ html body .cn-card:disabled, html body .sb-card:disabled, html body .sb-cell:dis
   border-radius: 8px;
   box-shadow: 0 2px 4px rgba(60,40,10,.2),inset 0 0 0 3px #fffdf5,inset 0 0 0 4px #e0d3b0;
 }
+
+body[data-game="kin"] {
+  --themegreen: #e0b04a;
+  --themesubgreen: #8a6516;
+  --themeblack: #0d0a05;
+  --themegrey: #221a0c;
+  --themelog: #140f06;
+  --neon-rgb: 224, 176, 74;
+  --neon: rgb(var(--neon-rgb));
+  --neon-soft: #f2d58f;
+  --danger-rgb: 255, 60, 90;
+  --font-big: var(--font-small);
+  --card: var(--themelog);
+  --border: rgba(var(--neon-rgb), .5);
+  --accent: var(--neon);
+  --muted: #bfa56b;
+}
+body[data-game="kin"] ::selection {
+  background: #e0b04a;
+  color: #0d0a05;
+}
+body[data-game="kin"] .kin-seats {
+  list-style: none;
+  margin: 0 0 12px;
+  padding: 0;
+  display: grid;
+  gap: 6px;
+}
+body[data-game="kin"] .kin-seats li {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 6px 10px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: rgba(var(--neon-rgb), .06);
+}
+body[data-game="kin"] .kin-seats li.open {
+  opacity: .55;
+  border-style: dashed;
+}
+body[data-game="kin"] .kin-seats li > .row {
+  flex: 1;
+}
+body[data-game="kin"] .kin-seat-number {
+  min-width: 1.6em;
+  color: var(--neon-soft);
+  font-weight: 700;
+}
+body[data-game="kin"] .kin-tabs {
+  display: flex;
+  gap: 6px;
+  overflow-x: auto;
+  margin: 0 0 12px;
+}
+body[data-game="kin"] .kin-tabs button.active {
+  border-color: var(--neon);
+  background: rgba(var(--neon-rgb), .2);
+  color: var(--neon-soft);
+}
+body[data-game="kin"] .kin-host-options {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
+}
+
+body[data-game="kin"] .kin-setup {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 260px;
+  gap: 16px;
+  align-items: start;
+}
+body[data-game="kin"] .kin-setup-top {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+body[data-game="kin"] .kin-pile {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+}
+body[data-game="kin"] .kin-pile-type.selected {
+  border-color: var(--neon);
+  background: rgba(var(--neon-rgb), .2);
+  color: var(--neon-soft);
+}
+body[data-game="kin"] .kin-prompt.mine {
+  color: var(--neon-soft);
+  font-weight: 600;
+}
+body[data-game="kin"] .kin-seats li.on-turn {
+  border-color: var(--neon);
+  box-shadow: 0 0 10px rgba(var(--neon-rgb), .35);
+}
+body[data-game="kin"] .kin-board {
+  width: 100%;
+  height: auto;
+  max-height: 72vh;
+  background: #0b2a2c;
+  border-radius: 12px;
+}
+body[data-game="kin"] .kin-tile {
+  stroke: rgba(0, 0, 0, .35);
+  stroke-width: .8;
+}
+body[data-game="kin"] .kin-tile.clickable {
+  cursor: pointer;
+}
+body[data-game="kin"] .kin-tile.clickable:hover {
+  filter: brightness(1.3);
+}
+body[data-game="kin"] .kin-rivers line {
+  stroke: #1d63d6;
+  stroke-width: 4;
+  stroke-linecap: round;
+  pointer-events: none;
+}
+body[data-game="kin"] .kin-free-end {
+  fill: #ffffff;
+  stroke: #1d63d6;
+  stroke-width: 2;
+  pointer-events: none;
+}
+body[data-game="kin"] .kin-vertex-choice {
+  fill: rgba(255, 90, 76, .85);
+  stroke: #fff;
+  stroke-width: 1.2;
+  cursor: pointer;
+}
+body[data-game="kin"] .kin-vertex-choice:hover {
+  fill: #ff9a8f;
+}
+@media (max-width: 900px) {
+  body[data-game="kin"] .kin-setup {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Kin style guide: card-game look in red, indigo and gold */
+@font-face {
+  font-family: "BlizzDisplay";
+  src: url("/fonts/BlizzDisplay2026.otf") format("opentype");
+  font-display: swap;
+}
+body[data-game="kin"] {
+  --kin-red: #e0584c;
+  --kin-indigo: #14122a;
+  --kin-gold: #d8b25a;
+  --kin-paper: #f6ecd0;
+  --kin-ink: #2a1f14;
+  --neon-rgb: 224, 88, 76;
+  --neon: #e0584c;
+  --neon-soft: #f0e6c8;
+  --themeblack: var(--kin-gold);
+  --themelog: var(--kin-paper);
+  --card: var(--kin-paper);
+  --border: rgba(224, 88, 76, .6);
+  --muted: #6b5a3c;
+  --font-big: "BlizzDisplay", Georgia, serif;
+  color: var(--kin-ink);
+  background: var(--kin-gold);
+}
+body[data-game="kin"] h1, body[data-game="kin"] h2, body[data-game="kin"] h3, body[data-game="kin"] .brand {
+  font-family: "BlizzDisplay", Georgia, serif;
+  text-shadow: none;
+  letter-spacing: .04em;
+}
+body[data-game="kin"] .topbar {
+  background: var(--kin-indigo);
+  border-bottom: 3px solid var(--kin-red);
+  box-shadow: none;
+}
+body[data-game="kin"] .topbar .brand { color: var(--kin-red); }
+body[data-game="kin"] .topbar .brand::before { content: "❖ "; }
+body[data-game="kin"] .topbar nav a { color: #f0e6c8; }
+body[data-game="kin"] .topbar nav a.active { color: var(--kin-red); border-color: var(--kin-red); box-shadow: none; text-shadow: none; }
+body[data-game="kin"] .topbar .who, body[data-game="kin"] .topbar .profile-link { color: #f0e6c8; }
+body[data-game="kin"] .card {
+  background: var(--kin-paper);
+  color: var(--kin-ink);
+  border: 2px solid var(--kin-red);
+  border-radius: 10px;
+  box-shadow: inset 0 0 0 3px var(--kin-paper), inset 0 0 0 4px rgba(224, 88, 76, .45), 0 3px 10px rgba(20, 18, 42, .25);
+}
+body[data-game="kin"] .pill { color: var(--kin-red); border-color: var(--kin-red); text-shadow: none; }
+body[data-game="kin"] input, body[data-game="kin"] select, body[data-game="kin"] textarea {
+  background: #fffaf0;
+  color: var(--kin-ink);
+  border: 2px solid rgba(224, 88, 76, .7);
+}
+body[data-game="kin"] input::placeholder { color: rgba(42, 31, 20, .45); }
+body[data-game="kin"] input:focus, body[data-game="kin"] select:focus { box-shadow: 0 0 0 2px rgba(224, 88, 76, .35); }
+body[data-game="kin"] option { background: #fffaf0; color: var(--kin-ink); }
+body[data-game="kin"] button:not([class*="cn-"]):not([class*="sb-"]):not(.swatch):not(.link):not(.ts-word):not(.blokus-cell) {
+  background: transparent;
+  color: var(--kin-red);
+  border: 2px solid var(--kin-red);
+  border-radius: 8px;
+  text-shadow: none;
+  box-shadow: none;
+}
+body[data-game="kin"] .topbar button:not(.burger) { color: #f0e6c8; border-color: #f0e6c8; }
+body[data-game="kin"] button:not([class*="cn-"]):not([class*="sb-"]):not(.swatch):not(.link):not(.ts-word):not(.blokus-cell):hover:not(:disabled) {
+  background: var(--kin-red);
+  color: #fff;
+  box-shadow: none;
+}
+body[data-game="kin"] .primary, body[data-game="kin"] button.primary:not([class*="cn-"]) {
+  background: var(--kin-red) !important;
+  color: #fff !important;
+  box-shadow: none !important;
+}
+body[data-game="kin"] .primary:hover:not(:disabled) { background: var(--kin-indigo) !important; color: #fff !important; }
+body[data-game="kin"] th { color: var(--kin-red); text-shadow: none; }
+body[data-game="kin"] .results tr.me td, body[data-game="kin"] .stats-table tr.me td { color: var(--kin-ink); }
+body[data-game="kin"] .stat strong { color: var(--kin-red); text-shadow: none; }
+body[data-game="kin"] .modal { background: var(--kin-paper); }
+body[data-game="kin"] .modal-backdrop, body[data-game="kin"].modal-backdrop { background: rgba(20, 18, 42, .75); }
+
+/* Rulebook */
+.rulebook { display: flex; gap: 14px; height: calc(100vh - 190px); min-height: 320px; }
+.rb-tabs { flex: 0 0 210px; display: flex; flex-direction: column; gap: 4px; overflow-y: auto; padding-right: 6px; }
+.rb-tabs button { text-align: left; padding: 6px 10px; font-size: 13px; }
+body[data-game="kin"] .rb-tabs button.active:not(:disabled) { background: var(--kin-indigo); border-color: var(--kin-indigo); color: #f0e6c8; }
+.rb-body { flex: 1; min-width: 0; overflow-y: auto; padding: 0 12px 24px 4px; line-height: 1.5; font-size: 15px; }
+.rb-bar { position: sticky; top: 0; z-index: 2; display: flex; justify-content: space-between; align-items: center; padding: 4px 0 8px; background: var(--kin-paper, #fff); }
+.rb-logo { color: var(--kin-red, #e0584c); font-size: 22px; }
+.rb-h { margin: 1.2em 0 .4em; color: var(--kin-ink, inherit); border-bottom: 1px solid rgba(224, 88, 76, .5); padding-bottom: 2px; }
+.rb-h1 { font-size: 26px; color: var(--kin-red, inherit); }
+.rb-tags { margin-left: 10px; font-family: inherit; font-size: 11px; font-weight: normal; color: var(--muted); letter-spacing: 0; }
+.rb-icon { display: inline-block; margin-right: .3em; font-family: "Segoe UI Symbol", "Noto Sans Symbols", sans-serif; }
+.rb-link { color: #b8362b; text-decoration: underline dotted; cursor: pointer; }
+.rb-link.dead { cursor: default; text-decoration: none; color: inherit; }
+.rb-link.brown { color: #7a4a1e; }
+.rb-rule { margin: 8px 0; padding: 8px 12px; border: 1px solid rgba(224, 88, 76, .6); border-left: 5px solid #e0584c; border-radius: 6px; background: rgba(216, 178, 90, .18); }
+.rb-field { display: flex; gap: 10px; padding: 2px 0; }
+.rb-key { flex: 0 0 130px; font-weight: bold; color: #b8362b; }
+.rb-plain { display: block; }
+.rb-table { overflow-x: auto; }
+.rb-table table { border-collapse: collapse; }
+.rb-table th, .rb-table td { border: 1px solid rgba(224, 88, 76, .35); padding: 4px 8px; text-align: left; }
+.rb-flash { animation: rbflash 1.6s ease-out; }
+@keyframes rbflash { from { background: rgba(224, 88, 76, .35); } to { background: transparent; } }
+@media (max-width: 700px) {
+  .rulebook { flex-direction: column; height: calc(100vh - 150px); }
+  .rb-tabs { flex: 0 0 auto; flex-direction: row; overflow-x: auto; overflow-y: hidden; padding: 0 0 6px; }
+  .rb-tabs button { white-space: nowrap; }
+  .rb-field { flex-direction: column; gap: 0; }
+}
+
+/* Kin cards */
+.kin-cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); gap: 12px; margin: 10px 0 16px; }
+.kin-card { display: flex; flex-direction: column; gap: 6px; padding: 8px 10px 10px; border: 3px solid var(--kin-color, #888); border-radius: 10px; background: #fffaf0; color: #2a1f14; box-shadow: inset 0 0 0 2px #fffaf0, inset 0 0 0 3px rgba(42, 31, 20, .25), 0 2px 6px rgba(20, 18, 42, .3); }
+.kin-card header { display: flex; align-items: center; gap: 6px; background: var(--kin-color, #888); color: #fff; margin: -8px -10px 0; padding: 6px 10px; border-radius: 6px 6px 0 0; text-shadow: 0 1px 2px rgba(0, 0, 0, .5); }
+.kin-card header h3 { margin: 0; font-size: 15px; line-height: 1.15; }
+.kin-card-art { height: 64px; display: grid; place-items: center; font-family: "BlizzDisplay", Georgia, serif; font-size: 44px; color: var(--kin-color, #888); background: repeating-linear-gradient(45deg, rgba(42, 31, 20, .06) 0 6px, transparent 6px 12px); border: 1px solid rgba(42, 31, 20, .25); border-radius: 4px; text-shadow: 0 1px 0 rgba(0, 0, 0, .35); }
+.kin-card-ability { margin: 0; font-size: 13px; line-height: 1.3; }
+.kin-card-flavour { margin: 0; font-size: 11px; font-style: italic; color: #6b5a3c; line-height: 1.3; display: -webkit-box; -webkit-line-clamp: 4; -webkit-box-orient: vertical; overflow: hidden; }
+.kin-card footer { margin-top: auto; display: flex; justify-content: space-between; align-items: center; }
+.kin-card.taken { opacity: .55; filter: grayscale(.5); }
+.kin-card.available { box-shadow: 0 0 0 3px #e0584c, 0 2px 10px rgba(224, 88, 76, .5); }
+
+/* Character cards */
+.char-cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 12px; margin: 10px 0 16px; }
+.char-card { display: flex; flex-direction: column; gap: 5px; padding: 8px 10px; border: 5px solid #888; border-radius: 10px; color: #2a1f14; box-shadow: 0 2px 6px rgba(20, 18, 42, .3); }
+.char-card:not(.neutral) { color: #fff; text-shadow: 0 1px 2px rgba(0, 0, 0, .55); }
+.char-card header { display: flex; justify-content: space-between; align-items: baseline; gap: 6px; }
+.char-card h3 { margin: 0; font-size: 16px; line-height: 1.15; }
+.char-power { flex: none; min-width: 24px; text-align: center; font-weight: bold; border-radius: 50%; padding: 1px 6px; background: #14122a; color: #f0e6c8; text-shadow: none; }
+.char-title { margin: 0; font-size: 11px; font-style: italic; opacity: .85; }
+.char-ability { flex: 1; font-size: 12px; line-height: 1.3; background: rgba(255, 250, 240, .9); color: #2a1f14; text-shadow: none; border-radius: 6px; padding: 5px 7px; }
+.char-ability p { margin: 0 0 4px; }
+.char-icon { font-family: "Segoe UI Symbol", "Noto Sans Symbols", sans-serif; color: #b8362b; }
+.char-none { font-style: italic; color: #6b5a3c; }
+.char-card footer { display: flex; justify-content: space-between; align-items: center; gap: 6px; }
+.char-tags { font-size: 10px; opacity: .9; }
+.char-card.eligible { box-shadow: 0 0 0 3px #e0584c, 0 2px 10px rgba(224, 88, 76, .5); }
+.char-card.ineligible { filter: grayscale(1); opacity: .55; }
+.char-card.claimed { opacity: .7; }
+
+/* Kin buildings and armies */
+.kin-spot { fill: rgba(255, 255, 255, 0.45); stroke: #e0584c; stroke-width: 2; cursor: pointer; }
+.kin-spot:hover { fill: rgba(255, 255, 255, 0.75); }
+.kin-icon { font-size: 12px; pointer-events: none; }
+.kin-icon.small { font-size: 9px; }
+.kin-army text { font-size: 8px; font-weight: bold; fill: #fff; pointer-events: none; }
+.kin-building.cross { opacity: 0.9; }
+.kin-templates { margin-top: 0.75rem; }
+body[data-game="kin"] .kin-victory-banner { padding: 0.75rem 1rem; margin-bottom: 0.75rem; border: 2px solid gold; border-radius: 8px; background: rgba(255, 215, 0, 0.12); text-align: center; }
+body[data-game="kin"] .kin-victory-table { border-collapse: collapse; margin-top: 0.5rem; }
+body[data-game="kin"] .kin-victory-table th, body[data-game="kin"] .kin-victory-table td { padding: 0.25rem 0.75rem; border: 1px solid rgba(128, 128, 128, 0.35); text-align: center; }
+body[data-game="kin"] .kin-victory-table th:first-child { text-align: left; }
+body[data-game="kin"] .kin-victory-table td.most { background: rgba(255, 215, 0, 0.25); font-weight: bold; }
+.kin-gallery { display: flex; flex-wrap: wrap; gap: 0.75rem; margin-top: 0.5rem; }
+.kin-gallery figure { margin: 0; text-align: center; font-size: 0.85rem; }
+.kin-ark-board { margin-top: 0.5rem; display: inline-flex; flex-direction: column; align-items: center; background: #fff8; border: 2px solid #e0584c; border-radius: 6px; padding: 0.25rem 0.5rem; }
+
+/* Kin main game UI: top phase bar, left board menu, middle board, right players, bottom court and resources */
+body[data-game="kin"] .kin-main {
+  display: grid;
+  grid-template-columns: 150px minmax(0, 1fr) 270px;
+  grid-template-areas: "top top top" "left middle right" "bottom bottom bottom";
+  gap: 12px;
+  flex: 1;
+}
+body[data-game="kin"] .kin-main-bottom { overflow: auto; }
+body[data-game="kin"] .kin-main-bottom { min-height: 0; }
+body[data-game="kin"] .kin-main > * {
+  background: var(--kin-paper);
+  border: 2px solid var(--kin-red);
+  border-radius: 10px;
+  color: var(--kin-ink);
+}
+body[data-game="kin"] .kin-main-top {
+  grid-area: top;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 8px 16px;
+  background: var(--kin-indigo);
+  color: #f0e6c8;
+}
+body[data-game="kin"] .kin-main-top .muted { color: #cbbf9a; }
+body[data-game="kin"] .kin-phase-summary { display: flex; align-items: center; gap: 12px; flex: 1; flex-wrap: wrap; }
+body[data-game="kin"] .kin-phase-summary strong { font-family: "BlizzDisplay", serif; font-size: 1.2rem; letter-spacing: .04em; }
+body[data-game="kin"] .kin-phase-chip {
+  border: 2px solid var(--phase-color);
+  color: #fff;
+  background: color-mix(in srgb, var(--phase-color) 55%, transparent);
+  border-radius: 999px;
+  padding: 2px 12px;
+  font-weight: 600;
+}
+body[data-game="kin"] .kin-phase-dots { display: flex; gap: 6px; }
+body[data-game="kin"] .kin-phase-dot { width: 14px; height: 14px; border-radius: 50%; border: 2px solid #f0e6c8; }
+
+body[data-game="kin"] .kin-main-left { grid-area: left; display: flex; flex-direction: column; gap: 8px; padding: 10px; }
+body[data-game="kin"] .kin-board-tab { display: flex; flex-direction: column; align-items: center; gap: 4px; padding: 10px 6px; text-align: center; font-size: .85rem; }
+body[data-game="kin"] .kin-board-tab.selected { background: var(--kin-indigo) !important; color: #f0e6c8 !important; border-color: var(--kin-indigo) !important; }
+body[data-game="kin"] .kin-board-icon { font-size: 1.6rem; line-height: 1; }
+
+body[data-game="kin"] .kin-main-middle { grid-area: middle; padding: 4px; overflow: hidden; display: flex; flex-direction: column; gap: 8px; min-height: 0; }
+body[data-game="kin"] .kin-board-stage { position: relative; flex: 1; min-height: 0; display: flex; }
+body[data-game="kin"] .kin-board-stage .kin-board-scroll { flex: 1; }
+body[data-game="kin"] .kin-zoom { position: absolute; top: 8px; left: 8px; display: flex; align-items: center; gap: 6px; padding: 2px 6px; border-radius: 8px; background: rgba(20, 18, 42, .8); color: #f0e6c8; }
+body[data-game="kin"] .kin-ark-overlay { position: absolute; bottom: 8px; left: 8px; transform-origin: bottom left; transform: scale(.7); }
+body[data-game="kin"] .kin-ark-overlay .kin-ark-board { margin-top: 0; }
+body[data-game="kin"] .kin-board-scroll { flex: 1; overflow: auto; min-height: 0; border-radius: 8px; background: #0b2a2c; }
+body[data-game="kin"] .kin-board-scroll .kin-board { max-height: none; height: 100%; border-radius: 0; }
+
+body[data-game="kin"] .kin-tech-board { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; flex: 1; }
+body[data-game="kin"] .kin-tech-board section { background: #c9c9cf; border: 2px solid #8b8b93; border-radius: 8px; padding: 10px; }
+body[data-game="kin"] .kin-phase-board { display: flex; flex-direction: column; gap: 12px; flex: 1; }
+body[data-game="kin"] .kin-phase-tracks { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
+body[data-game="kin"] .kin-phase-track { border: 3px solid var(--phase-color); border-radius: 8px; padding: 8px; background: color-mix(in srgb, var(--phase-color) 18%, #fffaf0); }
+body[data-game="kin"] .kin-phase-track h3 { margin: 0 0 8px; color: var(--phase-color); font-family: "BlizzDisplay", serif; }
+body[data-game="kin"] .kin-phase-slots { display: flex; flex-direction: column; gap: 6px; }
+body[data-game="kin"] .kin-phase-slots span { height: 44px; border: 2px dashed var(--phase-color); border-radius: 6px; opacity: .6; }
+body[data-game="kin"] .kin-laws { border: 2px dashed var(--kin-red); border-radius: 8px; padding: 10px; }
+
+body[data-game="kin"] .kin-main-right { grid-area: right; padding: 10px; overflow-y: auto; }
+body[data-game="kin"] .kin-main-right h2 { margin-top: 0; }
+body[data-game="kin"] .kin-player-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 8px; }
+body[data-game="kin"] .kin-player { width: 100%; display: flex; flex-direction: column; align-items: flex-start; gap: 4px; text-align: left; border-left: 8px solid var(--kin-color); }
+body[data-game="kin"] .kin-player.selected { box-shadow: 0 0 0 2px var(--kin-indigo); }
+body[data-game="kin"] .kin-player.on-turn { background: #fff3c4 !important; }
+body[data-game="kin"] .kin-player-head { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
+body[data-game="kin"] .kin-player-resources { display: flex; flex-wrap: wrap; gap: 4px 10px; font-size: .8rem; }
+
+body[data-game="kin"] .kin-main-bottom {
+  grid-area: bottom;
+  display: grid;
+  grid-template-columns: 200px minmax(0, 1fr) 230px;
+  gap: 12px;
+  padding: 10px;
+  min-height: 200px;
+}
+body[data-game="kin"] .kin-court-menu { display: flex; flex-direction: column; gap: 6px; align-self: start; }
+body[data-game="kin"] .kin-court { display: flex; gap: 10px; overflow-x: auto; align-items: flex-start; padding-bottom: 6px; }
+body[data-game="kin"] .kin-court .char-card { flex: 0 0 200px; }
+body[data-game="kin"] .kin-resources { display: flex; flex-direction: column; gap: 4px; }
+body[data-game="kin"] .kin-resource-row { display: grid; grid-template-columns: 24px 1fr auto 52px auto; align-items: center; gap: 6px; }
+body[data-game="kin"] .kin-resource-symbol { font-size: 1.1rem; text-align: center; color: var(--kin-red); }
+body[data-game="kin"] .kin-cheat { padding: 0 6px; font-size: .75rem; }
+@media (max-width: 1000px) {
+  body[data-game="kin"] .kin-main {
+    grid-template-columns: 1fr;
+    grid-template-rows: auto;
+    grid-template-areas: "top" "left" "middle" "right" "bottom";
+  }
+  body[data-game="kin"] .kin-main-left { flex-direction: row; }
+  body[data-game="kin"] .kin-main-bottom { grid-template-columns: 1fr; }
+  body[data-game="kin"] .page:has(.kin-main) { height: auto !important; }
+  body[data-game="kin"] .kin-board-scroll { min-height: 60vh; }
+}
+
+/* Kin always uses the full window; the main game fills the screen below the top bar. */
+body[data-game="kin"] .page { max-width: none; margin: 0; padding: 12px 16px; }
+body[data-game="kin"] .page:has(.kin-main) { display: flex; flex-direction: column; gap: 8px; height: calc(100dvh - 50px); padding-bottom: 8px; box-sizing: border-box; }
+body[data-game="kin"] .page:has(.kin-main) > h1, body[data-game="kin"] .page:has(.kin-main) h1 { font-size: 1.1rem; margin: 0; }
+
+/* Cards */
+body[data-game="kin"] .kc-row { display: flex; flex-wrap: wrap; gap: 0.6rem; align-items: flex-start; }
+body[data-game="kin"] .kc-gallery section { margin-bottom: 1rem; }
+body[data-game="kin"] .kc { position: relative; width: 11rem; min-height: 8rem; padding: 0.5rem 0.6rem 0.6rem; border: 2px solid #777; border-radius: 0.5rem; background: #efe4c8; color: #221a10; font-size: 0.78rem; display: flex; flex-direction: column; gap: 0.25rem; }
+body[data-game="kin"] .kc.tapped, body[data-game="kin"] .char-card.tapped { transform: rotate(60deg) scale(0.7); opacity: 0.7; filter: grayscale(0.6); margin: -1.5rem -0.2rem; transition: transform 0.15s; }
+body[data-game="kin"] .kc.tapped:hover, body[data-game="kin"] .char-card.tapped:hover { transform: rotate(90deg) scale(0.9); z-index: 5; }
+body[data-game="kin"] .kin-court { padding-top: 6px; }
+body[data-game="kin"] .char-card .kc-tapped-label { align-self: center; background: rgba(0, 0, 0, 0.55); color: #fff; padding: 0 6px; border-radius: 4px; }
+body[data-game="kin"] .kc.selectable, body[data-game="kin"] .char-card.selectable { cursor: pointer; box-shadow: 0 0 0 3px #fff3b0, 0 0 14px 4px #e0b020; }
+body[data-game="kin"] .kc.selectable:hover, body[data-game="kin"] .char-card.selectable:hover { transform: scale(1.08); z-index: 5; }
+body[data-game="kin"] .kc.chosen, body[data-game="kin"] .char-card.chosen { box-shadow: 0 0 0 4px #e0584c, 0 0 18px 6px #e0584c; }
+body[data-game="kin"] .kc-power-badge { display: flex; align-items: baseline; justify-content: center; gap: 4px; font-size: 1.6rem; margin: 0.3rem 0; }
+body[data-game="kin"] .kc-tapped-label { font-size: 0.7rem; text-transform: uppercase; color: #7a6a4a; }
+body[data-game="kin"] .kc-universal { background: linear-gradient(135deg, #f4ead2, #e9dcc0 60%, #dcd0f0); }
+body[data-game="kin"] .kin-block text { font-size: 14px; pointer-events: none; paint-order: stroke; stroke: #14122a; stroke-width: 2px; }
+body[data-game="kin"] .kin-army-pickable { cursor: pointer; filter: drop-shadow(0 0 6px #ffd84a); animation: kin-pulse 1s ease-in-out infinite alternate; }
+body[data-game="kin"] .kin-army-moving { filter: drop-shadow(0 0 8px #e0584c); }
+body[data-game="kin"] .kin-move-cost { font-size: 14px; font-weight: bold; fill: #2a2112; pointer-events: none; text-anchor: middle; dominant-baseline: central; }
+body[data-game="kin"] .kin-instruction { color: #ffd84a; font-weight: bold; }
+body[data-game="kin"] .kin-phase-dot.current { box-shadow: 0 0 0 3px #fff3b0; }
+body[data-game="kin"] .kin-board-tab.needed { box-shadow: 0 0 10px 2px #ffd84a; }
+@keyframes kin-pulse { from { opacity: 0.7; } to { opacity: 1; } }
+body[data-game="kin"] .kc h4 { margin: 0; font-size: 0.9rem; text-align: center; }
+body[data-game="kin"] .kc p { margin: 0; }
+body[data-game="kin"] .kc-kind { font-size: 0.6rem; text-transform: uppercase; letter-spacing: 0.05em; opacity: 0.6; text-align: center; }
+body[data-game="kin"] .kc-term { text-decoration: underline dotted; }
+body[data-game="kin"] .kc-icon { margin-right: 0.15em; }
+body[data-game="kin"] .kc-lines { margin: 0; display: flex; flex-direction: column; gap: 0.2rem; }
+body[data-game="kin"] .kc-lines div { display: flex; flex-direction: column; }
+body[data-game="kin"] .kc-lines dt { font-weight: 700; font-size: 0.68rem; opacity: 0.8; }
+body[data-game="kin"] .kc-lines dd { margin: 0; }
+body[data-game="kin"] .kc-phase { align-self: center; margin-top: auto; padding: 0 0.5rem; border-radius: 0.6rem; color: #fff; font-size: 0.62rem; text-transform: capitalize; }
+body[data-game="kin"] .kc-technology { background: #b9b9bf; border-color: #8c8c94; }
+body[data-game="kin"] .kc-gears { text-align: center; font-weight: 700; font-size: 1rem; }
+body[data-game="kin"] .kc-event { background: #f3d6e6; border: 1px solid #8a4fb3; }
+body[data-game="kin"] .kc-action { background: #f4ead2; border-width: 1px; }
+body[data-game="kin"] .kc-treaty { background: #bfe0f5; border-width: 1px; }
+body[data-game="kin"] .kc-blueprint { background: #1d3f8f; border: 0; color: #f2f5ff; width: 12rem; }
+body[data-game="kin"] .kc-blueprint .kc-shape { text-align: center; font-size: 1.2rem; }
+body[data-game="kin"] .kc-blueprint .kc-effects p { margin-top: 0.2rem; }
+body[data-game="kin"] .kc-faction { background: #f4ead2; border-width: 1px 1px 1px 6px; }
+body[data-game="kin"] .kc-faction.event { background: #f3d6e6; }
+body[data-game="kin"] .kc-ban { background: #5a1520; color: #fbe9ec; border-color: #2c0910; }
+body[data-game="kin"] .kc-activation { background: #f4ead2; }
+body[data-game="kin"] .kc-power { margin-right: 0.35em; font-weight: 700; }
+body[data-game="kin"] .kin-tech-board section, body[data-game="kin"] .kin-phase-track { margin-bottom: 1rem; }
+
+/* Kin: treaties and barter */
+body[data-game="kin"] .kc-details { margin: 4px 0 0; padding-left: 14px; font-size: 0.72rem; }
+body[data-game="kin"] .kin-barter-banner { margin: 8px; padding: 10px 14px; border: 2px solid #8a4fb3; border-radius: 8px; background: rgba(138, 79, 179, 0.12); }
+body[data-game="kin"] .kin-barter-answer { display: flex; gap: 8px; margin-top: 6px; }
+body[data-game="kin"] .kin-barter { padding: 12px; overflow: auto; display: grid; gap: 10px; align-content: start; }
+body[data-game="kin"] .kin-barter-sides { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+body[data-game="kin"] .kin-barter-side { border: 1px solid #8884; border-radius: 8px; padding: 8px; display: grid; gap: 4px; }
+body[data-game="kin"] .kin-barter-resources { display: grid; grid-template-columns: repeat(auto-fill, minmax(90px, 1fr)); gap: 4px; }
+body[data-game="kin"] .kin-barter-resources label, body[data-game="kin"] .kin-barter-check { display: flex; gap: 4px; align-items: center; font-size: 0.85rem; }
+body[data-game="kin"] .kin-barter-resources input { width: 52px; }
+body[data-game="kin"] .kin-barter-mint { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
+
+.kin-spot-line { stroke: #e0584c; stroke-width: 7; stroke-linecap: round; opacity: 0.8; cursor: pointer; }
+.kin-spot-line:hover { stroke: #fff; opacity: 1; }
+body[data-game="kin"] .kin-payment { background: rgba(20, 18, 42, 0.92); border: 1px solid #ffd84a; border-radius: 6px; padding: 0.5rem 0.75rem; margin: 0.5rem; }
+body[data-game="kin"] .kin-payment h3 { margin: 0 0 0.25rem; }
+body[data-game="kin"] .kin-payment-cards, body[data-game="kin"] .kin-payment-basic, body[data-game="kin"] .kin-payment-buttons, body[data-game="kin"] .kin-payment-row { display: flex; flex-wrap: wrap; gap: 0.5rem; align-items: center; margin: 0.25rem 0; }
+body[data-game="kin"] .kin-army-exhausted circle { opacity: 0.55; }
+body[data-game="kin"] .kin-battle-sides { display: flex; flex-wrap: wrap; gap: 1rem; }
+body[data-game="kin"] .kin-battle-side { flex: 1 1 14rem; }
+body[data-game="kin"] .kin-dice { display: flex; flex-wrap: wrap; gap: 0.25rem; margin: 0.25rem 0; }
+body[data-game="kin"] .kin-die { display: inline-flex; align-items: center; justify-content: center; width: 1.6rem; height: 1.6rem; border-radius: 4px; background: #e8e4d4; color: #14122a; font-weight: bold; border: 2px solid #7a7a8c; }
+body[data-game="kin"] .kin-die-aggressive { border-color: #d9483a; }
+body[data-game="kin"] .kin-die-ambush { border-color: #8a4fb3; }
+body[data-game="kin"] .kin-die-defensive { border-color: #3b78c4; }
+body[data-game="kin"] .kin-bad { color: #e0584c; }
+body[data-game="kin"] .kin-army-badge { font-size: 7px; fill: #ffd84a; font-weight: bold; }
+body[data-game="kin"] .kin-pay-card { border: 1px solid #6a6890; border-radius: 4px; padding: 0.15rem 0.5rem; }
+body[data-game="kin"] .kin-pay-card.tapped { opacity: 0.6; }
+body[data-game="kin"] .kin-payment-basic input { width: 3.5rem; }

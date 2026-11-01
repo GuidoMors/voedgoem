@@ -49,7 +49,7 @@ export function AuthPage({ onAuthenticated }: { onAuthenticated: (user: User) =>
       <form className="card auth-card" onSubmit={submit}>
         <label>Username<input value={username} onChange={e => setUsername(e.target.value)} autoComplete="username" required minLength={2} maxLength={20} /></label>
         {mode === "reset" && <label>Recovery key<input value={recoveryKey} onChange={e => setRecoveryKey(e.target.value)} placeholder="XXXX-XXXX-XXXX-XXXX" required /></label>}
-        <label>{mode === "reset" ? "New password" : "Password"}<input type="password" value={password} onChange={e => setPassword(e.target.value)} autoComplete={mode === "login" ? "current-password" : "new-password"} required minLength={8} maxLength={128} /></label>
+        <label>{mode === "reset" ? "New password" : "Password"}<input type="password" value={password} onChange={e => setPassword(e.target.value)} autoComplete={mode === "login" ? "current-password" : "new-password"} required minLength={3} maxLength={128} /></label>
         {error && <p className="error">{error}</p>}
         {notice && <p className="success">{notice}</p>}
         <button className="primary" disabled={busy}>{busy ? "Please wait…" : mode === "login" ? "Play" : mode === "register" ? "Create account" : "Reset password"}</button>
