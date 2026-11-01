@@ -30,6 +30,8 @@ function getTurnBotId(snapshot: LobbySnapshot): string | null {
     }
     case "tetris":
       return null;
+    case "werewolves":
+      return null;
   }
 }
 
