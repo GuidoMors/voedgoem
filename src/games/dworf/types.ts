@@ -1,13 +1,16 @@
 import type { BaseSnapshot } from "../types";
 
-export type Role = "saboteur" | "explorer";
+export type Role = "cultist" | "explorer";
 export type GoalType = "gold" | "monster";
+export type MonsterType = "bull" | "cyclops" | "ghost" | "ogre" | "werewolf";
 export type AbilityType = "lookGoal" | "lookDwarf" | "destroyTunnel" | "destroyPickaxe" | "fixPickaxe" | "destroyLantern" | "fixLantern";
 
-export interface SaboteurPlayer {
+export interface DworfPlayer {
   id: string;
   username: string;
   connected: boolean;
+  cell: number | null;
+  dead: boolean;
   tunnels: number;
   abilities: number;
   pickaxeBroken: boolean;
@@ -16,8 +19,8 @@ export interface SaboteurPlayer {
   role: Role | null;
 }
 
-export interface SaboteurSnapshot extends BaseSnapshot {
-  game: "saboteur";
+export interface DworfSnapshot extends BaseSnapshot {
+  game: "dworf";
   round: number;
   minPlayers: number;
   seats: { id: string; username: string; connected: boolean }[];
@@ -25,20 +28,21 @@ export interface SaboteurSnapshot extends BaseSnapshot {
   cols: number;
   ladder: number;
   abilityNames: Record<AbilityType, string>;
-  players: SaboteurPlayer[];
+  players: DworfPlayer[];
   turnId: string | null;
   step: "turn" | "gift" | "monster";
   tunnels: { cell: number; sides: string }[];
-  goals: { index: number; cell: number; type: GoalType | null; revealed: boolean }[];
+  goals: { index: number; cell: number; type: GoalType | null; monsterType: MonsterType | null; revealed: boolean }[];
   gems: number[];
   monsters: number[];
+  monsterTypes: MonsterType[];
   lastTurn: string[];
   monsterNext: { from: number; to: number }[];
   row: AbilityType[];
   deckCount: number;
   log: string[];
   winner: Role | null;
-  endReason: "gold" | "monster" | "tunnels" | null;
+  endReason: "gold" | "monster" | "tunnels" | "elimination" | null;
   me: { role: Role; tunnels: string[]; abilities: AbilityType[] } | null;
   // Hand index -> rotation (0 or 1, a half turn) -> cells where that card fits. Only for the dwarf whose turn it is.
   placeable: Record<number, Record<number, number[]>> | null;

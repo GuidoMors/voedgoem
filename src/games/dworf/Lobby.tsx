@@ -1,10 +1,11 @@
-import { useEffect, useState } from "react";
-import { Person } from "../../avatar/Avatar";
+import { useContext, useEffect, useState } from "react";
+import { Avatar, AvatarsContext, Person } from "../../avatar/Avatar";
+import { defaultAvatar } from "../../avatar/model";
 import { HostControlsTab } from "../../components/HostControlsTab";
 import { HistoryPanel } from "../../components/HistoryPanel";
 import { KickButton } from "../../components/KickButton";
 import type { GameLobbyProps } from "../types";
-import type { AbilityType, SaboteurPlayer, SaboteurSnapshot } from "./types";
+import type { AbilityType, DworfPlayer, DworfSnapshot } from "./types";
 
 const SIDE_VECTORS: Record<string, [number, number]> = { N: [0, -1], E: [1, 0], S: [0, 1], W: [-1, 0] };
 const rotate = (sides: string) => [...sides].map(side => ({ N: "S", E: "W", S: "N", W: "E" }[side])).sort((a, b) => "NESW".indexOf(a!) - "NESW".indexOf(b!)).join("");
@@ -13,7 +14,7 @@ const turned = (sides: string, rot: number) => { let out = sides; for (let i = 0
 // A square tunnel piece: a hub in the middle with a path to each open side.
 function TunnelPiece({ sides, size = 48 }: { sides: string; size?: number }) {
   return (
-    <svg className="sb-piece" width={size} height={size} viewBox="0 0 40 40" aria-hidden>
+    <svg className="dworf-piece" width={size} height={size} viewBox="0 0 40 40" aria-hidden>
       <rect width="40" height="40" rx="4" fill="#6b4a2f" />
       {[...sides].map(side => {
         const [dx, dy] = SIDE_VECTORS[side];
@@ -31,7 +32,7 @@ const ABILITY_ICON: Record<AbilityType, string> = {
 const ABILITY_HELP: Record<AbilityType, string> = {
   lookGoal: "Secretly check one of the three goal cards.",
   lookDwarf: "Secretly check another dwarf's role.",
-  destroyTunnel: "Remove a tunnel from the board.",
+  destroyTunnel: "Remove a tunnel from the board. Any monster on it will be killed.",
   destroyPickaxe: "A dwarf can't place tunnels until it's fixed.",
   fixPickaxe: "Repair another dwarf's pickaxe.",
   destroyLantern: "A dwarf can't place tunnels until it's fixed.",
@@ -45,12 +46,12 @@ type Mode =
   | { kind: "gift"; card: AbilityType | null }
   | null;
 
-export function SaboteurLobby({ snapshot, userId, isHost, isAdmin, send }: GameLobbyProps<SaboteurSnapshot>) {
+export function DworfLobby({ snapshot, userId, isHost, isAdmin, send }: GameLobbyProps<DworfSnapshot>) {
   if (snapshot.phase === "lobby") return <Waiting {...{ snapshot, userId, isHost, isAdmin, send }} />;
   return <Table {...{ snapshot, userId, isHost, isAdmin, send }} />;
 }
 
-function Waiting({ snapshot, userId, isHost, send }: GameLobbyProps<SaboteurSnapshot>) {
+function Waiting({ snapshot, userId, isHost, send }: GameLobbyProps<DworfSnapshot>) {
   const seated = snapshot.seats.some(item => item.id === userId);
   const full = snapshot.seats.length >= snapshot.maxPlayers;
   const enough = snapshot.seats.length >= snapshot.minPlayers;
@@ -65,7 +66,7 @@ function Waiting({ snapshot, userId, isHost, send }: GameLobbyProps<SaboteurSnap
         {seated
           ? <button onClick={() => send({ type: "unseat" })}>Leave the expedition</button>
           : <button className="primary" disabled={full} onClick={() => send({ type: "seat" })}>Join the expedition</button>}
-        <p className="muted small">{snapshot.minPlayers}–{snapshot.maxPlayers} players. Saboteurs are secretly chosen when the game starts.</p>
+        <p className="muted small">{snapshot.minPlayers}–{snapshot.maxPlayers} players. Cultists are secretly chosen when the game starts.</p>
       </section>
       <section className="card">
         <h2>Spectators <span className="pill">{snapshot.spectators.length}</span></h2>
@@ -83,12 +84,29 @@ function Waiting({ snapshot, userId, isHost, send }: GameLobbyProps<SaboteurSnap
   );
 }
 
-function Table({ snapshot, userId, isHost, send }: GameLobbyProps<SaboteurSnapshot>) {
+function Table({ snapshot, userId, isHost, isDisplay, send }: GameLobbyProps<DworfSnapshot>) {
+  const avatars = useContext(AvatarsContext);
+  const [showSecretInfo, setShowSecretInfo] = useState(false);
+  const [shopOpen, setShopOpen] = useState(false);
   const [mode, setMode] = useState<Mode>(null);
   const [notice, setNotice] = useState<string | null>(null);
   const [rots, setRots] = useState<Record<number, 0 | 1 | 2 | 3>>({});
+  const visibleSnapshot: DworfSnapshot = showSecretInfo ? snapshot : {
+    ...snapshot,
+    players: snapshot.players.map(player => ({ ...player, role: null })),
+    goals: snapshot.goals.map(goal => ({
+      ...goal,
+      type: goal.revealed ? goal.type : null,
+      monsterType: goal.revealed ? goal.monsterType : null
+    })),
+    me: null
+  };
+  snapshot = visibleSnapshot;
   const handKey = snapshot.me?.tunnels.join(",") ?? "";
   useEffect(() => setRots({}), [handKey]);
+  useEffect(() => {
+    if (snapshot.step === "gift") setShopOpen(true);
+  }, [snapshot.step]);
   const { cols, rows } = snapshot;
   const me = snapshot.me;
   const playing = snapshot.phase === "playing";
@@ -100,10 +118,30 @@ function Table({ snapshot, userId, isHost, send }: GameLobbyProps<SaboteurSnapsh
 
   const choose = (next: Mode) => { setMode(current => (JSON.stringify(current) === JSON.stringify(next) ? null : next)); setNotice(null); };
   const done = () => setMode(null);
+  const toggleSecretInfo = () => {
+    setShowSecretInfo(value => !value);
+    setMode(null);
+  };
+  const renderSecretToggle = () => (
+    <button
+      type="button"
+      className="dworf-secret-toggle"
+      aria-label={showSecretInfo ? "Hide secret information" : "Show secret information"}
+      title={showSecretInfo ? "Hide secret information" : "Show secret information"}
+      aria-pressed={showSecretInfo}
+      onClick={toggleSecretInfo}
+    >
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12Z" />
+        <circle cx="12" cy="12" r="3" />
+        {!showSecretInfo && <path d="m3 3 18 18" />}
+      </svg>
+    </button>
+  );
 
   const valid = new Set<number>();
   if (mode?.kind === "tunnel") for (const cell of snapshot.placeable?.[mode.index]?.[mode.rot] ?? []) valid.add(cell);
-  if (mode?.kind === "ability" && mode.card === "destroyTunnel") for (const item of snapshot.tunnels) if (!snapshot.monsters.includes(item.cell)) valid.add(item.cell);
+  if (mode?.kind === "ability" && mode.card === "destroyTunnel") for (const item of snapshot.tunnels) valid.add(item.cell);
   if (mode?.kind === "ability" && mode.card === "lookGoal") for (const goal of snapshot.goals) if (!goal.revealed) valid.add(goal.cell);
   if (snapshot.monsterOptions) for (const cell of snapshot.monsterOptions) valid.add(cell);
 
@@ -119,8 +157,8 @@ function Table({ snapshot, userId, isHost, send }: GameLobbyProps<SaboteurSnapsh
   };
 
   const needsPlayer = (mode?.kind === "ability" && ["lookDwarf", "destroyPickaxe", "fixPickaxe", "destroyLantern", "fixLantern"].includes(mode.card)) || (mode?.kind === "gift" && mode.card !== null);
-  const selfBlocked = (player: SaboteurPlayer) => player.id === userId && !(mode?.kind === "ability" && (mode.card === "destroyPickaxe" || mode.card === "destroyLantern"));
-  const onPlayer = (player: SaboteurPlayer) => {
+  const selfBlocked = (player: DworfPlayer) => player.id === userId && !(mode?.kind === "ability" && (mode.card === "destroyPickaxe" || mode.card === "destroyLantern"));
+  const onPlayer = (player: DworfPlayer) => {
     if (mode?.kind === "ability") send({ type: "ability", card: mode.card, target: player.id });
     else if (mode?.kind === "gift" && mode.card) send({ type: "gift", card: mode.card, target: player.id });
     done();
@@ -128,12 +166,12 @@ function Table({ snapshot, userId, isHost, send }: GameLobbyProps<SaboteurSnapsh
 
   let prompt = "";
   if (!playing) prompt = "";
-  else if (!myTurn) prompt = `${turnPlayer?.username ?? "Someone"} is taking their turn.`;
+  else if (!myTurn) prompt = turnPlayer ? "is taking their turn." : "Someone is taking their turn.";
   else if (snapshot.step === "monster") prompt = "Two routes are equally short. Click where the monster should crawl.";
   else if (snapshot.step === "gift") prompt = "You found a gem! Pick a card from The Shop, then the dwarf who gets it.";
   else if (mode?.kind === "tunnel") prompt = "Click a highlighted spot to place the tunnel. Use Turn to flip it.";
   else if (mode?.kind === "pass") prompt = "Pick a tunnel card from your hand to discard.";
-  else if (mode?.kind === "ability") prompt = mode.card === "destroyTunnel" ? "Click the tunnel to destroy." : mode.card === "lookGoal" ? "Click a goal card to peek at." : "Pick a dwarf on the right.";
+  else if (mode?.kind === "ability") prompt = mode.card === "destroyTunnel" ? "Click a tunnel to destroy; any monster on it will be killed." : mode.card === "lookGoal" ? "Click a goal card to peek at." : "Pick a dwarf on the right.";
   else prompt = "Your turn: place a tunnel, play an ability card, or pass.";
 
   const handClick = (kind: "tunnel" | "ability", index: number, card?: AbilityType) => {
@@ -158,55 +196,90 @@ function Table({ snapshot, userId, isHost, send }: GameLobbyProps<SaboteurSnapsh
   for (let cell = 0; cell < rows * cols; cell++) {
     const sides = tunnelAt.get(cell);
     const goal = goalAt.get(cell);
+    const goalCard = goal && !(goal.revealed && goal.type === "monster") ? goal : null;
     const isGem = snapshot.gems.includes(cell);
-    const monster = snapshot.monsters.filter(item => item === cell).length;
+    const monsters = snapshot.monsters.flatMap((item, index) => item === cell ? [index] : []);
+    const occupants = snapshot.players.filter(player => player.cell === cell);
     const highlight = valid.has(cell);
     const arrows = (snapshot.monsterNext ?? []).filter(item => item.from === cell);
     const targeted = (snapshot.monsterNext ?? []).some(item => item.to === cell);
     cells.push(
-      <button key={cell} className={`sb-cell ${highlight ? "valid" : ""} ${goal ? "goal" : ""} ${cell === snapshot.ladder ? "ladder" : ""} ${targeted ? "monster-target" : ""}`} disabled={!highlight && !(mode?.kind === "ability" && mode.card === "lookGoal" && goal && !goal.revealed)} onClick={() => onCell(cell)}>
-        {cell === snapshot.ladder && <><TunnelPiece sides="NESW" size={44} /><span className="sb-icon sb-ladder-icon">🪜</span></>}
+      <button key={cell} className={`dworf-cell ${highlight ? "valid" : ""} ${goalCard ? "goal" : ""} ${cell === snapshot.ladder ? "ladder" : ""} ${targeted ? "monster-target" : ""}`} disabled={!highlight && !(mode?.kind === "ability" && mode.card === "lookGoal" && goal && !goal.revealed)} onClick={() => onCell(cell)}>
+        {cell === snapshot.ladder && (
+          <>
+            <TunnelPiece sides="NESW" size={44} />
+            <svg className="dworf-ladder-icon" viewBox="0 0 32 40" role="img" aria-label="Ladder">
+              <path d="M7 3 12 37M25 3 20 37M9 10h14M10 18h12M11 26h10M12 34h8" fill="none" stroke="#f3e3c3" strokeWidth="3" strokeLinecap="square" />
+            </svg>
+          </>
+        )}
         {sides && <TunnelPiece sides={sides} size={44} />}
-        {goal && <span className={`sb-goal ${goal.revealed ? "open" : ""}`}>{goal.type === "gold" ? "💰" : goal.type === "monster" ? "🪨" : "?"}{!goal.revealed && goal.type && <small>{goal.type === "gold" ? "gold" : "coal"}</small>}</span>}
-        {isGem && !sides && <span className="sb-gem">💎</span>}
+        {goalCard && <span className={`dworf-goal ${goalCard.revealed ? "open" : ""}`}>
+          {goalCard.type === "gold" ? "💰" : goalCard.type === "monster" && goalCard.monsterType
+            ? <img src={`${import.meta.env.BASE_URL}dworf/monsters/${goalCard.monsterType}.svg`} alt="" />
+            : "?"}
+          {goalCard.type && <small>{goalCard.type}</small>}
+        </span>}
+        {isGem && !sides && <span className="dworf-gem">💎</span>}
         {arrows.map(item => {
           const delta = item.to - cell;
           const [angle, shift] = delta === 1 ? [0, "50%, 0"] : delta === -1 ? [180, "-50%, 0"] : delta > 0 ? [90, "0, 50%"] : [270, "0, -50%"];
-          return <svg key={item.to} className="sb-arrow" viewBox="0 0 56 56" aria-hidden style={{ transform: `translate(${shift}) rotate(${angle}deg)` }}><path d="M12 28 H44 M33 17 L44 28 L33 39" fill="none" stroke="#ff3b30" strokeWidth="5" strokeLinecap="square" /></svg>;
+          return <svg key={item.to} className="dworf-arrow" viewBox="0 0 56 56" aria-hidden style={{ transform: `translate(${shift}) rotate(${angle}deg)` }}><path d="M12 28 H44 M33 17 L44 28 L33 39" fill="none" stroke="#ff3b30" strokeWidth="5" strokeLinecap="square" /></svg>;
         })}
-        {monster > 0 && <span className="sb-monster">👹{monster > 1 ? `×${monster}` : ""}</span>}
-        {mode?.kind === "tunnel" && highlight && <span className="sb-ghost"><TunnelPiece sides={turned(me!.tunnels[mode.index], mode.rot)} size={44} /></span>}
+        {(occupants.length > 0 || monsters.length > 0) && (
+          <span className="dworf-occupants">
+            {occupants.map(player => (
+              <span className="dworf-occupant-avatar" key={player.id} title={player.username}>
+                <Avatar avatar={avatars[player.id] ?? defaultAvatar(player.id)} size={16.8} resolutionScale={1.25} />
+                {player.dead && <span className="dworf-avatar-skull" aria-label="Eliminated">💀</span>}
+              </span>
+            ))}
+            {monsters.map(index => (
+              <span className="dworf-occupant-monster" key={index} title="Monster">
+                {snapshot.monsterTypes[index]
+                  ? <img src={`${import.meta.env.BASE_URL}dworf/monsters/${snapshot.monsterTypes[index]}.svg`} alt="" />
+                  : "👹"}
+              </span>
+            ))}
+          </span>
+        )}
+        {mode?.kind === "tunnel" && highlight && <span className="dworf-ghost"><TunnelPiece sides={turned(me!.tunnels[mode.index], mode.rot)} size={44} /></span>}
       </button>
     );
   }
 
-  const reason = snapshot.endReason === "gold" ? "The tunnel reached the gold!" : snapshot.endReason === "monster" ? "A monster reached the ladder!" : "The tunnel cards ran out!";
+  const reason = snapshot.endReason === "gold" ? "The tunnel reached the gold!" : snapshot.endReason === "monster" ? "A monster reached the ladder!" : snapshot.endReason === "elimination" ? "The monsters eliminated all explorers!" : "The tunnel cards ran out!";
 
   return (
     <div className="cn-layout">
       <div className="cn-main">
+        {me && snapshot.phase !== "lobby" && (
+          <div className={`dworf-role-banner ${me.role}`}>
+            <strong>{me.role === "cultist" ? "CULTIST" : "EXPLORER"}</strong>
+            <span>{me.role === "cultist"
+              ? "Keep the gold hidden and help a monster reach the ladder."
+              : "Reach the gold before a monster reaches the ladder."}</span>
+          </div>
+        )}
         {snapshot.phase === "results" ? (
           <div className={`cn-status ${snapshot.winner === "explorer" ? "team-blue" : "team-red"}`}>
-            <strong>{snapshot.winner === "explorer" ? "The explorers win!" : "The saboteurs win!"}</strong> {reason}
+            <strong>{snapshot.winner === "explorer" ? "The explorers win!" : "The cultists win!"}</strong> {reason}
           </div>
         ) : (
           <>
-          <div className="cn-status sb-last-turn"><span className="muted small">Previous turn: </span>{snapshot.lastTurn?.length ? snapshot.lastTurn.join(" ") : "none yet"}</div>
-          <div className={`cn-status ${myTurn ? "team-blue" : ""}`}><strong>{prompt}</strong></div>
+          <div className={`cn-status dworf-current-turn ${myTurn ? "team-blue" : ""}`}>
+            {turnPlayer && <Person id={turnPlayer.id} name={turnPlayer.username} size={22} />}
+            <strong>{prompt}</strong>
+          </div>
+          <div className="cn-status dworf-last-turn"><span className="muted small">Previous turn: </span>{snapshot.lastTurn?.length ? snapshot.lastTurn.join(" ") : "none yet"}</div>
           </>
-        )}
-        {me && snapshot.phase === "playing" && (
-          <p className={`sb-role ${me.role}`}>
-            You are {me.role === "saboteur" ? "a Saboteur" : "an Explorer"}.
-            {me.role === "saboteur" ? " Keep the gold hidden and wake a monster. Your goals and fellow saboteurs are marked." : " Dig to the gold and watch for saboteurs."}
-          </p>
         )}
         {notice && <p className="error">{notice}</p>}
 
         {playing && turnPlayer && (
-          <div className="sb-player turn sb-turn-mobile">
+          <div className="dworf-player turn dworf-turn-mobile">
             <Person id={turnPlayer.id} name={turnPlayer.username} size={22} />
-            <div className="sb-badges">
+            <div className="dworf-badges">
               {turnPlayer.pickaxeBroken && <span title="Pickaxe broken">⛏✖</span>}
               {turnPlayer.lanternBroken && <span title="Lantern broken">🏮✖</span>}
               <span className="muted small">{turnPlayer.tunnels}+{turnPlayer.abilities}</span>
@@ -214,8 +287,13 @@ function Table({ snapshot, userId, isHost, send }: GameLobbyProps<SaboteurSnapsh
           </div>
         )}
 
-        <div className="sb-board-wrap">
-          <div className="sb-board" style={{ gridTemplateColumns: `repeat(${cols}, 52px)`, gridTemplateRows: `repeat(${rows}, 52px)` }}>{cells}</div>
+        <div className="dworf-board-controls">
+          {!isDisplay && (
+            <div className="dworf-secret-toggle-mobile">{renderSecretToggle()}</div>
+          )}
+          <div className="dworf-board-wrap">
+            <div className="dworf-board" style={{ gridTemplateColumns: `repeat(${cols}, 52px)`, gridTemplateRows: `repeat(${rows}, 52px)` }}>{cells}</div>
+          </div>
         </div>
 
         {me && playing && (
@@ -224,27 +302,41 @@ function Table({ snapshot, userId, isHost, send }: GameLobbyProps<SaboteurSnapsh
               <h2>Your hand</h2>
               <span className="muted small">Tunnel Draw Pile: {snapshot.deckCount}</span>
             </div>
-            <div className="sb-hand-split">
-            <div className="sb-hand">
+            <div className="dworf-hand-split">
+            <div className="dworf-hand dworf-tunnel-hand">
               {me.tunnels.map((sides, index) => {
                 const selected = mode?.kind === "tunnel" && mode.index === index;
                 const shown = turned(sides, rots[index] ?? 0);
                 const cantTurn = rotate(sides) === sides;
                 return (
-                  <div key={`t${index}`} className="sb-card-wrap">
-                    <button className={`sb-card ${selected ? "selected" : ""} ${mode?.kind === "pass" ? "discardable" : ""}`} disabled={!myTurn || snapshot.step !== "turn"} onClick={() => handClick("tunnel", index)}>
+                  <div key={`t${index}`} className="dworf-card-wrap">
+                    <button className={`dworf-card ${selected ? "selected" : ""} ${mode?.kind === "pass" ? "discardable" : ""}`} disabled={!myTurn || snapshot.step !== "turn"} onClick={() => handClick("tunnel", index)}>
                       <TunnelPiece sides={shown} size={56} />
                       <span className="small">Tunnel</span>
                     </button>
-                    <button className="small sb-rotate" title={cantTurn ? "This tunnel looks the same when turned" : "Turn this tunnel 180 degrees"} disabled={cantTurn} onClick={() => rotateCard(index)}>↻ 180°</button>
+                    <button className="small dworf-rotate" title={cantTurn ? "This tunnel looks the same when turned" : "Turn this tunnel 180 degrees"} disabled={cantTurn} onClick={() => rotateCard(index)}>↻ 180°</button>
                   </div>
                 );
               })}
+              {myTurn && snapshot.step === "turn" && (
+                <button
+                  type="button"
+                  className={`dworf-card dworf-pass-card ${mode?.kind === "pass" ? "selected" : ""}`}
+                  onClick={() => (mode?.kind === "pass"
+                    ? done()
+                    : me.tunnels.length === 0
+                      ? send({ type: "pass" })
+                      : choose({ kind: "pass" }))}
+                >
+                  <strong>Pass</strong>
+                  <span>{me.tunnels.length === 0 ? "Nothing to discard" : "Discard a tunnel"}</span>
+                </button>
+              )}
             </div>
-            <div className="sb-hand sb-hand-abilities">
+            <div className="dworf-hand dworf-hand-abilities">
               {me.abilities.map((card, index) => (
-                <button key={`a${index}`} className={`sb-card ability ${mode?.kind === "ability" && mode.card === card ? "selected" : ""}`} disabled={!myTurn || snapshot.step !== "turn" || mode?.kind === "pass"} title={ABILITY_HELP[card]} onClick={() => handClick("ability", index, card)}>
-                  <span className="sb-icon big">{ABILITY_ICON[card]}</span>
+                <button key={`a${index}`} className={`dworf-card ability ${mode?.kind === "ability" && mode.card === card ? "selected" : ""}`} disabled={!myTurn || snapshot.step !== "turn" || mode?.kind === "pass"} title={ABILITY_HELP[card]} onClick={() => handClick("ability", index, card)}>
+                  <span className="dworf-icon big">{ABILITY_ICON[card]}</span>
                   <span className="small">{snapshot.abilityNames[card]}</span>
                 </button>
               ))}
@@ -252,7 +344,6 @@ function Table({ snapshot, userId, isHost, send }: GameLobbyProps<SaboteurSnapsh
             </div>
             {myTurn && snapshot.step === "turn" && (
               <div className="row">
-                <button className={mode?.kind === "pass" ? "primary" : ""} onClick={() => (me.tunnels.length === 0 ? send({ type: "pass" }) : choose({ kind: "pass" }))}>{mode?.kind === "pass" ? "Cancel pass" : me.tunnels.length === 0 ? "Pass (nothing to discard)" : "Pass (discard a tunnel)"}</button>
                 {mode && mode.kind !== "pass" && <button onClick={done}>Cancel</button>}
               </div>
             )}
@@ -260,30 +351,46 @@ function Table({ snapshot, userId, isHost, send }: GameLobbyProps<SaboteurSnapsh
           </section>
         )}
 
-        <section className="card">
-          <h2>The Shop</h2>
-          {snapshot.row.length === 0 ? <p className="muted">None left.</p> : (
-            <div className="sb-hand">
-              {snapshot.row.map((card, index) => {
-                const giving = myTurn && snapshot.step === "gift";
-                return (
-                  <button key={index} className={`sb-card ability ${mode?.kind === "gift" && mode.card === card ? "selected" : ""}`} disabled={!giving} title={ABILITY_HELP[card]} onClick={() => choose({ kind: "gift", card })}>
-                    <span className="sb-icon big">{ABILITY_ICON[card]}</span>
-                    <span className="small">{snapshot.abilityNames[card]}</span>
-                  </button>
-                );
-              })}
-            </div>
-          )}
-          {myTurn && snapshot.step === "gift" && <div className="row"><button onClick={() => { send({ type: "skipgift" }); done(); }}>Don't give a card</button></div>}
-        </section>
+        <div className="dworf-shop-controls">
+          <section className="card dworf-shop">
+            <button
+              type="button"
+              className="dworf-shop-toggle"
+              aria-expanded={shopOpen}
+              onClick={() => setShopOpen(open => !open)}
+            >
+              <span>The Shop</span>
+              <span aria-hidden="true">{shopOpen ? "−" : "+"}</span>
+            </button>
+            {shopOpen && (
+              <>
+                {snapshot.row.length === 0 ? <p className="muted">None left.</p> : (
+                  <div className="dworf-hand">
+                    {snapshot.row.map((card, index) => {
+                      const giving = myTurn && snapshot.step === "gift";
+                      return (
+                        <button key={index} className={`dworf-card dworf-shop-card ability ${giving ? "shop-selectable" : ""} ${mode?.kind === "gift" && mode.card === card ? "selected" : ""}`} disabled={!giving} title={ABILITY_HELP[card]} onClick={() => choose({ kind: "gift", card })}>
+                          <span className="dworf-icon big">{ABILITY_ICON[card]}</span>
+                          <span className="small">{snapshot.abilityNames[card]}</span>
+                        </button>
+                      );
+                    })}
+                  </div>
+                )}
+                {myTurn && snapshot.step === "gift" && <div className="row"><button onClick={() => { send({ type: "skipgift" }); done(); }}>Don't give a card</button></div>}
+              </>
+            )}
+          </section>
+          {!isDisplay && <div className="dworf-secret-toggle-desktop">{renderSecretToggle()}</div>}
+        </div>
 
         <HistoryPanel title="Log">
-          <ul className="names sb-log">{[...snapshot.log].reverse().map((line, index) => <li key={index}>{line}</li>)}</ul>
+          <ul className="names dworf-log">{[...snapshot.log].reverse().map((line, index) => <li key={index}>{line}</li>)}</ul>
         </HistoryPanel>
 
         {isHost && playing && (
           <div className="row">
+            {snapshot.step === "turn" && <button onClick={() => send({ type: "forcepass" })}>Force pass {turnPlayer?.username ?? "current player"}</button>}
             {turnPlayer && !turnPlayer.connected && <button onClick={() => send({ type: "forceskip" })}>Skip {turnPlayer.username} (offline)</button>}
             <button onClick={() => send({ type: "abort" })}>Abort game</button>
           </div>
@@ -293,14 +400,15 @@ function Table({ snapshot, userId, isHost, send }: GameLobbyProps<SaboteurSnapsh
           : <p className="muted small">Waiting for {snapshot.host.name} to return to the lobby.</p>)}
       </div>
 
-      <aside className="cn-side sb-side">
+      <aside className="cn-side dworf-side">
         <h3>Dwarves</h3>
         <ul className="names">
           {snapshot.players.map(player => (
-            <li key={player.id} className={`sb-player ${player.id === snapshot.turnId && playing ? "turn" : ""} ${player.connected ? "" : "offline"}`}>
+            <li key={player.id} className={`dworf-player ${player.id === snapshot.turnId && playing ? "turn" : ""} ${player.connected ? "" : "offline"} ${player.dead ? "eliminated" : ""}`}>
               <Person id={player.id} name={player.username} size={22} />
-              <div className="sb-badges">
-                {player.role && <span className={`pill ${player.role}`}>{player.role === "saboteur" ? "saboteur" : "explorer"}</span>}
+              <div className="dworf-badges">
+                {player.role && <span className={`pill ${player.role}`}>{player.role === "cultist" ? "cultist" : "explorer"}</span>}
+                {player.dead && <span title="Eliminated">💀</span>}
                 {player.pickaxeBroken && <span title="Pickaxe broken">⛏️✖</span>}
                 {player.lanternBroken && <span title="Lantern broken">🏮✖</span>}
                 {playing && <span className="muted small" title="Tunnel and ability cards in hand">{player.tunnels}+{player.abilities}</span>}

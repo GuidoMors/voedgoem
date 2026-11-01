@@ -456,7 +456,7 @@ button:disabled {
   --hub-danger: #7e2837;
   --hub-danger-text: #fff;
 }
-.lobby-list li.hub-lobby[data-game="saboteur"] {
+.lobby-list li.hub-lobby[data-game="dworf"] {
   --hub-surface: #2a1d12;
   --hub-panel: #3b2a1a;
   --hub-edge: #1a1109;
@@ -737,8 +737,11 @@ th {
   margin-bottom: 8px;
   border: 2px solid #334155;
 }
-.cn-status.sb-last-turn .small {
+.cn-status.dworf-last-turn .small {
   display: block;
+}
+.cn-status.dworf-last-turn {
+  font-size: .9rem;
 }
 .cn-status.team-red {
   border-color: #dc2626;
@@ -1170,12 +1173,12 @@ th {
 .cn-card.hinted.c-neutral {
   border-color: #78716c;
 }
-/* Saboteur */
-.sb-board-wrap {
+/* Dworf */
+.dworf-board-wrap {
   overflow-x: auto;
   padding: 8px 0;
 }
-.sb-board {
+.dworf-board {
   display: grid;
   gap: 2px;
   width: max-content;
@@ -1184,7 +1187,7 @@ th {
   background: #2b2118;
   border-radius: 10px;
 }
-.sb-cell {
+.dworf-cell {
   position: relative;
   width: 52px;
   height: 52px;
@@ -1196,21 +1199,21 @@ th {
   border-radius: 6px;
   background: #3a2d21;
 }
-.sb-cell:disabled {
+.dworf-cell:disabled {
   cursor: default;
   opacity: 1;
 }
-.sb-cell.valid {
+.dworf-cell.valid {
   border: 2px solid #facc15;
   background: #5a4a1a;
   cursor: pointer;
 }
-.sb-cell.goal, .sb-cell.ladder {
+.dworf-cell.goal, .dworf-cell.ladder {
   border-style: solid;
   border-color: #8b6b3f;
   background: #4b3a28;
 }
-.sb-ghost {
+.dworf-ghost {
   position: absolute;
   inset: 0;
   display: flex;
@@ -1219,47 +1222,86 @@ th {
   opacity: 0.55;
   pointer-events: none;
 }
-.sb-piece {
+.dworf-piece {
   display: block;
 }
-.sb-icon {
+.dworf-icon {
   font-size: 1.6rem;
   line-height: 1;
 }
-.sb-icon.big {
+.dworf-icon.big {
   font-size: 2rem;
 }
-.sb-goal {
+.dworf-goal {
   display: flex;
   flex-direction: column;
   align-items: center;
   font-size: 1.5rem;
   line-height: 1;
 }
-.sb-goal small {
+.dworf-goal small {
   font-size: 0.55rem;
   opacity: 0.8;
 }
-.sb-gem {
+.dworf-goal img {
+  width: 28px;
+  height: 28px;
+  object-fit: contain;
+}
+.dworf-gem {
   position: absolute;
   font-size: 1.3rem;
   opacity: 0.9;
   pointer-events: none;
 }
-.sb-monster {
+.dworf-occupants {
   position: absolute;
-  font-size: 1.5rem;
-  z-index: 2;
+  z-index: 3;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1px;
   filter: drop-shadow(0 0 4px #000);
   pointer-events: none;
 }
-.sb-hand {
+.dworf-occupant-avatar,
+.dworf-occupant-monster {
+  flex: 0 0 auto;
+  line-height: 1;
+}
+.dworf-occupant-avatar .avatar {
+  display: block;
+}
+.dworf-occupant-avatar {
+  position: relative;
+}
+.dworf-avatar-skull {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 9.75px;
+  line-height: 1;
+}
+.dworf-occupant-monster {
+  font-size: 14px;
+}
+.dworf-occupant-monster img {
+  display: block;
+  width: 23.4px;
+  height: 23.4px;
+  object-fit: contain;
+  filter: drop-shadow(0 0 3px #f00) drop-shadow(0 0 5px rgba(255, 0, 0, .75));
+}
+.dworf-hand {
   display: flex;
   flex-wrap: wrap;
   gap: 8px;
   margin: 8px 0;
 }
-.sb-card {
+.dworf-card {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -1270,51 +1312,161 @@ th {
   border: 2px solid #334155;
   background: #1e2433;
 }
-.sb-card.ability {
+.dworf-pass-card {
+  box-sizing: border-box;
+  justify-content: center;
+  flex: 0 0 92px;
+  width: 92px;
+  height: 94px;
+  background: #ffd84a;
+  color: #241a05;
+  border-color: #1a1109;
+  box-shadow: inset 4px 4px 0 #fff0a3, inset -4px -4px 0 #947018;
+}
+.dworf-pass-card strong {
+  font-size: 1.05rem;
+}
+.dworf-pass-card span {
+  font-size: .68rem;
+  line-height: 1.1;
+  text-align: center;
+}
+.dworf-shop-toggle {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  padding: 8px 10px;
+  background: #5b4228;
+  color: #f3e3c3;
+  border: 2px solid #1a1109;
+  border-radius: 6px;
+  font: inherit;
+  font-weight: 700;
+  text-align: left;
+}
+.dworf-shop-toggle > span:last-child {
+  font-size: 1.4rem;
+  line-height: 1;
+}
+.dworf-card.ability {
   background: #2a2540;
 }
-.sb-card.selected {
+.dworf-card.selected {
   border-color: #facc15;
   box-shadow: 0 0 0 2px rgba(250, 204, 21, 0.4);
 }
-.sb-card.discardable:not(:disabled) {
+.dworf-card.discardable:not(:disabled) {
   border-color: #ef4444;
 }
-.sb-card:disabled {
+.dworf-card:disabled {
   cursor: default;
   opacity: 0.85;
 }
-.sb-role {
-  padding: 6px 10px;
+.dworf-role-banner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 5px;
+  padding: 14px 16px;
+  margin-bottom: 8px;
+  border: 3px solid;
+  border-radius: 8px;
+  text-align: center;
+}
+.dworf-board-controls {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  min-width: 0;
+}
+.dworf-shop-controls {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+}
+.dworf-shop {
+  flex: 1;
+  min-width: 0;
+}
+.dworf-secret-toggle-mobile {
+  display: none;
+}
+.dworf-secret-toggle-desktop {
+  flex: 0 0 72px;
+}
+.dworf-board-controls .dworf-board-wrap {
+  min-width: 0;
+  flex: 1;
+}
+.dworf-secret-toggle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 72px;
+  width: 72px;
+  height: 72px;
+  padding: 12px;
+  border: 4px solid #1a1109;
   border-radius: 6px;
-  font-size: 0.9rem;
+  background: #ffd84a;
+  color: #241a05;
+  box-shadow: inset -4px -4px 0 #947018, inset 4px 4px 0 #fff0a3;
+  cursor: pointer;
 }
-.sb-role.saboteur {
-  background: rgba(220, 38, 38, 0.2);
+.dworf-secret-toggle svg {
+  width: 44px;
+  height: 44px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
 }
-.sb-role.explorer {
-  background: rgba(37, 99, 235, 0.2);
+body[data-game="dworf"] .dworf-secret-toggle,
+body[data-game="dworf"] .dworf-secret-toggle:hover {
+  background: #ffd84a !important;
+  color: #241a05 !important;
+  border: 4px solid #1a1109 !important;
+  box-shadow: inset -4px -4px 0 #947018, inset 4px 4px 0 #fff0a3 !important;
 }
-.sb-side .sb-player {
+.dworf-role-banner strong {
+  font-size: 1.5rem;
+  line-height: 1.1;
+  letter-spacing: .08em;
+}
+.dworf-role-banner span {
+  font-size: .95rem;
+}
+.dworf-role-banner.cultist {
+  border-color: #b83a2f;
+  background: rgba(142, 45, 34, .35);
+}
+.dworf-role-banner.explorer {
+  border-color: #4383bd;
+  background: rgba(47, 93, 138, .35);
+}
+.dworf-side .dworf-player {
   display: grid;
   gap: 4px;
   padding: 6px;
   border-radius: 6px;
   border: 2px solid transparent;
 }
-.sb-side .sb-player.turn {
+.dworf-side .dworf-player.turn {
   border-color: #facc15;
 }
-.sb-badges {
+.dworf-badges {
   display: flex;
   flex-wrap: wrap;
   gap: 4px;
   align-items: center;
 }
-.sb-player button.small[disabled] {
+.dworf-player button.small[disabled] {
   background: #3a3a3a !important;
 }
-.pill.saboteur {
+.pill.cultist {
   background: #7f1d1d;
   color: #fff;
 }
@@ -1322,7 +1474,7 @@ th {
   background: #1e3a8a;
   color: #fff;
 }
-.sb-log {
+.dworf-log {
   max-height: 180px;
   overflow-y: auto;
   margin: 0;
@@ -1330,7 +1482,7 @@ th {
   list-style: none;
   font-size: 0.85rem;
 }
-.cn-side.sb-side {
+.cn-side.dworf-side {
   width: auto;
 }
 /* Display accounts */
@@ -1483,7 +1635,7 @@ th {
 }
 /* ===== Arcade neon theme =====
    Colours come from variables, so a game page can restyle itself by overriding them on a wrapper,
-   e.g. .shell[data-theme="saboteur"] { --neon: ...; --neon-rgb: ...; } */
+   e.g. .shell[data-theme="dworf"] { --neon: ...; --neon-rgb: ...; } */
 :root {
   --themegreen: rgb(94, 255, 0);
   --themesubgreen: rgb(67, 155, 17);
@@ -1833,7 +1985,7 @@ body[data-game="thirtyone"] ::selection {
   background: #ffd25a;
   color: #1a1000;
 }
-body[data-game="saboteur"] ::selection {
+body[data-game="dworf"] ::selection {
   background: #d6a868;
   color: #17100a;
 }
@@ -1946,7 +2098,7 @@ option {
   color: #fff;
 }
 /* Neon sign buttons */
-button:not([class*="cn-"]):not([class*="sb-"]):not(.swatch):not(.link):not(.ts-word):not(.blokus-cell),
+button:not([class*="cn-"]):not([class*="dworf-"]):not(.swatch):not(.link):not(.ts-word):not(.blokus-cell),
 .button {
   position: relative;
   background: transparent;
@@ -1958,7 +2110,7 @@ button:not([class*="cn-"]):not([class*="sb-"]):not(.swatch):not(.link):not(.ts-w
   box-shadow: 0 0 .7em rgba(var(--neon-rgb), .55), inset 0 0 .7em rgba(var(--neon-rgb), .3);
   transition: background .15s, color .15s, box-shadow .15s;
 }
-button:not([class*="cn-"]):not([class*="sb-"]):not(.swatch):not(.link):not(.ts-word):not(.blokus-cell):hover:not(:disabled),
+button:not([class*="cn-"]):not([class*="dworf-"]):not(.swatch):not(.link):not(.ts-word):not(.blokus-cell):hover:not(:disabled),
 .button:hover {
   background: var(--neon);
   color: var(--themeblack);
@@ -2002,10 +2154,10 @@ button:disabled {
   box-shadow: 0 0 10px #fff;
 }
 /* Game pieces get a light neon rim without changing their own colours */
-.cn-card, .sb-card, .ts-word {
+.cn-card, .dworf-card, .ts-word {
   box-shadow: 0 0 8px rgba(255,255,255,.12);
 }
-.cn-card:hover:not(:disabled), .sb-card:hover:not(:disabled), .ts-word:hover:not(:disabled) {
+.cn-card:hover:not(:disabled), .dworf-card:hover:not(:disabled), .ts-word:hover:not(:disabled) {
   box-shadow: 0 0 14px var(--neon);
 }
 .shell {
@@ -2290,8 +2442,8 @@ button.kick {
   line-height: 1.5;
   font-size: 14px;
 }
-/* ===== Saboteur: dirt and rock, blocky ===== */
-body[data-game="saboteur"] {
+/* ===== Dworf: dirt and rock, blocky ===== */
+body[data-game="dworf"] {
   --neon-rgb: 214, 168, 104;
   --neon-soft: rgb(236, 205, 150);
   --themeblack: #17100a;
@@ -2308,27 +2460,27 @@ body[data-game="saboteur"] {
     linear-gradient(90deg, rgba(0,0,0,.18) 25%, transparent 25% 75%, rgba(0,0,0,.12) 75%);
   background-size: 32px 32px, 32px 32px, 64px 64px;
 }
-body[data-game="saboteur"] * {
+body[data-game="dworf"] * {
   border-radius: 0 !important;
   text-shadow: none !important;
 }
-body[data-game="saboteur"] h1, body[data-game="saboteur"] h2, body[data-game="saboteur"] h3,
-body[data-game="saboteur"] .brand {
+body[data-game="dworf"] h1, body[data-game="dworf"] h2, body[data-game="dworf"] h3,
+body[data-game="dworf"] .brand {
   color: #f3e3c3;
   text-shadow: 2px 2px 0 #000 !important;
   letter-spacing: .04em;
 }
-body[data-game="saboteur"] .topbar {
+body[data-game="dworf"] .topbar {
   background: #3b2a1a;
   border-bottom: 4px solid #1a1109;
   box-shadow: inset 0 -4px 0 #5b4228;
 }
-body[data-game="saboteur"] .card, body[data-game="saboteur"] .team-box, body[data-game="saboteur"] .names li {
+body[data-game="dworf"] .card, body[data-game="dworf"] .team-box, body[data-game="dworf"] .names li {
   background: #3b2a1a;
   border: 4px solid #1a1109;
   box-shadow: inset 4px 4px 0 #5b4228, inset -4px -4px 0 #2a1d12;
 }
-body[data-game="saboteur"] .button, body[data-game="saboteur"] button {
+body[data-game="dworf"] .button, body[data-game="dworf"] button {
   border: 3px solid #111;
   background: #7d7d7d;
   color: #fff;
@@ -2337,49 +2489,49 @@ body[data-game="saboteur"] .button, body[data-game="saboteur"] button {
   font-size: 12px;
   text-transform: uppercase;
 }
-body[data-game="saboteur"] .button:hover, body[data-game="saboteur"] button:hover:not(:disabled) {
+body[data-game="dworf"] .button:hover, body[data-game="dworf"] button:hover:not(:disabled) {
   background: #8f9a6a;
   color: #fff;
   box-shadow: inset -3px -3px 0 #55603a, inset 3px 3px 0 #c4d09a;
 }
-body[data-game="saboteur"] .primary, body[data-game="saboteur"] button.primary:not([class*="cn-"]) {
+body[data-game="dworf"] .primary, body[data-game="dworf"] button.primary:not([class*="cn-"]) {
   background: #5d8a32 !important;
   color: #fff !important;
   box-shadow: inset -3px -3px 0 #3d5f1d, inset 3px 3px 0 #8fc15a !important;
 }
-body[data-game="saboteur"] .danger {
+body[data-game="dworf"] .danger {
   background: #8e2d22 !important;
   color: #fff !important;
   box-shadow: inset -3px -3px 0 #5e1b14, inset 3px 3px 0 #c9594b !important;
 }
-body[data-game="saboteur"] input, body[data-game="saboteur"] select, body[data-game="saboteur"] textarea {
+body[data-game="dworf"] input, body[data-game="dworf"] select, body[data-game="dworf"] textarea {
   background: #1a1109;
   border: 3px solid #5b4228;
   color: #efe4d0;
   box-shadow: inset 3px 3px 0 #000;
 }
-body[data-game="saboteur"] .pill {
+body[data-game="dworf"] .pill {
   background: #5b4228;
   border: 2px solid #1a1109;
   color: #f3e3c3;
 }
-body[data-game="saboteur"] .pill.saboteur {
+body[data-game="dworf"] .pill.cultist {
   background: #8e2d22;
 }
-body[data-game="saboteur"] .pill.explorer {
+body[data-game="dworf"] .pill.explorer {
   background: #2f5d8a;
 }
-body[data-game="saboteur"] th {
+body[data-game="dworf"] th {
   color: #f3e3c3;
 }
-body[data-game="saboteur"] .sb-board {
+body[data-game="dworf"] .dworf-board {
   background: #120b06;
   border: 4px solid #000;
   padding: 8px;
   gap: 0;
   box-shadow: inset 4px 4px 0 #000;
 }
-body[data-game="saboteur"] .sb-cell {
+body[data-game="dworf"] .dworf-cell {
   width: 56px;
   height: 56px;
   border: 2px solid #2a1d12;
@@ -2388,56 +2540,101 @@ body[data-game="saboteur"] .sb-cell {
   background-size: 8px 8px;
   image-rendering: pixelated;
 }
-body[data-game="saboteur"] .sb-cell.valid {
+body[data-game="dworf"] .dworf-cell.valid {
   border: 3px solid #ffd84a;
   background-color: #6f6a2a;
 }
-body[data-game="saboteur"] .sb-cell.goal, body[data-game="saboteur"] .sb-cell.ladder {
+body[data-game="dworf"] .dworf-cell.goal, body[data-game="dworf"] .dworf-cell.ladder {
   border: 3px solid #1a1109;
   background-color: #7d7d7d;
   background-image: linear-gradient(90deg, rgba(0,0,0,.18) 50%, transparent 50%), linear-gradient(rgba(0,0,0,.18) 50%, transparent 50%);
   background-size: 16px 16px;
 }
-body[data-game="saboteur"] .sb-card {
+body[data-game="dworf"] .dworf-card {
   background: #6b6b6b;
   border: 4px solid #1a1109;
   box-shadow: inset 4px 4px 0 #9a9a9a, inset -4px -4px 0 #444;
   color: #fff;
 }
-body[data-game="saboteur"] .sb-card.ability {
+body[data-game="dworf"] .dworf-card.dworf-pass-card,
+body[data-game="dworf"] .dworf-card.dworf-pass-card:hover {
+  background: #ffd84a !important;
+  color: #241a05 !important;
+  border-color: #1a1109 !important;
+  box-shadow: inset 4px 4px 0 #fff0a3, inset -4px -4px 0 #947018 !important;
+}
+body[data-game="dworf"] .dworf-shop-toggle {
+  background: #5b4228 !important;
+  color: #f3e3c3 !important;
+  border: 2px solid #1a1109 !important;
+  box-shadow: inset 3px 3px 0 #80603d, inset -3px -3px 0 #352313 !important;
+}
+body[data-game="dworf"] .dworf-shop-toggle:hover {
+  background: #6b4d30 !important;
+  color: #fff0d0 !important;
+}
+body[data-game="dworf"] .dworf-card.dworf-pass-card.selected {
+  border-color: #fff0a3 !important;
+  box-shadow: inset 4px 4px 0 #fff0a3, inset -4px -4px 0 #947018, 0 0 0 3px #ffd84a !important;
+}
+body[data-game="dworf"] .dworf-card.ability {
   background: #5b4a7a;
   box-shadow: inset 4px 4px 0 #8a76b0, inset -4px -4px 0 #3b2f52;
 }
-body[data-game="saboteur"] .sb-card.selected {
+body[data-game="dworf"] .dworf-card.dworf-shop-card.ability {
+  background: #d5aa32;
+  box-shadow: inset 4px 4px 0 #f3d66f, inset -4px -4px 0 #947018;
+  color: #241a05;
+}
+body[data-game="dworf"] .dworf-card.dworf-shop-card.shop-selectable {
+  border-color: #fff0a3;
+  box-shadow: inset 4px 4px 0 #f3d66f, inset -4px -4px 0 #947018, 0 0 10px 3px #ffd84a;
+}
+body[data-game="dworf"] .dworf-card.selected {
   border-color: #ffd84a;
 }
-body[data-game="saboteur"] .sb-card.discardable:not(:disabled) {
+body[data-game="dworf"] .dworf-card.discardable:not(:disabled) {
   border-color: #d64834;
 }
-body[data-game="saboteur"] .sb-side .sb-player {
+body[data-game="dworf"] .dworf-side .dworf-player {
   border: 3px solid transparent;
 }
-body[data-game="saboteur"] .sb-side .sb-player.turn {
+body[data-game="dworf"] .dworf-side .dworf-player.turn {
   border-color: #ffd84a;
   background: rgba(255,216,74,.1);
 }
-body[data-game="saboteur"] .sb-role.saboteur {
-  background: #8e2d22;
+body[data-game="dworf"] .dworf-side .dworf-player.eliminated {
+  opacity: .65;
 }
-body[data-game="saboteur"] .sb-role.explorer {
-  background: #2f5d8a;
+body[data-game="dworf"] .dworf-role-banner.cultist {
+  background: rgba(142, 45, 34, .35);
 }
-body[data-game="saboteur"] .sb-icon, body[data-game="saboteur"] .sb-gem, body[data-game="saboteur"] .sb-monster, body[data-game="saboteur"] .sb-goal {
+body[data-game="dworf"] .dworf-role-banner.explorer {
+  background: rgba(47, 93, 138, .35);
+}
+body[data-game="dworf"] .cn-status.dworf-current-turn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 8px;
+  background: #7d7d7d;
+  color: #fff;
+  border: 3px solid #111;
+  border-radius: 4px;
+  box-shadow: inset -3px -3px 0 #4a4a4a, inset 3px 3px 0 #b5b5b5;
+}
+body[data-game="dworf"] .dworf-icon, body[data-game="dworf"] .dworf-gem, body[data-game="dworf"] .dworf-occupant-monster, body[data-game="dworf"] .dworf-goal {
   image-rendering: pixelated;
   filter: contrast(1.1) saturate(1.2);
 }
-body[data-game="saboteur"] .sb-piece {
+body[data-game="dworf"] .dworf-piece {
   image-rendering: pixelated;
   shape-rendering: crispEdges;
 }
-/* Saboteur overrides: beat the neon button and nav rules */
-body[data-game="saboteur"] button:not(.swatch):not(.link):not(.sb-card):not(.sb-cell),
-body[data-game="saboteur"] .button {
+/* Dworf overrides: beat the neon button and nav rules */
+body[data-game="dworf"] button:not(.swatch):not(.link):not(.dworf-card):not(.dworf-cell):not(.dworf-secret-toggle):not(.dworf-shop-toggle),
+body[data-game="dworf"] .button {
   background: #7d7d7d !important;
   color: #fff !important;
   border: 3px solid #111 !important;
@@ -2445,32 +2642,32 @@ body[data-game="saboteur"] .button {
   filter: none;
   padding: 8px 14px;
 }
-body[data-game="saboteur"] button:not(.swatch):not(.link):not(.sb-card):not(.sb-cell):hover:not(:disabled),
-body[data-game="saboteur"] .button:hover {
+body[data-game="dworf"] button:not(.swatch):not(.link):not(.dworf-card):not(.dworf-cell):not(.dworf-secret-toggle):not(.dworf-shop-toggle):hover:not(:disabled),
+body[data-game="dworf"] .button:hover {
   background: #8f9a6a !important;
   color: #fff !important;
   box-shadow: inset -3px -3px 0 #55603a, inset 3px 3px 0 #c4d09a !important;
 }
-body[data-game="saboteur"] button:not(.cn-card):not(.sb-card):not(.sb-cell):not(.ts-word):not(.swatch):disabled {
+body[data-game="dworf"] button:not(.cn-card):not(.dworf-card):not(.dworf-cell):not(.ts-word):not(.swatch):disabled {
   background: #4a4238 !important;
   color: #8a7d68 !important;
   box-shadow: inset 3px 3px 0 #2a1d12 !important;
   opacity: 1;
 }
-body[data-game="saboteur"] button.primary:not(:disabled) {
+body[data-game="dworf"] button.primary:not(:disabled) {
   background: #5d8a32 !important;
   box-shadow: inset -3px -3px 0 #3d5f1d, inset 3px 3px 0 #8fc15a !important;
 }
-body[data-game="saboteur"] button.danger:not(:disabled), body[data-game="saboteur"] .danger {
+body[data-game="dworf"] button.danger:not(:disabled), body[data-game="dworf"] .danger {
   background: #8e2d22 !important;
   border-color: #111 !important;
   color: #fff !important;
   box-shadow: inset -3px -3px 0 #5e1b14, inset 3px 3px 0 #c9594b !important;
 }
-body[data-game="saboteur"] .link {
+body[data-game="dworf"] .link {
   color: #ecd596;
 }
-body[data-game="saboteur"] .topbar nav a, body[data-game="saboteur"] .topbar nav button.navtab {
+body[data-game="dworf"] .topbar nav a, body[data-game="dworf"] .topbar nav button.navtab {
   background: #7d7d7d !important;
   color: #fff !important;
   border: 3px solid #111 !important;
@@ -2480,15 +2677,15 @@ body[data-game="saboteur"] .topbar nav a, body[data-game="saboteur"] .topbar nav
   font-size: 12px;
   text-transform: uppercase;
 }
-body[data-game="saboteur"] .topbar nav a:hover, body[data-game="saboteur"] .topbar nav button.navtab:hover {
+body[data-game="dworf"] .topbar nav a:hover, body[data-game="dworf"] .topbar nav button.navtab:hover {
   background: #8f9a6a !important;
   box-shadow: inset -3px -3px 0 #55603a, inset 3px 3px 0 #c4d09a !important;
 }
-body[data-game="saboteur"] .topbar nav a.active, body[data-game="saboteur"] .topbar nav button.navtab.active {
+body[data-game="dworf"] .topbar nav a.active, body[data-game="dworf"] .topbar nav button.navtab.active {
   background: #5d8a32 !important;
   box-shadow: inset -3px -3px 0 #3d5f1d, inset 3px 3px 0 #8fc15a !important;
 }
-body[data-game="saboteur"] .topbar {
+body[data-game="dworf"] .topbar {
   box-shadow: inset 0 -4px 0 #5b4228 !important;
   border-bottom-color: #1a1109 !important;
 }
@@ -2588,7 +2785,7 @@ body[data-game="codenames"] button.danger, body[data-game="codenames"] .danger {
   color: #fff !important;
   border-color: #5a1010 !important;
 }
-body[data-game="codenames"] button:not(.cn-card):not(.sb-card):not(.sb-cell):not(.ts-word):not(.swatch):disabled {
+body[data-game="codenames"] button:not(.cn-card):not(.dworf-card):not(.dworf-cell):not(.ts-word):not(.swatch):disabled {
   opacity: .5;
 }
 body[data-game="codenames"] input, body[data-game="codenames"] select, body[data-game="codenames"] textarea {
@@ -2816,7 +3013,7 @@ body[data-game="thirtyone"] button.danger, body[data-game="thirtyone"] .danger {
   border-color: #ff9a9a !important;
   color: #fff !important;
 }
-body[data-game="thirtyone"] button:not(.cn-card):not(.sb-card):not(.sb-cell):not(.ts-word):not(.swatch):disabled {
+body[data-game="thirtyone"] button:not(.cn-card):not(.dworf-card):not(.dworf-cell):not(.ts-word):not(.swatch):disabled {
   opacity: .45;
 }
 body[data-game="thirtyone"] input, body[data-game="thirtyone"] select, body[data-game="thirtyone"] textarea {
@@ -2897,34 +3094,35 @@ body[data-game="thirtyone"] .ts-history li {
 body[data-game="thirtyone"] .ts-words-inline .yes {
   color: #7dff9a;
 }
-/* Saboteur hand: tunnels left, abilities right */
-.sb-hand-split {
+/* Dworf hand: tunnels left, abilities right */
+.dworf-hand-split {
   display: flex;
   justify-content: space-between;
   gap: 16px;
   flex-wrap: wrap;
   align-items: flex-start;
 }
-.sb-hand-split .sb-hand {
+.dworf-hand-split .dworf-hand {
   margin: 8px 0;
 }
-.sb-hand-abilities {
+.dworf-hand-abilities {
   justify-content: flex-end;
   margin-left: auto;
 }
 /* Ladder start tile: four-way tunnel with the ladder on top */
-.sb-cell.ladder .sb-ladder-icon {
+.dworf-cell.ladder .dworf-ladder-icon {
   position: absolute;
-  font-size: 1.3rem;
+  width: 23px;
+  height: 29px;
   pointer-events: none;
   filter: drop-shadow(0 0 2px #000);
 }
-body[data-game="saboteur"] .sb-cell.ladder {
+body[data-game="dworf"] .dworf-cell.ladder {
   background: #5a3d24;
   border: 2px solid #2a1d12;
 }
 /* Where each monster will crawl next */
-.sb-arrow {
+.dworf-arrow {
   position: absolute;
   inset: 0;
   width: 100%;
@@ -2933,12 +3131,12 @@ body[data-game="saboteur"] .sb-cell.ladder {
   pointer-events: none;
   filter: drop-shadow(0 0 2px #000);
 }
-.sb-cell.monster-target {
+.dworf-cell.monster-target {
   outline: 3px dashed #ff3b30;
   outline-offset: -4px;
-  animation: sb-target-pulse 1s steps(2) infinite;
+  animation: dworf-target-pulse 1s steps(2) infinite;
 }
-@keyframes sb-target-pulse {
+@keyframes dworf-target-pulse {
   50% {
     outline-color: #ffd84a;
   }
@@ -2953,7 +3151,7 @@ button.primary:disabled {
   cursor: not-allowed;
   filter: grayscale(1);
 }
-body[data-game="saboteur"] button.primary:disabled {
+body[data-game="dworf"] button.primary:disabled {
   background: #4a4238 !important;
   color: #8a7d68 !important;
   border-color: #111 !important;
@@ -2962,34 +3160,34 @@ body[data-game="saboteur"] button.primary:disabled {
   filter: none;
 }
 /* Tunnel card with its own turn button */
-.sb-card-wrap {
+.dworf-card-wrap {
   display: flex;
   flex-direction: column;
   gap: 4px;
   align-items: stretch;
 }
-.sb-card-wrap .sb-rotate {
+.dworf-card-wrap .dworf-rotate {
   padding: 4px 6px;
   font-size: 12px;
 }
 /* Highlights must not change the cell size, or neighbouring cells cover the right/bottom edge */
-.sb-cell {
+.dworf-cell {
   box-sizing: border-box;
 }
-.sb-cell.valid, body[data-game="saboteur"] .sb-cell.valid {
+.dworf-cell.valid, body[data-game="dworf"] .dworf-cell.valid {
   border-width: 2px;
   box-shadow: inset 0 0 0 3px #ffd84a;
   z-index: 1;
 }
-body[data-game="saboteur"] .sb-cell.valid {
+body[data-game="dworf"] .dworf-cell.valid {
   border-color: #ffd84a;
 }
-.sb-cell.monster-target {
+.dworf-cell.monster-target {
   outline-offset: -3px;
   z-index: 1;
 }
 /* Disabled buttons: darker and flat, winning over every theme's button rules */
-button:not(.cn-card):not(.sb-card):not(.sb-cell):not(.ts-word):not(.swatch):disabled:disabled:disabled {
+button:not(.cn-card):not(.dworf-card):not(.dworf-cell):not(.ts-word):not(.swatch):disabled:disabled:disabled {
   filter: brightness(.45) grayscale(.6) !important;
   cursor: not-allowed !important;
   box-shadow: none !important;
@@ -2998,69 +3196,69 @@ button:not(.cn-card):not(.sb-card):not(.sb-cell):not(.ts-word):not(.swatch):disa
 body[data-game] button.primary:disabled:disabled:disabled {
   opacity: 1 !important;
 }
-body[data-game="saboteur"] button:not(.cn-card):not(.sb-card):not(.sb-cell):not(.ts-word):not(.swatch):disabled:disabled:disabled {
+body[data-game="dworf"] button:not(.cn-card):not(.dworf-card):not(.dworf-cell):not(.ts-word):not(.swatch):disabled:disabled:disabled {
   background: #3a342c !important;
   color: #8a7d68 !important;
   border-color: #111 !important;
   box-shadow: inset 3px 3px 0 #1f1a14 !important;
   filter: none !important;
 }
-body[data-game="codenames"] button:not(.cn-card):not(.sb-card):not(.sb-cell):not(.ts-word):not(.swatch):disabled:disabled:disabled {
+body[data-game="codenames"] button:not(.cn-card):not(.dworf-card):not(.dworf-cell):not(.ts-word):not(.swatch):disabled:disabled:disabled {
   background: #d9ceb2 !important;
   color: #8a7d68 !important;
   border-color: #b8a97f !important;
 }
-body[data-game="thirtyone"] button:not(.cn-card):not(.sb-card):not(.sb-cell):not(.ts-word):not(.swatch):disabled:disabled:disabled {
+body[data-game="thirtyone"] button:not(.cn-card):not(.dworf-card):not(.dworf-cell):not(.ts-word):not(.swatch):disabled:disabled:disabled {
   background: #151b44 !important;
   color: #7c86b8 !important;
   border-color: #6b5a2c !important;
 }
 /* Arrow sits on the border between the two tiles; monsters stay above it */
-.sb-arrow {
+.dworf-arrow {
   z-index: 5;
 }
-.sb-monster {
+.dworf-occupants {
   z-index: 6;
 }
 /* Active dwarf: a lighter brown instead of a see-through highlight */
-body[data-game="saboteur"] .sb-side .sb-player.turn {
+body[data-game="dworf"] .dworf-side .dworf-player.turn {
   background: #6b4d30 !important;
   border-color: #ffd84a;
   box-shadow: inset 4px 4px 0 #8a6842, inset -4px -4px 0 #4a341f;
 }
 /* Disabled buttons win over every theme rule (those use several :not() selectors) */
-html body button.primary:not(.cn-card):not(.sb-card):not(.sb-cell):not(.ts-word):not(.swatch):disabled:disabled:disabled:disabled:disabled:disabled:disabled, html body button:not(.cn-card):not(.sb-card):not(.sb-cell):not(.ts-word):not(.swatch):disabled:disabled:disabled:disabled:disabled:disabled:disabled, html body .button[disabled] {
+html body button.primary:not(.cn-card):not(.dworf-card):not(.dworf-cell):not(.ts-word):not(.swatch):disabled:disabled:disabled:disabled:disabled:disabled:disabled, html body button:not(.cn-card):not(.dworf-card):not(.dworf-cell):not(.ts-word):not(.swatch):disabled:disabled:disabled:disabled:disabled:disabled:disabled, html body .button[disabled] {
   filter: brightness(.5) !important;
   cursor: not-allowed !important;
   box-shadow: none !important;
   opacity: 1 !important;
   transform: none !important;
 }
-html body[data-game="saboteur"] button:not(.cn-card):not(.sb-card):not(.sb-cell):not(.ts-word):not(.swatch):disabled:disabled:disabled:disabled:disabled:disabled:disabled {
+html body[data-game="dworf"] button:not(.cn-card):not(.dworf-card):not(.dworf-cell):not(.ts-word):not(.swatch):disabled:disabled:disabled:disabled:disabled:disabled:disabled {
   background: #2e2a24 !important;
   color: #7d705c !important;
   border-color: #0d0d0d !important;
   box-shadow: inset 3px 3px 0 #17130e !important;
   filter: none !important;
 }
-html body[data-game="codenames"] button:not(.cn-card):not(.sb-card):not(.sb-cell):not(.ts-word):not(.swatch):disabled:disabled:disabled:disabled:disabled:disabled:disabled {
+html body[data-game="codenames"] button:not(.cn-card):not(.dworf-card):not(.dworf-cell):not(.ts-word):not(.swatch):disabled:disabled:disabled:disabled:disabled:disabled:disabled {
   background: #cfc4a6 !important;
   color: #7d705c !important;
   border-color: #b8a97f !important;
   filter: none !important;
 }
-html body[data-game="thirtyone"] button:not(.cn-card):not(.sb-card):not(.sb-cell):not(.ts-word):not(.swatch):disabled:disabled:disabled:disabled:disabled:disabled:disabled {
+html body[data-game="thirtyone"] button:not(.cn-card):not(.dworf-card):not(.dworf-cell):not(.ts-word):not(.swatch):disabled:disabled:disabled:disabled:disabled:disabled:disabled {
   background: #0c1033 !important;
   color: #6c76a8 !important;
   border-color: #4f4222 !important;
   filter: none !important;
 }
 /* Current dwarf above the map, phones only */
-.sb-turn-mobile {
+.dworf-turn-mobile {
   display: none;
 }
 @media (max-width: 800px) {
-  .sb-turn-mobile {
+  .dworf-turn-mobile {
     display: grid;
     gap: 4px;
     padding: 6px;
@@ -3068,7 +3266,7 @@ html body[data-game="thirtyone"] button:not(.cn-card):not(.sb-card):not(.sb-cell
     border: 2px solid #facc15;
     background: rgba(250, 204, 21, .12);
   }
-  body[data-game="saboteur"] .sb-turn-mobile {
+  body[data-game="dworf"] .dworf-turn-mobile {
     background: #6b4d30;
     border: 3px solid #ffd84a;
     box-shadow: inset 4px 4px 0 #8a6842, inset -4px -4px 0 #4a341f;
@@ -3084,7 +3282,7 @@ html body[data-game="thirtyone"] button:not(.cn-card):not(.sb-card):not(.sb-cell
   flex: 1;
   font-size: 1.05rem;
 }
-.modal.wide .sb-log {
+.modal.wide .dworf-log {
   max-height: none;
   font-size: 1rem;
 }
@@ -3092,6 +3290,505 @@ html body[data-game="thirtyone"] button:not(.cn-card):not(.sb-card):not(.sb-cell
   .modal.wide {
     width: 100%;
     height: calc(100vh - 24px);
+  }
+}
+
+/* Werewolves lobby and table */
+.werewolves-game {
+  display: grid;
+  gap: 16px;
+}
+.werewolves-heading,
+.werewolves-game-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+.werewolves-heading h2,
+.werewolves-game-header h2 {
+  margin: 0;
+}
+.werewolves-heading .eyebrow,
+.werewolves-game-header .eyebrow {
+  margin: 0 0 4px;
+  text-transform: uppercase;
+  letter-spacing: .12em;
+  font-size: .75rem;
+  color: var(--muted);
+}
+.werewolves-lobby-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(260px, .75fr);
+  gap: 16px;
+  align-items: start;
+}
+.werewolves-lobby-grid > .card,
+.werewolves-game .host-controls-panel {
+  min-width: 0;
+}
+.werewolves-gm-seat,
+.werewolves-lobby-seats li,
+.werewolves-order li,
+.werewolves-player-list li,
+.werewolves-results li {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  min-width: 0;
+  padding: 8px;
+  border-bottom: 1px solid rgba(255,255,255,.12);
+}
+.werewolves-gm-seat {
+  margin-bottom: 10px;
+  background: rgba(130, 80, 190, .15);
+  border-radius: 6px;
+}
+.werewolves-gm-seat > strong {
+  margin-right: auto;
+}
+.werewolves-lobby-seats,
+.werewolves-order ol,
+.werewolves-player-list,
+.werewolves-results ul {
+  list-style: none;
+  padding: 0;
+  margin: 8px 0 14px;
+}
+.werewolves-lobby-seats li > .person,
+.werewolves-order li > .person,
+.werewolves-player-list li > .person,
+.werewolves-results li > .person {
+  flex: 1;
+  min-width: 0;
+}
+.werewolves-seat-number {
+  display: inline-grid;
+  place-items: center;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: rgba(255,255,255,.12);
+  font-weight: 700;
+}
+.werewolves-admin-gm,
+.werewolves-order,
+.werewolves-settings {
+  display: grid;
+  gap: 10px;
+  margin-top: 16px;
+}
+.werewolves-admin-gm label,
+.werewolves-settings label:not(.werewolves-check) {
+  display: grid;
+  gap: 6px;
+}
+.werewolves-settings {
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  align-items: end;
+}
+.werewolves-settings small {
+  color: var(--muted);
+}
+.werewolves-check {
+  display: flex !important;
+  align-items: center;
+  gap: 8px;
+}
+.werewolves-check input {
+  width: auto;
+}
+.werewolves-role-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
+  gap: 8px;
+}
+.werewolves-role-card {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  min-height: 66px;
+  padding: 8px;
+  text-align: left;
+  border: 2px solid rgba(255,255,255,.18);
+  border-radius: 8px;
+  background: rgba(255,255,255,.05);
+  color: inherit;
+}
+button.werewolves-role-card {
+  cursor: pointer;
+}
+.werewolves-role-card.selected {
+  border-color: #b38aff;
+  background: rgba(124, 58, 237, .2);
+  box-shadow: 0 0 0 2px rgba(179,138,255,.2);
+}
+.werewolves-role-card > span {
+  display: grid;
+  gap: 3px;
+}
+.werewolves-role-card small {
+  text-transform: capitalize;
+  color: var(--muted);
+}
+.werewolves-role-icon {
+  object-fit: contain;
+  flex: 0 0 auto;
+}
+.werewolves-rules {
+  display: grid;
+  gap: 12px;
+}
+.werewolves-rules h2 {
+  margin: 8px 0 0;
+}
+.werewolves-rules ul {
+  padding-left: 22px;
+}
+.werewolves-rule-role {
+  padding: 10px;
+  border: 1px solid rgba(255,255,255,.12);
+  border-radius: 8px;
+}
+.werewolves-rule-role .werewolves-role-card {
+  border: 0;
+  padding: 0;
+  background: transparent;
+}
+.werewolves-rule-role p {
+  margin: 8px 0 0;
+}
+.werewolves-game-header .row {
+  justify-content: flex-end;
+}
+.werewolves-secret-button[aria-pressed="true"] {
+  background: #eab308;
+  color: #201600;
+}
+.werewolves-private-role {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 14px;
+  border: 2px solid rgba(255,255,255,.2);
+  border-radius: 10px;
+  background: rgba(255,255,255,.06);
+}
+.werewolves-private-role strong {
+  font-size: 1.35rem;
+}
+.werewolves-private-role p {
+  margin: 4px 0;
+}
+.werewolves-private-role.werewolf {
+  border-color: #dc2626;
+  background: rgba(127, 29, 29, .24);
+}
+.werewolves-private-role.villager {
+  border-color: #60a5fa;
+  background: rgba(30, 58, 138, .22);
+}
+.werewolves-private-role.neutral {
+  border-color: #c084fc;
+  background: rgba(88, 28, 135, .2);
+}
+.werewolves-gm-banner,
+.werewolves-public-step,
+.werewolves-status {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px;
+  border: 1px solid rgba(255,255,255,.18);
+  border-radius: 8px;
+  background: rgba(255,255,255,.06);
+}
+.werewolves-public-step strong {
+  flex: 1;
+}
+.werewolves-circle-wrap {
+  width: min(100%, 840px);
+  margin: 0 auto;
+  padding: 10px;
+  overflow: hidden;
+}
+.werewolves-circle {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 1.45;
+  min-height: 340px;
+  border: 3px solid #6b4a2f;
+  border-radius: 50%;
+  background: radial-gradient(ellipse, rgba(120,76,45,.22) 0 40%, rgba(30,22,18,.1) 41% 100%);
+}
+.werewolves-circle::before {
+  content: "";
+  position: absolute;
+  inset: 14%;
+  border: 2px dashed rgba(220,190,150,.25);
+  border-radius: 50%;
+}
+.werewolves-circle-table {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  display: grid;
+  gap: 5px;
+  transform: translate(-50%, -50%);
+  text-align: center;
+  color: var(--muted);
+}
+.werewolves-circle-seat {
+  position: absolute;
+  display: grid;
+  justify-items: center;
+  gap: 3px;
+  width: 120px;
+  max-width: 28%;
+  padding: 6px;
+  transform: translate(-50%, -50%);
+  border: 2px solid transparent;
+  border-radius: 8px;
+  background: rgba(10,10,20,.85);
+  text-align: center;
+  overflow-wrap: anywhere;
+}
+.werewolves-circle-seat.self {
+  border-color: #c084fc;
+}
+.werewolves-circle-seat.mayor {
+  box-shadow: 0 0 0 1px #facc15;
+}
+.werewolves-circle-seat.spared {
+  border-color: #4ade80;
+  background: rgba(20, 70, 42, .94);
+}
+.werewolves-circle-seat.current-voter {
+  border-color: #facc15;
+  box-shadow: 0 0 0 3px rgba(250,204,21,.28);
+}
+.werewolves-circle-seat.lynch-target {
+  border-color: #f87171;
+  background: rgba(100, 25, 30, .96);
+  box-shadow: 0 0 0 3px rgba(248,113,113,.3);
+}
+.werewolves-voting-mark {
+  padding: 1px 6px;
+  border-radius: 999px;
+  background: #facc15;
+  color: #281d00;
+  font-size: .68rem;
+  font-weight: 700;
+}
+.werewolves-spared-mark {
+  padding: 1px 6px;
+  border-radius: 999px;
+  background: #4ade80;
+  color: #10251a;
+  font-size: .68rem;
+  font-weight: 700;
+}
+.werewolves-lynch-target-mark {
+  padding: 1px 6px;
+  border-radius: 999px;
+  background: #f87171;
+  color: #2b0909;
+  font-size: .68rem;
+  font-weight: 700;
+}
+.werewolves-lynch-announcement {
+  padding: 12px;
+  border: 1px solid #f87171;
+  border-radius: 8px;
+  background: rgba(127, 29, 29, .28);
+  font-size: 1.1rem;
+  font-weight: 700;
+}
+.werewolves-circle-seat.dead {
+  opacity: .58;
+  filter: grayscale(.85);
+}
+.werewolves-dead-mark {
+  position: absolute;
+  top: -7px;
+  right: 2px;
+  font-size: 1.6rem;
+  color: #f87171;
+}
+.werewolves-seat-role {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  font-size: .7rem;
+}
+.werewolves-player-action,
+.werewolves-gm-seats,
+.werewolves-events,
+.werewolves-results,
+.werewolves-private-results {
+  min-width: 0;
+}
+.werewolves-action-form {
+  display: grid;
+  gap: 10px;
+  margin-top: 10px;
+}
+.werewolves-action-form label {
+  display: grid;
+  gap: 5px;
+}
+.werewolves-action-form label.werewolves-check {
+  display: flex;
+}
+.werewolves-action-form input,
+.werewolves-action-form select {
+  max-width: 100%;
+}
+.werewolves-step-head {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+.werewolves-step-prompt {
+  font-size: 1.1rem;
+}
+.werewolves-submissions {
+  padding: 10px;
+  margin: 10px 0;
+  border: 1px solid rgba(255,255,255,.14);
+  border-radius: 8px;
+}
+.werewolves-submissions p {
+  margin: 6px 0;
+  overflow-wrap: anywhere;
+}
+.werewolves-gm-entry {
+  display: grid;
+  gap: 8px;
+  margin: 10px 0;
+}
+.werewolves-step-list {
+  margin-top: 14px;
+}
+.werewolves-step-list ol {
+  padding-left: 24px;
+}
+.werewolves-player-list li.dead {
+  opacity: .62;
+  text-decoration: line-through;
+}
+.werewolves-player-list li.silenced {
+  border-left: 3px solid #facc15;
+}
+.werewolves-events ol {
+  display: grid;
+  gap: 6px;
+  padding-left: 24px;
+}
+.werewolves-results li.winner {
+  border-left: 3px solid #4ade80;
+  background: rgba(34,197,94,.12);
+}
+@media (max-width: 760px) {
+  .werewolves-lobby-grid {
+    grid-template-columns: 1fr;
+  }
+  .werewolves-heading,
+  .werewolves-game-header {
+    align-items: flex-start;
+  }
+  .werewolves-game-header {
+    flex-direction: column;
+  }
+  .werewolves-game-header .row {
+    justify-content: flex-start;
+  }
+  .werewolves-circle-wrap {
+    padding: 0;
+  }
+  .werewolves-circle {
+    min-height: 300px;
+  }
+  .werewolves-circle-seat {
+    width: 96px;
+    padding: 4px;
+    font-size: .8rem;
+  }
+  .werewolves-seat-role {
+    font-size: .6rem;
+  }
+}
+@media (max-width: 700px) {
+  .dworf-board-controls {
+    flex-direction: column-reverse;
+    width: 100%;
+  }
+  .dworf-board-controls .dworf-board-wrap {
+    width: 100%;
+    max-width: 100%;
+    overflow-x: auto;
+    overflow-y: hidden;
+    -webkit-overflow-scrolling: touch;
+    touch-action: pan-x pan-y;
+  }
+  .dworf-board-controls .dworf-board {
+    width: max-content;
+    margin: 0;
+  }
+  .dworf-board-controls .dworf-secret-toggle {
+    align-self: center;
+  }
+  .dworf-shop-controls {
+    display: block;
+  }
+  .dworf-secret-toggle-mobile {
+    display: block;
+    align-self: center;
+  }
+  .dworf-secret-toggle-desktop {
+    display: none;
+  }
+  .dworf-hand-split {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 8px;
+  }
+  .dworf-hand-split .dworf-hand,
+  .dworf-hand {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 4px;
+    width: 100%;
+  }
+  .dworf-hand-abilities {
+    margin-left: 0;
+  }
+  .dworf-card-wrap {
+    min-width: 0;
+  }
+  .dworf-hand .dworf-card {
+    box-sizing: border-box;
+    width: 100%;
+    min-width: 0;
+    padding: 6px 2px;
+    font-size: .75rem;
+  }
+  .dworf-hand .dworf-card.dworf-pass-card {
+    grid-column: 2;
+    flex: initial;
+    height: 88px;
+  }
+  .dworf-hand .dworf-card .dworf-piece {
+    width: 40px;
+    height: 40px;
+  }
+  .dworf-hand .dworf-card .small {
+    max-width: 100%;
+    font-size: .65rem;
+    line-height: 1.15;
+    overflow-wrap: anywhere;
+    text-align: center;
   }
 }
 /* Spymaster key and hints must stay visible in the card theme */
@@ -3130,7 +3827,7 @@ body[data-game="codenames"] .cn-card.hint-received.hint-blue, body[data-game="co
   border: 3px dashed #1d4ed8;
 }
 /* Game pieces that are disabled only because you can't click them keep their full colour */
-html body .cn-card:disabled, html body .sb-card:disabled, html body .sb-cell:disabled, html body .ts-word:disabled {
+html body .cn-card:disabled, html body .dworf-card:disabled, html body .dworf-cell:disabled, html body .ts-word:disabled {
   filter: none;
   opacity: 1;
 }
@@ -3273,7 +3970,7 @@ html body .cn-card:disabled, html body .sb-card:disabled, html body .sb-cell:dis
   --font-big: 'Cinzel', Georgia, serif;
   --font-small: 'Raleway', system-ui, sans-serif;
 }
-.modal.stats-modal[data-game="saboteur"] {
+.modal.stats-modal[data-game="dworf"] {
   --stats-edge: #1a1109;
   --stats-glow: rgba(0,0,0,.4);
   --stats-surface: #2a1d12;
@@ -3284,19 +3981,19 @@ html body .cn-card:disabled, html body .sb-card:disabled, html body .sb-cell:dis
   --font-big: 'Silkscreen', 'Courier New', monospace;
   --font-small: 'VT323', 'Courier New', monospace;
 }
-.modal.stats-modal[data-game="saboteur"] .stats-page .card {
+.modal.stats-modal[data-game="dworf"] .stats-page .card {
   border: 4px solid #1a1109 !important;
   box-shadow: inset 4px 4px 0 #5b4228, inset -4px -4px 0 #2a1d12 !important;
 }
-.modal.stats-modal[data-game="saboteur"] .stats-page .stat {
+.modal.stats-modal[data-game="dworf"] .stats-page .stat {
   border: 3px solid #1a1109;
   box-shadow: inset 3px 3px 0 #5b4228, inset -3px -3px 0 #2a1d12;
 }
-.modal.stats-modal[data-game="saboteur"],
-.modal.stats-modal[data-game="saboteur"] .stats-page .card,
-.modal.stats-modal[data-game="saboteur"] .stats-page .stat,
-.modal.stats-modal[data-game="saboteur"] .stats-page .stats-tab,
-.modal.stats-modal[data-game="saboteur"] .stats-page .pill {
+.modal.stats-modal[data-game="dworf"],
+.modal.stats-modal[data-game="dworf"] .stats-page .card,
+.modal.stats-modal[data-game="dworf"] .stats-page .stat,
+.modal.stats-modal[data-game="dworf"] .stats-page .stats-tab,
+.modal.stats-modal[data-game="dworf"] .stats-page .pill {
   border-radius: 0 !important;
 }
 /* Keep every statistics-modal control and text element inside the selected game's palette. */
@@ -3417,13 +4114,13 @@ html body .cn-card:disabled, html body .sb-card:disabled, html body .sb-cell:dis
 .modal.stats-modal[data-game="thirtyone"] .stats-page .stats-player-tools input {
   border-radius: 30px !important;
 }
-.modal.stats-modal[data-game="saboteur"] .stats-page .stats-player-tools button,
-.modal.stats-modal[data-game="saboteur"] .stats-page .stats-pagination button,
-.modal.stats-modal[data-game="saboteur"] .stats-page .stats-player-tools input {
+.modal.stats-modal[data-game="dworf"] .stats-page .stats-player-tools button,
+.modal.stats-modal[data-game="dworf"] .stats-page .stats-pagination button,
+.modal.stats-modal[data-game="dworf"] .stats-page .stats-player-tools input {
   border-radius: 0 !important;
 }
-.modal.stats-modal[data-game="saboteur"] .stats-page .stats-player-tools button,
-.modal.stats-modal[data-game="saboteur"] .stats-page .stats-pagination button {
+.modal.stats-modal[data-game="dworf"] .stats-page .stats-player-tools button,
+.modal.stats-modal[data-game="dworf"] .stats-page .stats-pagination button {
   border: 3px solid #111 !important;
   background: #7d7d7d !important;
   color: #fff !important;
@@ -3432,14 +4129,14 @@ html body .cn-card:disabled, html body .sb-card:disabled, html body .sb-cell:dis
   font-size: 12px;
   text-transform: uppercase;
 }
-.modal.stats-modal[data-game="saboteur"] .stats-page .stats-player-tools button:hover:not(:disabled),
-.modal.stats-modal[data-game="saboteur"] .stats-page .stats-pagination button:hover:not(:disabled) {
+.modal.stats-modal[data-game="dworf"] .stats-page .stats-player-tools button:hover:not(:disabled),
+.modal.stats-modal[data-game="dworf"] .stats-page .stats-pagination button:hover:not(:disabled) {
   background: #8f9a6a !important;
   color: #fff !important;
   box-shadow: inset -3px -3px 0 #55603a, inset 3px 3px 0 #c4d09a !important;
 }
-.modal.stats-modal[data-game="saboteur"] .stats-page .stats-player-tools button:disabled,
-.modal.stats-modal[data-game="saboteur"] .stats-page .stats-pagination button:disabled {
+.modal.stats-modal[data-game="dworf"] .stats-page .stats-player-tools button:disabled,
+.modal.stats-modal[data-game="dworf"] .stats-page .stats-pagination button:disabled {
   background: #3a342c !important;
   color: #8a7d68 !important;
   border-color: #111 !important;
@@ -3453,8 +4150,8 @@ html body .cn-card:disabled, html body .sb-card:disabled, html body .sb-cell:dis
 .modal.stats-modal[data-game="codenames"] .stats-page .stats-tab {
   border-radius: 4px !important;
 }
-.modal.stats-modal[data-game="saboteur"] .modal-head button,
-.modal.stats-modal[data-game="saboteur"] .stats-page .stats-tab {
+.modal.stats-modal[data-game="dworf"] .modal-head button,
+.modal.stats-modal[data-game="dworf"] .stats-page .stats-tab {
   border-radius: 0 !important;
 }
 .modal.stats-modal[data-game="tetris"] {
@@ -3472,7 +4169,7 @@ html body .cn-card:disabled, html body .sb-card:disabled, html body .sb-cell:dis
   --neon-rgb: 255,217,138;
   --themeblack: #050b2e;
 }
-.modal.stats-modal[data-game="saboteur"] {
+.modal.stats-modal[data-game="dworf"] {
   --neon-rgb: 243,227,195;
   --themeblack: #2a1d12;
 }
@@ -3500,7 +4197,7 @@ html body .cn-card:disabled, html body .sb-card:disabled, html body .sb-cell:dis
   --chat-muted: #9fb0e8;
   --chat-glow: rgba(90,120,255,.35);
 }
-.modal.chat-modal[data-game="saboteur"] {
+.modal.chat-modal[data-game="dworf"] {
   --chat-surface: #2a1d12;
   --chat-panel: #3b2a1a;
   --chat-edge: #d6a868;
@@ -3513,17 +4210,17 @@ html body .cn-card:disabled, html body .sb-card:disabled, html body .sb-cell:dis
 .modal.chat-modal[data-game="codenames"],.modal.chat-modal[data-game="thirtyone"] {
   box-shadow: 0 4px 16px var(--chat-glow)!important;
 }
-.modal.chat-modal[data-game="saboteur"] {
+.modal.chat-modal[data-game="dworf"] {
   border: 4px solid #1a1109!important;
   border-radius: 0!important;
   box-shadow: inset 4px 4px 0 #5b4228,inset -4px -4px 0 #17100a!important;
 }
-.modal.chat-modal[data-game="saboteur"] .chat-message {
+.modal.chat-modal[data-game="dworf"] .chat-message {
   border: 3px solid #1a1109;
   border-radius: 0;
   box-shadow: inset 3px 3px 0 #5b4228,inset -3px -3px 0 #2a1d12;
 }
-.modal.chat-modal[data-game="saboteur"] .chat-compose button {
+.modal.chat-modal[data-game="dworf"] .chat-compose button {
   border: 3px solid #111!important;
   border-radius: 0!important;
   background: #7d7d7d!important;

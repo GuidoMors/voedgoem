@@ -67,6 +67,10 @@ export function TetrisPlayer({ seed, onState, onGameOver }: Props) {
         ArrowRight: g => g.moveRight(),
         ArrowDown: g => g.softDrop(),
         ArrowUp: g => g.rotate(1),
+        a: g => g.moveLeft(),
+        d: g => g.moveRight(),
+        s: g => g.softDrop(),
+        w: g => g.rotate(1),
         x: g => g.rotate(1),
         z: g => g.rotate(-1),
         " ": g => g.hardDrop()
@@ -109,7 +113,7 @@ export function TetrisPlayer({ seed, onState, onGameOver }: Props) {
           </div>
         </div>
       </div>
-      <p className="muted small">← → move · ↑ / X rotate · Z rotate back · ↓ soft drop · Space hard drop</p>
+      <p className="muted small">← → / A D move · ↑ / W / X rotate · Z rotate back · ↓ / S soft drop · Space hard drop</p>
     </div>
   );
 }
