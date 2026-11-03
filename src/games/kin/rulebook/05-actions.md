@@ -35,7 +35,7 @@ You may activate cards of the current phase on the phase board and cards of the 
 > On trigger: Select a untapped Discovery Character/Activation Card. Select an army you own.
 > Payment: Tapping the selected character/activation card.
 > Effect: For this Move you have speed equal to the power of the card used to activate this action. You may spend Speed to move the selected army to adjacent tiles for their [[tile speed cost]]. When you run out of speed, or when you choose to, you stop moving the Army.
-> Extra Rules: You may bring 1 [[relic block]] or 1 [[treasure block]] along with the army each tile you Move. You may not move your Army off a tile if there is an adjacent army of another player without that player's permission. With an access treaty that permission is not necessary: you get the permission.
+> Extra Rules: You may bring 1 [[relic block]] and 1 [[treasure block]] along with the army each tile you Move. You may not move your Army off a tile if there is an adjacent army of another player without that player's permission. With an access treaty that permission is not necessary: you get the permission.
 
 ## Research | action card
 > Short Description: Use [[gears]] to research a [[technology]] from the [[technology board]].

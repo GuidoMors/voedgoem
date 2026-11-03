@@ -32,6 +32,8 @@ function getTurnBotId(snapshot: LobbySnapshot): string | null {
       return null;
     case "werewolves":
       return null;
+    case "kin":
+      return null;
   }
 }
 
@@ -93,8 +95,7 @@ export function LobbyPage({ lobbyId, user, onGameChange, chatOpen, onChatClose }
       <div className="row between">
         <h1>{snapshot.name}</h1>
         <div className="row lobby-head-right">
-          <span className="host-tag">Hosted by {snapshot.host.name}{status === "reconnecting" && " · reconnecting…"}</span>
-          <a className="button" href="#/">Leave lobby</a>
+          <span className="host-tag">Hosted by {snapshot.host.name}{status === "reconnecting" && " · reconnecting…"}</span>
         </div>
       </div>
       {notice && <p className="error">{notice}</p>}
@@ -119,6 +120,7 @@ export function LobbyPage({ lobbyId, user, onGameChange, chatOpen, onChatClose }
             <h2>Test bots</h2>
             <span className="row">
               <button disabled={!turnBotId || controlling === turnBotId} onClick={() => turnBotId && setControlling(turnBotId)}>Control bot whose turn it is</button>
+              <button disabled={snapshot.bots.length === 0} onClick={() => send({ type: "bot:join" })}>Bots join game</button>
               <button onClick={() => send({ type: "bot:add" })}>Add bot</button>
             </span>
           </div>

@@ -60,7 +60,7 @@ Then: [[Publicize]] all their technologies. You gain all their [[Tactics Card]]s
 > Condition: A barter this player is involved in includes an access treaty or promise treaty as a bartering good.
 > Trigger: Barter, after succesful activation
 > Payment: this card goes to the tactics deck discard pile.
-> Effect: all their technologies are publicized. You gain all their tactics cards.
+> Effect: all their technologies are publicized (Except Steampower). You gain all their tactics cards.
 
 ## Bank Heist | ☽
 > Short description: When a succesful [[Barter]] offer includes: [[gold]]

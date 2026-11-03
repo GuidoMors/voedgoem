@@ -101,7 +101,7 @@ In recent years, their power has evolved beyond mere intelligence, allowing them
 
 ## Oxylium | Float Operator | Control | 2 power
 > ◫ Aero Magnetism
-> Short description: You may [[Explore]] with the [[Ark]] instead of an [[army]], when you do, immediately [[Reclaim]] for free if its a [[treasure block]] or [[relic block]].
-> Condition: Your Ark is on a tile with a ruins.
-> Trigger: Explore, before on trigger.
+> Short description: You may [[Explore]] with the [[Ark]] instead of an [[army]] when the Ark is adjacent, when you do, immediately [[Reclaim]] for free if its a [[treasure block]] or [[relic block]].
+> Condition: Your Ark is adjacent to a tile with a ruins on it
+> Trigger: For Explore, when decidign whether it is allowed.
 > Effect: Add the Ark to the list of options. If it is chosen: immediately [[Reclaim]] without payment on that tile.

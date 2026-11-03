@@ -208,7 +208,7 @@ button:disabled {
   transform: perspective(2em) rotateX(20deg) scale(1, .33);
   filter: blur(4em);
   opacity: .5;
-  background: var(--themegreen);
+  background: var(--thememain);
 }
 .auth-card label {
   display: flex;
@@ -378,170 +378,172 @@ button:disabled {
   --hub-surface: #15191f;
   --hub-panel: #202631;
   --hub-edge: #45505e;
-  --hub-accent: #d1d8e2;
-  --hub-muted: #abb4c1;
+  --hub-panel-font-color: #d1d8e2;
+  --hub-sub-text-color: #abb4c1;
   --hub-font: system-ui,sans-serif;
   --hub-radius: 8px;
   --hub-shadow: none;
   --hub-text: #f2f4f7;
-  --hub-button: #303945;
-  --hub-button-text: #f2f4f7;
-  --hub-primary: #596b83;
-  --hub-primary-text: #fff;
-  --hub-join: #4f9b45;
-  --hub-join-hover: #70bd63;
-  --hub-danger: #8d3c45;
-  --hub-danger-text: #fff;
+  color: var(--hub-text);
+  font-family: var(--hub-font);
+  font-size: var(--hub-font-size);
+  font-weight: var(--hub-font-weight);
+}
+.lobby-list li.hub-lobby,.lobby-list li.hub-lobby:hover {
+  background: transparent;
+  border: 0;
+  box-shadow: none;
+  padding: 0;
+  gap: 10px;
+}
+.lobby-list li.hub-lobby>.hub-lobby-bar {
+  flex: 1 1 auto;
+  min-width: 0;
+  padding: 10px 12px;
   background: var(--hub-surface);
   border: 2px solid var(--hub-edge);
   border-radius: var(--hub-radius);
   box-shadow: var(--hub-shadow);
-  color: var(--hub-text);
-  font-family: var(--hub-font);
+}
+.lobby-list li.hub-lobby>.button,.lobby-list li.hub-lobby>button {
+  flex: 0 0 auto;
+  font-size: 19px;
 }
 .lobby-list li.hub-lobby[data-game="tetris"] {
   --hub-surface: #090304;
   --hub-panel: #1b090c;
   --hub-edge: #8f1825;
-  --hub-accent: #ff3347;
-  --hub-muted: #c9959b;
+  --hub-panel-font-color: #ff3347;
+  --hub-sub-text-color: #c9959b;
   --hub-font: 'Tilt Neon',system-ui,sans-serif;
   --hub-radius: 4px;
   --hub-shadow: inset 0 0 12px rgba(255,51,71,.12);
   --hub-text: #fff1f2;
-  --hub-button: #1b090c;
-  --hub-button-text: #ff9ba5;
-  --hub-primary: #65101b;
-  --hub-primary-text: #fff;
-  --hub-join: #3d9b48;
-  --hub-join-hover: #52bd60;
-  --hub-danger: #6b202b;
-  --hub-danger-text: #fff;
+}
+.lobby-list li.hub-lobby[data-game="blokus"] {
+  --hub-surface: #180516;
+  --hub-panel: #1b091b;
+  --hub-edge: #c084fc;
+  --hub-panel-font-color: #c084fc;
+  --hub-sub-text-color: #c084fc;
+  --hub-font: 'Tilt Neon',system-ui,sans-serif;
+  --hub-radius: 4px;
+  --hub-shadow: inset 0 0 12px rgba(238, 51, 255, 0.12);
+  --hub-text: #fff1f2;
 }
 .lobby-list li.hub-lobby[data-game="codenames"] {
   --hub-surface: #e8dcc0;
   --hub-panel: #fbf6e8;
   --hub-edge: #a8956b;
-  --hub-accent: #7a1c1c;
-  --hub-muted: #7d6e58;
+  --hub-panel-font-color: #7a1c1c;
+  --hub-sub-text-color: #7d6e58;
   --hub-font: 'Playfair Display',Georgia,serif;
+  --hub-sub-font: 'Tilt Neon',system-ui,sans-serif;
   --hub-radius: 5px;
   --hub-shadow: 0 3px 8px rgba(60,40,10,.2);
   --hub-text: #2b2118;
-  --hub-button: #eee4ca;
-  --hub-button-text: #52251d;
-  --hub-primary: #7a1c1c;
-  --hub-primary-text: #fff7e8;
-  --hub-join: #4c7544;
-  --hub-join-hover: #648f5b;
-  --hub-danger: #454545;
-  --hub-danger-text: #fff;
 }
 .lobby-list li.hub-lobby[data-game="thirtyone"] {
   --hub-surface: #050b2e;
   --hub-panel: #0e1a78;
   --hub-edge: #c9a24a;
-  --hub-accent: #ffd98a;
-  --hub-muted: #9fb0e8;
+  --hub-panel-font-color: #ffd98a;
+  --hub-sub-text-color: #9fb0e8;
   --hub-font: 'Cinzel',Georgia,serif;
+  --hub-sub-font: 'Tilt Neon',system-ui,sans-serif;
   --hub-radius: 4px;
   --hub-shadow: inset 0 0 12px rgba(90,120,255,.25);
   --hub-text: #f2f5ff;
-  --hub-button: #111d64;
-  --hub-button-text: #ffd98a;
-  --hub-primary: #9a6b22;
-  --hub-primary-text: #fff;
-  --hub-join: #27894e;
-  --hub-join-hover: #35ae63;
-  --hub-danger: #7e2837;
-  --hub-danger-text: #fff;
 }
 .lobby-list li.hub-lobby[data-game="dworf"] {
   --hub-surface: #2a1d12;
   --hub-panel: #3b2a1a;
   --hub-edge: #1a1109;
-  --hub-accent: #f3e3c3;
-  --hub-muted: #d0b58a;
+  --hub-panel-font-color: #f3e3c3;
+  --hub-sub-text-color: #d0b58a;
   --hub-font: 'Silkscreen','Courier New',monospace;
+  --hub-sub-font: 'Tilt Neon',system-ui,sans-serif;
   --hub-radius: 0;
   --hub-shadow: inset 4px 4px 0 #5b4228,inset -4px -4px 0 #17100a;
   --hub-text: #efe4d0;
-  --hub-button: #6b6b6b;
-  --hub-button-text: #fff;
-  --hub-primary: #5d8a32;
-  --hub-primary-text: #fff;
-  --hub-join: #5d8a32;
-  --hub-join-hover: #78a94b;
-  --hub-danger: #8e2d22;
-  --hub-danger-text: #fff;
 }
-.lobby-list li.hub-lobby>div:first-child {
-  min-width: 0;
+.lobby-list li.hub-lobby[data-game="werewolves"] {
+  --hub-surface: #15191f;
+  --hub-panel: #202631;
+  --hub-edge: #45505e;
+  --hub-panel-font-color: #d1d8e2;
+  --hub-sub-text-color: #abb4c1;
+  --hub-font: system-ui,sans-serif;
+  --hub-sub-font: 'Tilt Neon',system-ui,sans-serif;
+  --hub-radius: 8px;
+  --hub-shadow: none;
+  --hub-text: #f2f4f7;
 }
+.lobby-list li.hub-lobby[data-game="werewolves"] {
+  --hub-surface: #15191f;
+  --hub-panel: #202631;
+  --hub-edge: #45505e;
+  --hub-panel-font-color: #d1d8e2;
+  --hub-sub-text-color: #abb4c1;
+  --hub-font: system-ui,sans-serif;
+  --hub-sub-font: 'Tilt Neon',system-ui,sans-serif;
+  --hub-radius: 8px;
+  --hub-shadow: none;
+  --hub-text: #f2f4f7;
+}
+.lobby-list li.hub-lobby[data-game="kin"] {
+  --hub-surface: #14122a;
+  --hub-panel: #e0584c;
+  --hub-edge: #e0584c;
+  --hub-panel-font-color: #fffaf0;
+  --hub-sub-text-color: #abb4c1;
+  --hub-font: "BlizzDisplay", Georgia, serif;
+  --hub-panel-font: 'Tilt Neon',system-ui,sans-serif;
+  --hub-font-size: 25px;
+  --hub-sub-font-size: .5em;
+  --hub-favicon-background: transparent;
+  --hub-font-weight: 100;
+  --hub-sub-font: 'Tilt Neon',system-ui,sans-serif;
+  --hub-radius: 8px;
+  --hub-shadow: none;
+  --hub-text: #fffaf0;
+}
+.lobby-list li.hub-lobby[data-game="new-template"] {
+  --hub-surface: #15191f;
+  --hub-panel: #202631;
+  --hub-edge: #45505e;
+  --hub-panel-font-color: #d1d8e2;
+  --hub-sub-text-color: #abb4c1;
+  --hub-font: system-ui,sans-serif;
+  --hub-panel-font: system-ui,sans-serif;
+  --hub-font-size: 16px;
+  --hub-font-weight: 400;
+  --hub-sub-font-size: 25px;
+  --hub-sub-font: 'Tilt Neon',system-ui,sans-serif;
+  --hub-radius: 8px;
+  --hub-shadow: none;
+  --hub-text: #f2f4f7;
+}
+
 .lobby-list li.hub-lobby .game-pill,.lobby-list li.hub-lobby .pill {
   background: var(--hub-panel)!important;
   border: 1px solid var(--hub-edge)!important;
   border-radius: var(--hub-radius)!important;
-  color: var(--hub-accent)!important;
-  font-family: var(--hub-font);
+  color: var(--hub-panel-font-color)!important;
+  font-family: var(--hub-panel-font, var(--hub-font));
   text-shadow: none!important;
   box-shadow: none!important;
 }
 .lobby-list li.hub-lobby .game-favicon {
-  background: var(--hub-surface);
+  background: var(--hub-favicon-background, transparent);
   border-radius: var(--hub-radius);
 }
 .lobby-list li.hub-lobby .lobby-player-count,.lobby-list li.hub-lobby .lobby-hosted-by {
-  color: var(--hub-muted)!important;
+  color: var(--hub-sub-text-color)!important;
 }
 .lobby-list li.hub-lobby .lobby-hosted-by {
-  font-family: var(--hub-font);
-}
-.lobby-list li.hub-lobby .button,.lobby-list li.hub-lobby button {
-  font-family: var(--hub-font);
-  border: 2px solid var(--hub-edge)!important;
-  border-radius: var(--hub-radius)!important;
-  background: var(--hub-button)!important;
-  color: var(--hub-button-text)!important;
-  text-shadow: none!important;
-  box-shadow: var(--hub-shadow)!important;
-}
-.lobby-list li.hub-lobby .button.primary {
-  background: var(--hub-primary)!important;
-  color: var(--hub-primary-text)!important;
-}
-.lobby-list li.hub-lobby .button.hub-join {
-  background: var(--hub-join)!important;
-  border-color: var(--hub-accent)!important;
-  color: #fff!important;
-  text-shadow: none!important;
-  box-shadow: var(--hub-shadow),0 0 10px color-mix(in srgb,var(--hub-join) 35%,transparent)!important;
-}
-.lobby-list li.hub-lobby .button.hub-join:hover {
-  background: var(--hub-join-hover)!important;
-  border-color: var(--hub-join-hover)!important;
-  color: #fff!important;
-}
-.lobby-list li.hub-lobby[data-game="tetris"] .button.hub-join {
-  background: rgba(61,155,72,.24)!important;
-  border: 2px solid var(--hub-join)!important;
-  color: #8cff98!important;
-  text-shadow: 0 0 .45em #3d9b48!important;
-  box-shadow: 0 0 .7em rgba(255,51,71,.55),inset 0 0 .7em rgba(255,51,71,.3)!important;
-}
-.lobby-list li.hub-lobby[data-game="tetris"] .button.hub-join:hover {
-  background: var(--hub-join)!important;
-  border-color: var(--hub-join)!important;
-  color: #fff!important;
-  text-shadow: none!important;
-  box-shadow: 0 0 1.2em var(--hub-join),inset 0 0 .6em rgba(255,255,255,.15)!important;
-}
-.lobby-list li.hub-lobby button.danger {
-  background: var(--hub-danger)!important;
-  color: var(--hub-danger-text)!important;
-}
-.lobby-list li.hub-lobby .button:hover,.lobby-list li.hub-lobby button:hover:not(:disabled) {
-  filter: brightness(1.15);
+  font-family: var(--hub-sub-font);
+  font-size: var(--hub-sub-font-size, .75em);
 }
 .create-lobby {
   margin-top: 14px;
@@ -1637,8 +1639,8 @@ body[data-game="dworf"] .dworf-secret-toggle:hover {
    Colours come from variables, so a game page can restyle itself by overriding them on a wrapper,
    e.g. .shell[data-theme="dworf"] { --neon: ...; --neon-rgb: ...; } */
 :root {
-  --themegreen: rgb(94, 255, 0);
-  --themesubgreen: rgb(67, 155, 17);
+  --thememain: rgb(94, 255, 0);
+  --themesubmain: rgb(67, 155, 17);
   --themeblack: rgb(1, 4, 1);
   --themegrey: rgb(18, 19, 18);
   --themewhite: rgb(248, 244, 241);
@@ -1705,8 +1707,8 @@ h3 {
   color: var(--themeblack);
 }
 body[data-game="tetris"] {
-  --themegreen: #ff263b;
-  --themesubgreen: #a91424;
+  --thememain: #ff263b;
+  --themesubmain: #a91424;
   --themeblack: #080304;
   --themegrey: #1b1012;
   --themelog: #0c0506;
@@ -1721,8 +1723,8 @@ body[data-game="tetris"] {
   --muted: #c18b90;
 }
 body[data-game="blokus"] {
-  --themegreen: #c084fc;
-  --themesubgreen: #7e22ce;
+  --thememain: #c084fc;
+  --themesubmain: #7e22ce;
   --themeblack: #080411;
   --themegrey: #1a1025;
   --themelog: #0e0818;
@@ -3432,6 +3434,9 @@ button.werewolves-role-card {
   text-transform: capitalize;
   color: var(--muted);
 }
+.host-controls-tab .werewolves-role-card:hover small {
+  color: black;
+}
 .werewolves-role-icon {
   object-fit: contain;
   flex: 0 0 auto;
@@ -3621,6 +3626,9 @@ button.werewolves-role-card {
   align-items: center;
   gap: 3px;
   font-size: .7rem;
+  background: var(--themesubmain);
+  padding: 3px;
+  color: black;
 }
 .werewolves-player-action,
 .werewolves-gm-seats,
@@ -3938,6 +3946,7 @@ html body .cn-card:disabled, html body .dworf-card:disabled, html body .dworf-ce
   color: var(--stats-text) !important;
 }
 .modal.stats-modal[data-game="tetris"] {
+  --stats-border-radius: 16px;
   --stats-edge: #8f1825;
   --stats-glow: rgba(255,38,59,.24);
   --stats-surface: #090304;
@@ -3949,6 +3958,7 @@ html body .cn-card:disabled, html body .dworf-card:disabled, html body .dworf-ce
   --font-small: 'Tilt Neon', system-ui, sans-serif;
 }
 .modal.stats-modal[data-game="codenames"] {
+  --stats-border-radius: 3px;
   --stats-edge: #a8956b;
   --stats-glow: rgba(122,28,28,.15);
   --stats-surface: #e8dcc0;
@@ -3960,6 +3970,7 @@ html body .cn-card:disabled, html body .dworf-card:disabled, html body .dworf-ce
   --font-small: 'Libre Baskerville', Georgia, serif;
 }
 .modal.stats-modal[data-game="thirtyone"] {
+  --stats-border-radius: 8px;
   --stats-edge: #c9a24a;
   --stats-glow: rgba(90,120,255,.3);
   --stats-surface: #050b2e;
@@ -3971,6 +3982,7 @@ html body .cn-card:disabled, html body .dworf-card:disabled, html body .dworf-ce
   --font-small: 'Raleway', system-ui, sans-serif;
 }
 .modal.stats-modal[data-game="dworf"] {
+  --stats-border-radius: 0;
   --stats-edge: #1a1109;
   --stats-glow: rgba(0,0,0,.4);
   --stats-surface: #2a1d12;
@@ -3981,6 +3993,42 @@ html body .cn-card:disabled, html body .dworf-card:disabled, html body .dworf-ce
   --font-big: 'Silkscreen', 'Courier New', monospace;
   --font-small: 'VT323', 'Courier New', monospace;
 }
+.modal.stats-modal[data-game="blokus"] {
+  --stats-edge: #c084fc;
+  --stats-glow: rgba(192, 132, 252, .3);
+  --stats-surface: #080411;
+  --stats-panel: #1a1025;
+  --stats-text: #b6a2c9;
+  --stats-muted: #b6a2c9;
+  --stats-accent: #c084fc;
+  --font-big: 'Tilt Neon', system-ui, sans-serif;
+  --font-small: 'Tilt Neon', system-ui, sans-serif;
+}
+
+.modal.stats-modal[data-game="werewolves"] {
+  --stats-edge: rgba(156,163,175,.55);
+  --stats-glow: rgba(0, 0, 0, 0);
+  --stats-surface: #14161a;
+  --stats-panel: #1d2026;
+  --stats-text: #e5e7eb;
+  --stats-muted: #e5e7eb;
+  --stats-accent: #9ca3af;
+  --font-big: system-ui, sans-serif;
+  --font-small: system-ui, sans-serif;
+}
+
+.modal.stats-modal[data-game="kin"] {
+  --stats-edge: #e0584c;
+  --stats-glow: rgba(0, 0, 0, 0);
+  --stats-surface: #14122a;
+  --stats-panel: #d8b25a;
+  --stats-text:  #f6ecd0;
+  --stats-muted:  #f6ecd0;
+  --stats-accent: #e0584c;
+  --font-big: "BlizzDisplay", Georgia, serif;
+  --font-small: 'Tilt Neon', system-ui, sans-serif;
+}
+
 .modal.stats-modal[data-game="dworf"] .stats-page .card {
   border: 4px solid #1a1109 !important;
   box-shadow: inset 4px 4px 0 #5b4228, inset -4px -4px 0 #2a1d12 !important;
@@ -3988,13 +4036,6 @@ html body .cn-card:disabled, html body .dworf-card:disabled, html body .dworf-ce
 .modal.stats-modal[data-game="dworf"] .stats-page .stat {
   border: 3px solid #1a1109;
   box-shadow: inset 3px 3px 0 #5b4228, inset -3px -3px 0 #2a1d12;
-}
-.modal.stats-modal[data-game="dworf"],
-.modal.stats-modal[data-game="dworf"] .stats-page .card,
-.modal.stats-modal[data-game="dworf"] .stats-page .stat,
-.modal.stats-modal[data-game="dworf"] .stats-page .stats-tab,
-.modal.stats-modal[data-game="dworf"] .stats-page .pill {
-  border-radius: 0 !important;
 }
 /* Keep every statistics-modal control and text element inside the selected game's palette. */
 .modal.stats-modal[data-game] {
@@ -4016,6 +4057,9 @@ html body .cn-card:disabled, html body .dworf-card:disabled, html body .dworf-ce
   background: var(--stats-accent) !important;
   color: var(--stats-surface) !important;
   box-shadow: 0 0 12px var(--stats-glow) !important;
+}
+.modal.stats-modal[data-game] .stats-page {
+  background: transparent !important;
 }
 .modal.stats-modal[data-game] .modal-head h2,
 .modal.stats-modal[data-game] .stats-page h1,
@@ -4234,8 +4278,8 @@ html body .cn-card:disabled, html body .dworf-card:disabled, html body .dworf-ce
 }
 
 body[data-game="kin"] {
-  --themegreen: #e0b04a;
-  --themesubgreen: #8a6516;
+  --thememain: #e0b04a;
+  --themesubmain: #8a6516;
   --themeblack: #0d0a05;
   --themegrey: #221a0c;
   --themelog: #140f06;
@@ -4267,7 +4311,8 @@ body[data-game="kin"] .kin-seats li {
   padding: 6px 10px;
   border: 1px solid var(--border);
   border-radius: 10px;
-  background: rgba(var(--neon-rgb), .06);
+  background: var(--kin-paper);
+  display: block;
 }
 body[data-game="kin"] .kin-seats li.open {
   opacity: .55;
@@ -4278,8 +4323,17 @@ body[data-game="kin"] .kin-seats li > .row {
 }
 body[data-game="kin"] .kin-seat-number {
   min-width: 1.6em;
-  color: var(--neon-soft);
+  color: var(--kin-ink);
   font-weight: 700;
+  display: inline-flex;
+  align-items: center;
+}
+body[data-game="kin"] .kin-seat-pill-container {
+  display: inline-grid;
+  gap: 4px;
+  top: 2px;
+  position: absolute;
+  right: 2px;
 }
 body[data-game="kin"] .kin-tabs {
   display: flex;
@@ -4302,7 +4356,7 @@ body[data-game="kin"] .kin-host-options {
 body[data-game="kin"] .kin-setup {
   display: grid;
   grid-template-columns: minmax(0, 1fr) 260px;
-  gap: 16px;
+  gap: 5px;
   align-items: start;
 }
 body[data-game="kin"] .kin-setup-top {
@@ -4311,6 +4365,12 @@ body[data-game="kin"] .kin-setup-top {
   align-items: center;
   justify-content: space-between;
   gap: 12px;
+  background: var(--kin-paper);
+  color: var(--kin-ink);
+  border: 2px solid var(--kin-red);
+  border-radius: 10px;
+  padding: 10px;
+  box-shadow: inset 0 0 0 3px var(--kin-paper), inset 0 0 0 4px rgba(224, 88, 76, .45), 0 3px 10px rgba(20, 18, 42, .25);
 }
 body[data-game="kin"] .kin-pile {
   display: flex;
@@ -4320,16 +4380,19 @@ body[data-game="kin"] .kin-pile {
 }
 body[data-game="kin"] .kin-pile-type.selected {
   border-color: var(--neon);
-  background: rgba(var(--neon-rgb), .2);
-  color: var(--neon-soft);
+  background: var(--kin-indigo) !important;
+  color: var(--neon-soft) !important; 
 }
 body[data-game="kin"] .kin-prompt.mine {
-  color: var(--neon-soft);
+  color: var(--kin-paper);
   font-weight: 600;
 }
 body[data-game="kin"] .kin-seats li.on-turn {
+  position: relative;
   border-color: var(--neon);
   box-shadow: 0 0 10px rgba(var(--neon-rgb), .35);
+  box-sizing: border-box;
+  border-width:5px;
 }
 body[data-game="kin"] .kin-board {
   width: 100%;
@@ -4403,23 +4466,32 @@ body[data-game="kin"] h1, body[data-game="kin"] h2, body[data-game="kin"] h3, bo
   font-family: "BlizzDisplay", Georgia, serif;
   text-shadow: none;
   letter-spacing: .04em;
+  font-size: 25px;
+  color: var(--kin-ink);
 }
 body[data-game="kin"] .topbar {
   background: var(--kin-indigo);
   border-bottom: 3px solid var(--kin-red);
   box-shadow: none;
 }
+body[data-game="kin"] .row.between { display: none;}
 body[data-game="kin"] .topbar .brand { color: var(--kin-red); }
-body[data-game="kin"] .topbar .brand::before { content: "❖ "; }
 body[data-game="kin"] .topbar nav a { color: #f0e6c8; }
 body[data-game="kin"] .topbar nav a.active { color: var(--kin-red); border-color: var(--kin-red); box-shadow: none; text-shadow: none; }
 body[data-game="kin"] .topbar .who, body[data-game="kin"] .topbar .profile-link { color: #f0e6c8; }
 body[data-game="kin"] .card {
-  background: var(--kin-paper);
+  background: transparent;
   color: var(--kin-ink);
-  border: 2px solid var(--kin-red);
+  border: none;
   border-radius: 10px;
-  box-shadow: inset 0 0 0 3px var(--kin-paper), inset 0 0 0 4px rgba(224, 88, 76, .45), 0 3px 10px rgba(20, 18, 42, .25);
+  box-shadow: none;
+}
+body[data-game="kin"]  .kin-setup-side h2 {
+  color: var(--kin-red);
+}
+body[data-game="kin"] .kin-pile .pill {
+  color: var(--kin-paper) !important;
+  border-color: var(--kin-paper) !important;
 }
 body[data-game="kin"] .pill { color: var(--kin-red); border-color: var(--kin-red); text-shadow: none; }
 body[data-game="kin"] input, body[data-game="kin"] select, body[data-game="kin"] textarea {
@@ -4431,8 +4503,8 @@ body[data-game="kin"] input::placeholder { color: rgba(42, 31, 20, .45); }
 body[data-game="kin"] input:focus, body[data-game="kin"] select:focus { box-shadow: 0 0 0 2px rgba(224, 88, 76, .35); }
 body[data-game="kin"] option { background: #fffaf0; color: var(--kin-ink); }
 body[data-game="kin"] button:not([class*="cn-"]):not([class*="sb-"]):not(.swatch):not(.link):not(.ts-word):not(.blokus-cell) {
-  background: transparent;
-  color: var(--kin-red);
+  background: var(--accent);
+  color: var(--kin-indigo);
   border: 2px solid var(--kin-red);
   border-radius: 8px;
   text-shadow: none;
@@ -4491,7 +4563,7 @@ body[data-game="kin"] .rb-tabs button.active:not(:disabled) { background: var(--
 .kin-cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); gap: 12px; margin: 10px 0 16px; }
 .kin-card { display: flex; flex-direction: column; gap: 6px; padding: 8px 10px 10px; border: 3px solid var(--kin-color, #888); border-radius: 10px; background: #fffaf0; color: #2a1f14; box-shadow: inset 0 0 0 2px #fffaf0, inset 0 0 0 3px rgba(42, 31, 20, .25), 0 2px 6px rgba(20, 18, 42, .3); }
 .kin-card header { display: flex; align-items: center; gap: 6px; background: var(--kin-color, #888); color: #fff; margin: -8px -10px 0; padding: 6px 10px; border-radius: 6px 6px 0 0; text-shadow: 0 1px 2px rgba(0, 0, 0, .5); }
-.kin-card header h3 { margin: 0; font-size: 15px; line-height: 1.15; }
+.kin-card header h3 { margin: 0; font-size: 25px; line-height: 1.15; }
 .kin-card-art { height: 64px; display: grid; place-items: center; font-family: "BlizzDisplay", Georgia, serif; font-size: 44px; color: var(--kin-color, #888); background: repeating-linear-gradient(45deg, rgba(42, 31, 20, .06) 0 6px, transparent 6px 12px); border: 1px solid rgba(42, 31, 20, .25); border-radius: 4px; text-shadow: 0 1px 0 rgba(0, 0, 0, .35); }
 .kin-card-ability { margin: 0; font-size: 13px; line-height: 1.3; }
 .kin-card-flavour { margin: 0; font-size: 11px; font-style: italic; color: #6b5a3c; line-height: 1.3; display: -webkit-box; -webkit-line-clamp: 4; -webkit-box-orient: vertical; overflow: hidden; }
@@ -4524,7 +4596,7 @@ body[data-game="kin"] .rb-tabs button.active:not(:disabled) { background: var(--
 .kin-icon.small { font-size: 9px; }
 .kin-army text { font-size: 8px; font-weight: bold; fill: #fff; pointer-events: none; }
 .kin-building.cross { opacity: 0.9; }
-.kin-templates { margin-top: 0.75rem; }
+.kin-templates { margin-top: 0.75rem; display: none;}
 body[data-game="kin"] .kin-victory-banner { padding: 0.75rem 1rem; margin-bottom: 0.75rem; border: 2px solid gold; border-radius: 8px; background: rgba(255, 215, 0, 0.12); text-align: center; }
 body[data-game="kin"] .kin-victory-table { border-collapse: collapse; margin-top: 0.5rem; }
 body[data-game="kin"] .kin-victory-table th, body[data-game="kin"] .kin-victory-table td { padding: 0.25rem 0.75rem; border: 1px solid rgba(128, 128, 128, 0.35); text-align: center; }
@@ -4536,16 +4608,12 @@ body[data-game="kin"] .kin-victory-table td.most { background: rgba(255, 215, 0,
 
 /* Kin main game UI: top phase bar, left board menu, middle board, right players, bottom court and resources */
 body[data-game="kin"] .kin-main {
-  display: grid;
-  grid-template-columns: 150px minmax(0, 1fr) 270px;
-  grid-template-areas: "top top top" "left middle right" "bottom bottom bottom";
-  gap: 12px;
-  flex: 1;
+  display: block;
 }
-body[data-game="kin"] .kin-main-bottom { overflow: auto; }
+body[data-game="kin"] .kin-main-bottom { overflow: visible; }
 body[data-game="kin"] .kin-main-bottom { min-height: 0; }
 body[data-game="kin"] .kin-main > * {
-  background: var(--kin-paper);
+  background: transparent;
   border: 2px solid var(--kin-red);
   border-radius: 10px;
   color: var(--kin-ink);
@@ -4573,18 +4641,34 @@ body[data-game="kin"] .kin-phase-chip {
 body[data-game="kin"] .kin-phase-dots { display: flex; gap: 6px; }
 body[data-game="kin"] .kin-phase-dot { width: 14px; height: 14px; border-radius: 50%; border: 2px solid #f0e6c8; }
 
-body[data-game="kin"] .kin-main-left { grid-area: left; display: flex; flex-direction: column; gap: 8px; padding: 10px; }
+body[data-game="kin"] .kin-main { position: relative; display: flex; flex-direction: column; gap: 8px; height: calc(100vh - 100px); min-height: 480px; }
+body[data-game="kin"] .kin-main-top { flex: none; }
+body[data-game="kin"] .kin-main-middle { flex: 1; }
+body[data-game="kin"] .kin-main-left, body[data-game="kin"] .kin-main-right, body[data-game="kin"] .kin-main-bottom { transition: transform .25s ease; }
+body[data-game="kin"] .kin-main-left.collapsed { transform: translateX(-100%); }
+body[data-game="kin"] .kin-main-right.collapsed { transform: translateX(100%); }
+body[data-game="kin"] .kin-main-bottom.collapsed { transform: translateY(100%); }
+body[data-game="kin"] .kin-dock-toggle { position: absolute !important; width: 28px; height: 28px; padding: 0; display: flex; align-items: center; justify-content: center; font-size: .8rem; line-height: 1; border-radius: 8px; }
+body[data-game="kin"] .kin-main-left > .kin-dock-toggle { top: 8px; right: -34px; }
+body[data-game="kin"] .kin-main-right > .kin-dock-toggle { top: 8px; left: -34px; }
+body[data-game="kin"] .kin-main-bottom > .kin-dock-toggle { top: -34px; left: 50%; margin-left: -14px; }
+
+body[data-game="kin"] .kin-main-left { grid-area: left; position: absolute; top: 3.5rem; left: 0; z-index: 5; width: max-content; max-width: 160px; display: flex; flex-direction: column; gap: 8px; padding: 10px; }
 body[data-game="kin"] .kin-board-tab { display: flex; flex-direction: column; align-items: center; gap: 4px; padding: 10px 6px; text-align: center; font-size: .85rem; }
 body[data-game="kin"] .kin-board-tab.selected { background: var(--kin-indigo) !important; color: #f0e6c8 !important; border-color: var(--kin-indigo) !important; }
 body[data-game="kin"] .kin-board-icon { font-size: 1.6rem; line-height: 1; }
 
-body[data-game="kin"] .kin-main-middle { grid-area: middle; padding: 4px; overflow: hidden; display: flex; flex-direction: column; gap: 8px; min-height: 0; }
+body[data-game="kin"] .kin-main-middle { grid-area: middle; padding: 4px; overflow: hidden; display: flex; flex-direction: column; min-height: 0; }
+body[data-game="kin"] .kin-plane { position: relative; flex: 1; min-height: 0; }
+body[data-game="kin"] .kin-plane-viewport { position: absolute; inset: 0; overflow: hidden; cursor: grab; touch-action: none; }
+body[data-game="kin"] .kin-plane-viewport.dragging { cursor: grabbing; user-select: none; }
+body[data-game="kin"] .kin-plane-content { position: absolute; inset: 0; transform-origin: 0 0; display: flex; flex-direction: column; gap: 8px; }
 body[data-game="kin"] .kin-board-stage { position: relative; flex: 1; min-height: 0; display: flex; }
 body[data-game="kin"] .kin-board-stage .kin-board-scroll { flex: 1; }
-body[data-game="kin"] .kin-zoom { position: absolute; top: 8px; left: 8px; display: flex; align-items: center; gap: 6px; padding: 2px 6px; border-radius: 8px; background: rgba(20, 18, 42, .8); color: #f0e6c8; }
+body[data-game="kin"] .kin-zoom { display:none; position: absolute; top: 8px; left: 50%; transform: translateX(-50%); z-index: 6; display: flex; align-items: center; gap: 6px; padding: 2px 6px; border-radius: 8px; background: rgba(20, 18, 42, .8); color: #f0e6c8; }
 body[data-game="kin"] .kin-ark-overlay { position: absolute; bottom: 8px; left: 8px; transform-origin: bottom left; transform: scale(.7); }
 body[data-game="kin"] .kin-ark-overlay .kin-ark-board { margin-top: 0; }
-body[data-game="kin"] .kin-board-scroll { flex: 1; overflow: auto; min-height: 0; border-radius: 8px; background: #0b2a2c; }
+body[data-game="kin"] .kin-board-scroll { flex: 1; overflow: visible; min-height: 0; border-radius: 8px; background: #0b2a2c; }
 body[data-game="kin"] .kin-board-scroll .kin-board { max-height: none; height: 100%; border-radius: 0; }
 
 body[data-game="kin"] .kin-tech-board { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; flex: 1; }
@@ -4592,12 +4676,14 @@ body[data-game="kin"] .kin-tech-board section { background: #c9c9cf; border: 2px
 body[data-game="kin"] .kin-phase-board { display: flex; flex-direction: column; gap: 12px; flex: 1; }
 body[data-game="kin"] .kin-phase-tracks { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
 body[data-game="kin"] .kin-phase-track { border: 3px solid var(--phase-color); border-radius: 8px; padding: 8px; background: color-mix(in srgb, var(--phase-color) 18%, #fffaf0); }
+body[data-game="kin"] .kin-phase-track.inactive { opacity: 0.45; filter: grayscale(0.85); }
 body[data-game="kin"] .kin-phase-track h3 { margin: 0 0 8px; color: var(--phase-color); font-family: "BlizzDisplay", serif; }
 body[data-game="kin"] .kin-phase-slots { display: flex; flex-direction: column; gap: 6px; }
 body[data-game="kin"] .kin-phase-slots span { height: 44px; border: 2px dashed var(--phase-color); border-radius: 6px; opacity: .6; }
 body[data-game="kin"] .kin-laws { border: 2px dashed var(--kin-red); border-radius: 8px; padding: 10px; }
 
-body[data-game="kin"] .kin-main-right { grid-area: right; padding: 10px; overflow-y: auto; }
+body[data-game="kin"] .kin-main-right { grid-area: right; position: absolute; top: 3.5rem; right: 0; z-index: 5; width: max-content; max-width: 280px; padding: 10px; }
+body[data-game="kin"] .kin-main-right .kin-player-list { max-height: calc(70vh - 60px); overflow-y: auto; }
 body[data-game="kin"] .kin-main-right h2 { margin-top: 0; }
 body[data-game="kin"] .kin-player-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 8px; }
 body[data-game="kin"] .kin-player { width: 100%; display: flex; flex-direction: column; align-items: flex-start; gap: 4px; text-align: left; border-left: 8px solid var(--kin-color); }
@@ -4608,12 +4694,20 @@ body[data-game="kin"] .kin-player-resources { display: flex; flex-wrap: wrap; ga
 
 body[data-game="kin"] .kin-main-bottom {
   grid-area: bottom;
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 5;
+  max-height: 40%;
+  grid-template-rows: minmax(0, 1fr);
   display: grid;
   grid-template-columns: 200px minmax(0, 1fr) 230px;
   gap: 12px;
   padding: 10px;
   min-height: 200px;
 }
+body[data-game="kin"] .kin-main-bottom > :not(.kin-dock-toggle) { min-height: 0; overflow: auto; }
 body[data-game="kin"] .kin-court-menu { display: flex; flex-direction: column; gap: 6px; align-self: start; }
 body[data-game="kin"] .kin-court { display: flex; gap: 10px; overflow-x: auto; align-items: flex-start; padding-bottom: 6px; }
 body[data-game="kin"] .kin-court .char-card { flex: 0 0 200px; }
@@ -4627,16 +4721,28 @@ body[data-game="kin"] .kin-cheat { padding: 0 6px; font-size: .75rem; }
     grid-template-rows: auto;
     grid-template-areas: "top" "left" "middle" "right" "bottom";
   }
-  body[data-game="kin"] .kin-main-left { flex-direction: row; }
-  body[data-game="kin"] .kin-main-bottom { grid-template-columns: 1fr; }
+  body[data-game="kin"] .kin-main { height: auto; display: block; }
+  body[data-game="kin"] .kin-main-left { position: static; width: auto; max-width: none; flex-direction: row; }
+  body[data-game="kin"] .kin-main-right { position: static; width: auto; max-width: none; max-height: none; }
+  body[data-game="kin"] .kin-main-bottom { position: static; max-height: none; grid-template-columns: 1fr; }
+  body[data-game="kin"] .kin-dock-toggle { display: none; }
+  body[data-game="kin"] .kin-main-left.collapsed, body[data-game="kin"] .kin-main-right.collapsed, body[data-game="kin"] .kin-main-bottom.collapsed { transform: none; }
   body[data-game="kin"] .page:has(.kin-main) { height: auto !important; }
   body[data-game="kin"] .kin-board-scroll { min-height: 60vh; }
 }
 
 /* Kin always uses the full window; the main game fills the screen below the top bar. */
-body[data-game="kin"] .page { max-width: none; margin: 0; padding: 12px 16px; }
-body[data-game="kin"] .page:has(.kin-main) { display: flex; flex-direction: column; gap: 8px; height: calc(100dvh - 50px); padding-bottom: 8px; box-sizing: border-box; }
+body[data-game="kin"] .page { max-width: none; margin: 0; padding: 12px 16px;     background: #0b2a2c;}
+body[data-game="kin"] .page:has(.kin-main) { display: flex; flex-direction: column; gap: 8px; padding-bottom: 8px; box-sizing: border-box; }
 body[data-game="kin"] .page:has(.kin-main) > h1, body[data-game="kin"] .page:has(.kin-main) h1 { font-size: 1.1rem; margin: 0; }
+
+/* The waiting lobby is dark ink on the gold Kin theme; only the game board is teal. */
+body[data-game="kin"] .page:has(.kin-waiting) { background: var(--kin-gold); }
+body[data-game="kin"] .kin-waiting .kin-tabs button.active { background: var(--kin-indigo); border-color: var(--kin-indigo); color: var(--kin-paper); }
+body[data-game="kin"] .kin-waiting .kin-seats li > .row.between { display: flex; justify-content: space-between; align-items: center; }
+body[data-game="kin"] .kin-waiting .kin-seats li { display: flex; align-items: center; gap: 10px; }
+body[data-game="kin"] .kin-waiting .kin-seats .kick { color: var(--kin-paper); padding: 4px 10px; }
+body[data-game="kin"] .kin-waiting .pill { background: var(--kin-paper); }
 
 /* Cards */
 body[data-game="kin"] .kc-row { display: flex; flex-wrap: wrap; gap: 0.6rem; align-items: flex-start; }
@@ -4652,6 +4758,7 @@ body[data-game="kin"] .kc.chosen, body[data-game="kin"] .char-card.chosen { box-
 body[data-game="kin"] .kc-power-badge { display: flex; align-items: baseline; justify-content: center; gap: 4px; font-size: 1.6rem; margin: 0.3rem 0; }
 body[data-game="kin"] .kc-tapped-label { font-size: 0.7rem; text-transform: uppercase; color: #7a6a4a; }
 body[data-game="kin"] .kc-universal { background: linear-gradient(135deg, #f4ead2, #e9dcc0 60%, #dcd0f0); }
+body[data-game="kin"] .kin-law-chip { padding: 0.1rem 0.5rem; border: 1px solid #c77dff; border-radius: 999px; font-size: 0.8rem; background: rgba(199, 125, 255, 0.12); }
 body[data-game="kin"] .kin-block text { font-size: 14px; pointer-events: none; paint-order: stroke; stroke: #14122a; stroke-width: 2px; }
 body[data-game="kin"] .kin-army-pickable { cursor: pointer; filter: drop-shadow(0 0 6px #ffd84a); animation: kin-pulse 1s ease-in-out infinite alternate; }
 body[data-game="kin"] .kin-army-moving { filter: drop-shadow(0 0 8px #e0584c); }
@@ -4669,6 +4776,17 @@ body[data-game="kin"] .kc-lines { margin: 0; display: flex; flex-direction: colu
 body[data-game="kin"] .kc-lines div { display: flex; flex-direction: column; }
 body[data-game="kin"] .kc-lines dt { font-weight: 700; font-size: 0.68rem; opacity: 0.8; }
 body[data-game="kin"] .kc-lines dd { margin: 0; }
+body[data-game="kin"] .kc.unavailable { opacity: 0.6; filter: grayscale(0.7); }
+body[data-game="kin"] .kc-disabled-pill { position: absolute; top: 0.35rem; right: 0.35rem; padding: 0 0.5rem; border-radius: 0.6rem; background: #777; color: #eee; font-size: 0.62rem; cursor: help; }
+body[data-game="kin"] .kin-ability { display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap; margin: 0.4rem 0; }
+body[data-game="kin"] .char-use.disabled { opacity: 0.65; }
+body[data-game="kin"] .char-use .kc-disabled-pill { position: static; display: inline-block; }
+body[data-game="kin"] .char-use-button { display: block; width: 100%; text-align: left; font: inherit; color: inherit; background: rgba(255, 255, 255, 0.45); border: 1px solid currentColor; border-radius: 0.3rem; padding: 0.15rem 0.3rem; cursor: pointer; }
+body[data-game="kin"] .char-use-button:hover, body[data-game="kin"] .char-use-button.chosen { background: #fff; outline: 2px solid #2f7de1; }
+body[data-game="kin"] .kin-tactics { margin-top: 0.75rem; }
+body[data-game="kin"] .kc-tactic { background: #e6d29a; border: 1px solid #9a7b1c; }
+body[data-game="kin"] .kc-subterfuge { background: #2b2433; color: #eadff5; border: 1px solid #120d17; }
+body[data-game="kin"] .kc-subterfuge.kc-back { background: repeating-linear-gradient(45deg, #2b2433, #2b2433 8px, #382f43 8px, #382f43 16px); text-align: center; }
 body[data-game="kin"] .kc-phase { align-self: center; margin-top: auto; padding: 0 0.5rem; border-radius: 0.6rem; color: #fff; font-size: 0.62rem; text-transform: capitalize; }
 body[data-game="kin"] .kc-technology { background: #b9b9bf; border-color: #8c8c94; }
 body[data-game="kin"] .kc-gears { text-align: center; font-weight: 700; font-size: 1rem; }
@@ -4700,7 +4818,8 @@ body[data-game="kin"] .kin-barter-mint { display: flex; flex-wrap: wrap; gap: 6p
 .kin-spot-line { stroke: #e0584c; stroke-width: 7; stroke-linecap: round; opacity: 0.8; cursor: pointer; }
 .kin-spot-line:hover { stroke: #fff; opacity: 1; }
 body[data-game="kin"] .kin-payment { background: rgba(20, 18, 42, 0.92); border: 1px solid #ffd84a; border-radius: 6px; padding: 0.5rem 0.75rem; margin: 0.5rem; }
-body[data-game="kin"] .kin-payment h3 { margin: 0 0 0.25rem; }
+body[data-game="kin"] .kin-payment h3 { margin: 0 0 0.25rem; color: var(--kin-red); font-size:25px; }
+body[data-game="kin"] .kin-payment .small { color: var(--kin-paper); }
 body[data-game="kin"] .kin-payment-cards, body[data-game="kin"] .kin-payment-basic, body[data-game="kin"] .kin-payment-buttons, body[data-game="kin"] .kin-payment-row { display: flex; flex-wrap: wrap; gap: 0.5rem; align-items: center; margin: 0.25rem 0; }
 body[data-game="kin"] .kin-army-exhausted circle { opacity: 0.55; }
 body[data-game="kin"] .kin-battle-sides { display: flex; flex-wrap: wrap; gap: 1rem; }
@@ -4715,3 +4834,105 @@ body[data-game="kin"] .kin-army-badge { font-size: 7px; fill: #ffd84a; font-weig
 body[data-game="kin"] .kin-pay-card { border: 1px solid #6a6890; border-radius: 4px; padding: 0.15rem 0.5rem; }
 body[data-game="kin"] .kin-pay-card.tapped { opacity: 0.6; }
 body[data-game="kin"] .kin-payment-basic input { width: 3.5rem; }
+/* ===== Werewolves: muted grey lobby; the circle table keeps its brown ===== */
+body[data-game="werewolves"] {
+  --neon-rgb: 156, 163, 175;
+  --neon: rgb(var(--neon-rgb));
+  --neon-soft: rgb(200, 205, 213);
+  --thememain: rgb(156, 163, 175);
+  --themesubmain: rgb(107, 114, 128);
+  --themeblack: #14161a;
+  --themegrey: #1d2026;
+  --themelog: #1a1d22;
+  --themewhite: #e5e7eb;
+  --muted: #9ca3af;
+  --card: var(--themelog);
+  --border: rgba(var(--neon-rgb), .45);
+  --accent: var(--neon);
+  --font-big: system-ui, sans-serif;
+}
+body[data-game="werewolves"] .werewolves-circle-table {
+  color: #c9a77c;
+}
+/* Werewolves: no neon glow, small corner radius */
+body[data-game="werewolves"] *,
+body[data-game="werewolves"] *::before,
+body[data-game="werewolves"] *::after {
+  text-shadow: none !important;
+}
+body[data-game="werewolves"] :is(.card, .modal, button, .button, input, select, textarea, .pill, .topbar, header, .menu, [class*="werewolves-"]):not(.werewolves-circle):not(.werewolves-role-icon),
+body[data-game="werewolves"] :is(.card, button, .button, input, select, textarea, .pill, [class*="werewolves-"]):not(.werewolves-circle):not(.werewolves-role-icon)::before {
+  box-shadow: none !important;
+  border-radius: 5px !important;
+}
+body[data-game="werewolves"] :is(.card, .modal, button, .button, input, select, textarea, .pill):not(:disabled) {
+  filter: none !important;
+}
+body[data-game="werewolves"] .card,
+body[data-game="werewolves"] :is(button, .button, input, select, textarea) {
+  border-color: rgba(156, 163, 175, .35) !important;
+}
+body[data-game="werewolves"] .werewolves-circle-seat.self,
+body[data-game="werewolves"] .werewolves-circle-seat.spared,
+body[data-game="werewolves"] .werewolves-circle-seat.current-voter,
+body[data-game="werewolves"] .werewolves-circle-seat.lynch-target {
+  border-radius: 5px !important;
+}
+
+/* Each statistics tab wears the look of the game it selects. */
+.modal.stats-modal[data-game] .stats-page .stats-tab[data-tab-game="dworf"] {
+  --t-edge: #1a1109; --t-glow: rgba(0,0,0,.4); --t-surface: #2a1d12; --t-panel: #3b2a1a; --t-text: #efe4d0; --t-accent: #f3e3c3;
+  font-family: 'VT323', 'Courier New', monospace;
+}
+.modal.stats-modal[data-game] .stats-page .stats-tab[data-tab-game="tetris"] {
+  --t-edge: #8f1825; --t-glow: rgba(255,38,59,.24); --t-surface: #090304; --t-panel: #1b090c; --t-text: #fff1f2; --t-accent: #ff263b;
+  font-family: 'Tilt Neon', system-ui, sans-serif;
+}
+.modal.stats-modal[data-game] .stats-page .stats-tab[data-tab-game="werewolves"] {
+  --t-edge: rgba(156,163,175,.55); --t-glow: rgba(0,0,0,0); --t-surface: #14161a; --t-panel: #1d2026; --t-text: #e5e7eb; --t-accent: #9ca3af;
+  font-family: system-ui, sans-serif;
+}
+.modal.stats-modal[data-game] .stats-page .stats-tab[data-tab-game="thirtyone"] {
+  --t-edge: #c9a24a; --t-glow: rgba(90,120,255,.3); --t-surface: #050b2e; --t-panel: #0e1a78; --t-text: #f2f5ff; --t-accent: #ffd98a;
+  font-family: 'Raleway', system-ui, sans-serif;
+}
+.modal.stats-modal[data-game] .stats-page .stats-tab[data-tab-game="kin"] {
+  --t-edge: #e0584c; --t-glow: rgba(224,88,76,.3); --t-surface: #14122a; --t-panel: #221d4a; --t-text: #fffaf0; --t-accent: #e0584c;
+  font-family: 'Tilt Neon', system-ui, sans-serif;
+}
+.modal.stats-modal[data-game] .stats-page .stats-tab[data-tab-game="blokus"] {
+  --t-edge: #c084fc; --t-glow: rgba(192,132,252,.3); --t-surface: #080411; --t-panel: #1a1025; --t-text: #fff1f2; --t-accent: #c084fc;
+  font-family: 'Tilt Neon', system-ui, sans-serif;
+}
+.modal.stats-modal[data-game] .stats-page .stats-tab[data-tab-game="codenames"] {
+  --t-edge: #a8956b; --t-glow: rgba(122,28,28,.15); --t-surface: #e8dcc0; --t-panel: #fbf6e8; --t-text: #2b2118; --t-accent: #7a1c1c;
+  font-family: 'Libre Baskerville', Georgia, serif;
+}
+.modal.stats-modal[data-game] .stats-page .stats-tab[data-tab-game] {
+  background: var(--t-surface) !important;
+  color: var(--t-text) !important;
+  border: 2px solid var(--t-edge) !important;
+  box-shadow: 0 0 5px var(--t-glow) !important;
+  text-shadow: none !important;
+}
+.modal.stats-modal[data-game] .stats-page .stats-tab[data-tab-game]:hover:not(:disabled) {
+  background: var(--t-panel) !important;
+  color: var(--t-accent) !important;
+  box-shadow: 0 0 10px var(--t-glow) !important;
+}
+.modal.stats-modal[data-game] .stats-page .stats-tab[data-tab-game][aria-selected="true"],
+.modal.stats-modal[data-game] .stats-page .stats-tab[data-tab-game][aria-selected="true"]:hover {
+  background: var(--t-accent) !important;
+  color: var(--t-surface) !important;
+  border-color: var(--t-accent) !important;
+  box-shadow: 0 0 14px var(--t-glow), inset 0 0 0 2px var(--t-surface) !important;
+}
+.modal.stats-modal[data-game="werewolves"] { --stats-border-radius: 5px; }
+.modal.stats-modal[data-game="kin"] { --stats-border-radius: 4px; }
+.modal.stats-modal[data-game="blokus"] { --stats-border-radius: 4px; }
+
+/* One variable drives every corner inside the statistics modal. */
+.modal.stats-modal[data-game],
+.modal.stats-modal[data-game] * {
+  border-radius: var(--stats-border-radius, 8px) !important;
+}

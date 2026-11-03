@@ -3,13 +3,13 @@ import { cardDef } from "./Cards";
 import { CHARACTERS } from "./characters.data";
 import type { KinBarterOffer, KinBarterTreaty, KinGoods, KinWorld } from "./types";
 
-const RESOURCES = ["gold", "lumber", "stone", "food", "gear", "mana", "relic"];
+const RESOURCES = ["gold", "lumber", "stone", "food", "gear", "mana", "relic", "tradegood"];
 const treatyName = (def: string) => cardDef(def)?.name ?? def;
 const characterName = (id: string) => CHARACTERS.find(def => def.id === id)?.name ?? id;
 
 function describeGoods(goods: KinGoods, world: KinWorld): string {
   const parts = [
-    ...Object.entries(goods.resources).map(([name, amount]) => `${amount} ${name}`),
+    ...Object.entries(goods.resources).map(([name, amount]) => name === "tradegood" && goods.tradegoodAs ? `${amount} tradegood (as ${goods.tradegoodAs})` : `${amount} ${name}`),
     ...goods.characters.map(characterName),
     ...goods.treaties.map(id => treatyName(world.items.find(item => item.id === id)?.def ?? id))
   ];
@@ -80,6 +80,12 @@ function GoodsPicker({ title, goods, onChange, characters, treaties }: { title: 
           </label>
         ))}
       </div>
+      {(goods.resources.tradegood ?? 0) > 0 && (
+        <select value={goods.tradegoodAs ?? ""} onChange={event => onChange({ ...goods, tradegoodAs: event.target.value || undefined })} aria-label="Tradegoods become">
+          <option value="">Tradegoods become…</option>
+          {["gold", "lumber", "stone", "food"].map(res => <option key={res} value={res}>{res}</option>)}
+        </select>
+      )}
       {characters.map(id => <label key={id} className="kin-barter-check"><input type="checkbox" checked={goods.characters.includes(id)} onChange={() => onChange({ ...goods, characters: toggle(goods.characters, id) })} /> {characterName(id)}</label>)}
       {treaties.map(entry => <label key={entry.id} className="kin-barter-check"><input type="checkbox" checked={goods.treaties.includes(entry.id)} onChange={() => onChange({ ...goods, treaties: toggle(goods.treaties, entry.id) })} /> {entry.label}</label>)}
     </fieldset>

@@ -82,6 +82,9 @@ const colorOf = (world: KinWorld, owner: string | null) => {
   return kin ? kinColor(kin) : NEUTRAL_COLOR;
 };
 
+// Deep Ones: the resource a village is dedicated to.
+const DEDICATION_ICON: Record<string, string> = { gold: "🪙", lumber: "🪵", stone: "🪨", food: "🌾" };
+
 function iconOf(def: BuildingDef, world: KinWorld, building: KinBuilding) {
   if (def.id !== "worksite" || building.tile < 0) return undefined;
   const next = sideNeighborOf(building.tile, building.side ?? 0);
@@ -141,6 +144,7 @@ export function BuildingLayer({ world, spots, onSetupTile, onSetupSide, pickable
         return (
           <g key={building.id} transform={`translate(${x} ${y})`}>
             <BuildingShape def={def} side={building.side} reach={reach} color={color} icon={iconOf(def, world, building)} />
+            {building.dedication && <text x={0} y={22} textAnchor="middle" dominantBaseline="middle" className="kin-dedication">{DEDICATION_ICON[building.dedication] ?? "?"}<title>{`Dedicated to ${building.dedication}`}</title></text>}
           </g>
         );
       })}
@@ -171,7 +175,7 @@ export function BuildingLayer({ world, spots, onSetupTile, onSetupSide, pickable
           </g>
         );
       })}
-      {spots?.map(spot => {
+      {spots?.filter(spot => spot.tile >= 0).map(spot => {
         const [x, y] = tileCenter(spot.tile);
         const a = corner(spot.side ?? 0);
         const b = corner((spot.side ?? 0) + 1);
@@ -211,9 +215,10 @@ export function BuildingLayer({ world, spots, onSetupTile, onSetupSide, pickable
 const ORDER: Record<string, number> = { cross: 0, edge: 1, tile: 2, slice: 3, center: 4 };
 
 // The Ark's own board holds the buildings with tile -1.
-export function ArkBoard({ world }: { world: KinWorld }) {
+export function ArkBoard({ world, spots }: { world: KinWorld; spots?: Spot[] }) {
   const mine = world.buildings.filter(b => b.tile < 0);
-  if (mine.length === 0) return null;
+  const places = spots?.filter(spot => spot.tile < 0) ?? [];
+  if (mine.length === 0 && places.length === 0) return null;
   return (
     <div className="kin-ark-board">
       <strong>Ark board</strong>
@@ -221,6 +226,11 @@ export function ArkBoard({ world }: { world: KinWorld }) {
         {mine.map(building => {
           const def = buildingById(building.def);
           return def && <BuildingShape key={building.id} def={def} side={building.side} color={colorOf(world, building.owner)} />;
+        })}
+        {places.map(spot => {
+          const a = corner(spot.side ?? 0);
+          const b = corner((spot.side ?? 0) + 1);
+          return <polygon key={spot.key} className="kin-spot" points={points([a, b, scale(b, 0.5), scale(a, 0.5)])} onClick={spot.onClick}><title>{spot.title}</title></polygon>;
         })}
       </svg>
     </div>

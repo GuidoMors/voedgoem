@@ -88,7 +88,7 @@ export default function App() {
           {user.isDisplay
             ? <span className="pill">display</span>
             : <a className={`profile-link ${onProfile ? "active" : ""}`} href="#/profile" title="Edit profile" onClick={event => openModal(event, "profile")}><Avatar avatar={user.avatar ?? defaultAvatar(user.id)} size={34} />{user.username}</a>}
-          <button onClick={() => void logout()}>Sign out</button>
+          {inGame ? <a className="button" href="#/">Leave lobby</a> : <button onClick={() => void logout()}>Sign out</button>}
         </div>
         </div>
       </header>

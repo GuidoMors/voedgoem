@@ -13,7 +13,13 @@ Every ocean tile next to a mountain, forest or farmland tile becomes a climate t
 - [[desert]], in the middle 2 rows.
 - [[plains]], in every other row.
 
-## 3. Rivers
+
+## 3. The last tiles
+
+- Make a pile of 12 land tiles: 4 [[plains]], 4 [[snow]], 4 [[desert]].
+- Starting with the host player and going clockwise, each player places one tile from the pile on an ocean tile (matching climate) until the pile is gone. The player chooses which type of tile to take; the number of tiles left of each type is public.
+
+## 4. Rivers
 
 Starting with the host player, clockwise, each player creates a river until six exist.
 
@@ -23,10 +29,10 @@ These are the rules to create a river:
 - Continue the river edge by edge from its free end; its path may bend, but may not share an edge with or cross another river.
 - Stop when the free end touches a [[river]] or [[ocean]], or when no legal continuation remains. A river may not start on a vertex that already has a river on it.
 
-## 4. Kin
+## 5. Kin
 
-4.1 Picking Kin: Starting with the host player, clockwise, each player picks a different [[Kin]].
-4.2 Kin Setup: In [[natural order]], complete the steps in the [[starting setup]] of your Kin.
+5.1 Picking Kin: Starting with the host player, clockwise, each player picks a different [[Kin]].
+5.2 Kin Setup: In [[natural order]], complete the steps in the [[starting setup]] of your Kin.
 
 Starting buildings obey their normal Build conditions. If no tile is available for a starting building, a player may choose an ocean tile in the climate zone required by that building, convert it to the required tile type, and place the building there. The tile must satisfy the building's other conditions.
 
@@ -43,7 +49,7 @@ Starting buildings obey their normal Build conditions. If no tile is available f
 9. [[Children of the Great Tree]]
 10. [[Deep Ones]]
 
-## 5. Characters
+## 6. Characters
 
 - Stack the neutral characters and the regular characters of the picked [[Kin]]. Sort them by [[archetype]].
 - In natural order each player [[claim]]s a characer belonging to their Kin. ([[The Pride of Lumon]] must pick [[Lumon]] in this step. [[The Ethereal]] must pick the [[Ethereal]] in this step.)

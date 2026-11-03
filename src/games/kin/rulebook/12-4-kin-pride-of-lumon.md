@@ -30,7 +30,7 @@ Their unshaken faith in their prophet has led them to pacifism and diplomacy, an
 > Effect: The tile speed cost for moving to plains is set to ½.
 
 ## Virtue | ◫
-> Short description: [[Virtue]] equals the number of your treaties other players hold. It cannot be spent or bartered. Your characters use it as a requirement.
+> Short description: [[Virtue]] equals the number of your treaties other players hold. It cannot be spent or bartered. Your characters use it for their abilities.
 > Trigger: Barter, when it resolves
 > Effect: Set your virtue to the number of your treaties held by other players.
 > Extra rules: Virtue is not a bartering good.
@@ -72,7 +72,7 @@ Their unshaken faith in their prophet has led them to pacifism and diplomacy, an
 
 ## Wololay | Apprentice of the Faith | Discovery | 2 power
 > ↷ Turning of Hearts
-> Short description: [2 [[mana]]] - (6 [[virtue]]): Transfer command of a lesser [[strength]] [[army]] adjacent to your army to you, if they hold at least 3 of your [[treaty|treaties]].
+> Short description: [2 [[mana]]] - (6 [[virtue]]): Transfer command of a lesser [[strength]] [[army]] adjacent to an army you own, if they hold at least 3 of your [[treaty|treaties]].
 > Condition: Discovery Phase. You have at least 6 virtue. You own an army with greater strength than an adjacent army on an unbuilt tile owned by another player who holds at least 3 of your treaties.
 > Trigger: Click this ability ruletext.
 > On trigger: Select an army of lesser strength of another player that is adjacent to an army of greater strength that you own.

@@ -13,9 +13,12 @@ import { CHARACTERS } from "./characters.data";
 import type { KinMode, KinSnapshot, KinWorld } from "./types";
 
 const MODES: { id: KinMode; name: string; text: string }[] = [
-  { id: "short", name: "Short game", text: "The first chapter ends the game; its winner wins." },
-  { id: "long", name: "Long game", text: "Chapters are played until no unpicked Kin or chapters remain." },
-  { id: "campaign", name: "Campaign", text: "A series of chapters where the Kin are played in turn." }
+  { id: "short", name: "Short game", text: 
+    "In a short game you only play the first chapter: New Dawn. The winner of the chapter wins the game." },
+  { id: "long", name: "Long game", text: 
+    "In a long game chapters are played until someone wins two chapters in a row." },
+  { id: "campaign", name: "Campaign", text: 
+    "In a campaign you play through chapters until there are none left. The winner is the player who won the most chapters" }
 ];
 
 function Waiting({ snapshot, userId, isHost, send }: GameLobbyProps<KinSnapshot>) {
@@ -24,7 +27,7 @@ function Waiting({ snapshot, userId, isHost, send }: GameLobbyProps<KinSnapshot>
   const full = snapshot.seats.length >= snapshot.maxPlayers;
   const canStart = snapshot.seats.length >= snapshot.minPlayers;
   return (
-    <>
+    <div className="kin-waiting">
       <div className="grid-2">
         <section className="card">
           <h2>Players <span className="pill">{snapshot.seats.length}/{snapshot.maxPlayers}</span></h2>
@@ -91,11 +94,12 @@ function Waiting({ snapshot, userId, isHost, send }: GameLobbyProps<KinSnapshot>
           </div>
         </HostControlsTab>
       )}
-    </>
+    </div>
   );
 }
 
 const PILE_TYPES = ["mountain", "forest", "farmland"] as const;
+const LAST_TYPES = ["plains", "snow", "desert"] as const;
 
 const CHARACTER_PROMPTS = [
   "claim a character of your own Kin.",
@@ -122,8 +126,9 @@ function setupPrompt(world: KinWorld) {
 
 function stepTitle(world: KinWorld) {
   if (world.step === "tiles") return "1. Build the world";
-  if (world.step === "rivers") return "3. Rivers";
-  if (world.step === "kin") return "4. Pick your Kin";
+  if (world.step === "lastTiles") return "3. The last tiles";
+  if (world.step === "rivers") return "4. Rivers";
+  if (world.step === "kin") return "5. Pick your Kin";
   if (world.step === "setup") return "4.2 Starting setup";
   return "5. Characters";
 }
@@ -149,6 +154,7 @@ function Started(props: GameLobbyProps<KinSnapshot>) {
 
 function SetupScreen({ snapshot, userId, isHost, send }: GameLobbyProps<KinSnapshot>) {
   const [pick, setPick] = useState<(typeof PILE_TYPES)[number]>("mountain");
+  const [dedication, setDedication] = useState("gold");
   const names = new Map(snapshot.seats.map(seat => [seat.id, seat]));
   const world = snapshot.world;
   const myTurn = !!world && world.turn === userId;
@@ -156,6 +162,11 @@ function SetupScreen({ snapshot, userId, isHost, send }: GameLobbyProps<KinSnaps
   const pickable = world ? PILE_TYPES.filter(type => world.pile[type] > 0) : [];
   const chosen = world && world.pile[pick] > 0 ? pick : pickable[0];
   const left = world ? PILE_TYPES.reduce((sum, type) => sum + world.pile[type], 0) : 0;
+  const [lastPick, setLastPick] = useState<(typeof LAST_TYPES)[number]>("plains");
+  const lastPile = world?.lastPile;
+  const lastPickable = lastPile ? LAST_TYPES.filter(type => lastPile[type] > 0) : [];
+  const lastChosen = lastPile && lastPile[lastPick] > 0 ? lastPick : lastPickable[0];
+  const lastLeft = lastPile ? LAST_TYPES.reduce((sum, type) => sum + lastPile[type], 0) : 0;
   return (
     <>
       <div className="kin-setup">
@@ -178,14 +189,34 @@ function SetupScreen({ snapshot, userId, isHost, send }: GameLobbyProps<KinSnaps
                     ))}
                   </div>
                 )}
+                {world.step === "lastTiles" && lastPile && (
+                  <div className="kin-pile" aria-label="Last tiles left in the pile">
+                    <span className="muted small">Pile: {lastLeft} left</span>
+                    {LAST_TYPES.map(type => (
+                      <button
+                        key={type}
+                        type="button"
+                        className={`kin-pile-type ${type} ${lastChosen === type && myTurn ? "selected" : ""}`}
+                        disabled={!myTurn || lastPile[type] === 0}
+                        onClick={() => setLastPick(type)}
+                      >{TERRAIN_NAMES[type]} <span className="pill">{lastPile[type]}</span></button>
+                    ))}
+                  </div>
+                )}
               </div>
               <p className={myTurn ? "kin-prompt mine" : "kin-prompt muted"}>
                 {world.step === "tiles" && (myTurn ? `Your turn: choose a pile above, then click an ocean tile to place a ${chosen ?? "land"} tile.` : `Waiting for ${turnName} to place a tile.`)}
+                {world.step === "lastTiles" && (myTurn ? `Your turn: choose a pile above, then click an ocean tile in a ${lastChosen ?? "matching"} row to place a ${lastChosen ?? "climate"} tile.` : `Waiting for ${turnName} to place a tile.`)}
                 {world.step === "rivers" && (myTurn
                   ? (world.freeEnd ? "Click a highlighted corner to extend your river. It ends when it touches a river or the ocean." : "Click a highlighted corner of a mountain to start your river.")
                   : `Waiting for ${turnName} to draw river ${world.riversDone + 1} of ${world.riverTotal}.`)}
                 {world.step === "kin" && (myTurn ? "Your turn: pick a Kin. Each Kin can only be taken once." : `Waiting for ${turnName} to pick a Kin.`)}
                 {world.step === "setup" && (myTurn ? setupPrompt(world) : `Waiting for ${turnName} to place their starting buildings.`)}
+                {world.step === "setup" && myTurn && world.setup?.dedicate && (
+                  <select value={dedication} onChange={event => setDedication(event.target.value)} aria-label="Dedicate the village to a resource">
+                    {["gold", "lumber", "stone", "food"].map(res => <option key={res} value={res}>Dedicated to {res}</option>)}
+                  </select>
+                )}
                 {world.step === "characters" && (myTurn ? `Your turn: ${CHARACTER_PROMPTS[world.charRound ?? 0]}` : `Waiting for ${turnName}: ${CHARACTER_PROMPTS[world.charRound ?? 0]}`)}
                 {world.step === "done" && "The character draft is complete. The starting setup arrives in a later milestone."}
               </p>
@@ -208,12 +239,13 @@ function SetupScreen({ snapshot, userId, isHost, send }: GameLobbyProps<KinSnaps
               )}
               {world.step !== "characters" && <WorldBoard
                 world={world}
-                onTile={world.step === "tiles" && myTurn && chosen ? index => send({ type: "placeTile", tile: index, terrain: chosen }) : undefined}
+                onTile={world.step === "tiles" && myTurn && chosen ? index => send({ type: "placeTile", tile: index, terrain: chosen })
+                  : world.step === "lastTiles" && myTurn && lastChosen ? index => send({ type: "placeLastTile", tile: index, terrain: lastChosen }) : undefined}
                 onVertex={world.step === "rivers" && myTurn ? vertex => send({ type: world.freeEnd ? "riverExtend" : "riverStart", vertex }) : undefined}
-                onSetupTile={world.step === "setup" && myTurn ? tile => send({ type: "setupPlace", tile }) : undefined}
+                onSetupTile={world.step === "setup" && myTurn ? tile => send({ type: "setupPlace", tile, ...(world.setup?.dedicate ? { dedication } : {}) }) : undefined}
                 onSetupSide={world.step === "setup" && myTurn ? side => send({ type: "setupPlace", side }) : undefined}
               />}
-              {world.step !== "characters" && world.step !== "tiles" && world.step !== "rivers" && world.step !== "kin" && <ArkBoard world={world} />}
+              {world.step !== "characters" && world.step !== "tiles" && world.step !== "lastTiles" && world.step !== "rivers" && world.step !== "kin" && <ArkBoard world={world} />}
               {world.step !== "characters" && (
                 <details className="kin-templates">
                   <summary>Building templates</summary>
@@ -244,15 +276,17 @@ function SetupScreen({ snapshot, userId, isHost, send }: GameLobbyProps<KinSnaps
                 <li key={id} className={`taken ${world?.turn === id ? "on-turn" : ""}`}>
                   <span className="kin-seat-number">{index + 1}</span>
                   <Person id={seat.id} name={seat.username} />
+                  <span className="kin-seat-pill-container">
                   {world?.turn === id && <span className="pill">turn</span>}
                   {world?.kinPicks[id] && <span className="pill">{world.kins.find(k => k.id === world.kinPicks[id])?.name}</span>}
                   {!seat.connected && <span className="pill">offline</span>}
                   {seat.id === userId && <span className="pill">You</span>}
+                  </span>
                 </li>
               );
             })}
           </ol>
-          {world && world.step !== "tiles" && <p className="muted small">Rivers drawn: {world.riversDone} / {world.riverTotal}</p>}
+          {world && world.step !== "tiles" && world.step !== "lastTiles" && <p className="muted small">Rivers drawn: {world.riversDone} / {world.riverTotal}</p>}
           {snapshot.testing && isHost && snapshot.seed !== null && <p className="muted small">Testing seed: {snapshot.seed}</p>}
         </aside>
       </div>

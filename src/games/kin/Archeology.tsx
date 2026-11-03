@@ -33,7 +33,7 @@ export function FoundBanner({ found, name, onClose }: { found: KinFound; name: s
   const text = found.result === "warp" ? "a warp: 2 mana" : found.result === "treasure" ? "a treasure block" : "a relic block";
   return (
     <div className="kin-victory-banner" role="status">
-      <p>{name} explored the ruins and rolled a {found.roll}: it was {text}.</p>
+      <p>{name} explored the ruins and {found.roll === 0 ? "chose" : `rolled a ${found.roll}:`} it was {text}.</p>
       <button type="button" onClick={onClose}>Close</button>
     </div>
   );

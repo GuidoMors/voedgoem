@@ -1,5 +1,5 @@
 import type { CSSProperties } from "react";
-import type { Archetype, CharacterDef } from "./characters.data";
+import { CHARACTERS, type Archetype, type CharacterDef } from "./characters.data";
 import { kinColor } from "./KinCard";
 import type { KinInfo } from "./types";
 
@@ -19,7 +19,7 @@ export function archetypeBorder(archetypes: Archetype[]): CSSProperties {
 const NEUTRAL = "#efe4c8";
 const LABEL: Record<Archetype, string> = { discovery: "Discovery", expansion: "Expansion", control: "Control", universal: "Universal" };
 
-export function CharacterCard({ def, kins, owner, state, onPick, tapped, selectable, selected }: {
+export function CharacterCard({ def, kins, owner, state, onPick, tapped, selectable, selected, ability, borrowedAbility }: {
   def: CharacterDef;
   kins: KinInfo[];
   owner?: string;
@@ -30,9 +30,14 @@ export function CharacterCard({ def, kins, owner, state, onPick, tapped, selecta
   // Can be tapped for the action being activated; `onPick` is then called on click.
   selectable?: boolean;
   selected?: boolean;
+  // The tap ability can be clicked when `reason` is null; otherwise a disabled pill explains why not.
+  ability?: { reason: string | null; open: boolean; onUse: () => void };
+  borrowedAbility?: string;
 }) {
   const kin = kins.find(k => k.id === def.kin);
   const neutral = !kin;
+  const borrowed = borrowedAbility ? CHARACTERS.find(character => character.id === borrowedAbility) : undefined;
+  const abilities = borrowed?.abilities ?? def.abilities;
   const style = { ...archetypeBorder(def.archetypes), background: kin ? kinColor(kin) : NEUTRAL } as CSSProperties;
   const behaviour = selectable ? { onClick: onPick, role: "button", tabIndex: 0 } : {};
   return (
@@ -43,10 +48,18 @@ export function CharacterCard({ def, kins, owner, state, onPick, tapped, selecta
       </header>
       <p className="char-title">{def.title}</p>
       <div className="char-ability">
-        {def.abilities.length === 0 && <p className="char-none">No ability</p>}
-        {def.abilities.map(ability => (
-          <p key={ability.name}><span className="char-icon" title={ability.kind === "tap" ? "Tap ability" : "Passive ability"}>{ability.icon}</span> <strong>{ability.name}</strong> {ability.text}</p>
-        ))}
+        {abilities.length === 0 && <p className="char-none">No ability</p>}
+        {abilities.map(item => {
+          const usable = item.kind === "tap" && ability;
+          const body = <><span className="char-icon" title={item.kind === "tap" ? "Tap ability" : "Passive ability"}>{item.icon}</span> {borrowed && <strong>Borrowed from {borrowed.name}: </strong>}<strong>{item.name}</strong> {item.text}</>;
+          return usable ? (
+            <p key={item.name} className={`char-use ${ability.reason ? "disabled" : ""}`}>
+              {ability.reason
+                ? <>{body} <span className="kc-disabled-pill" title={ability.reason} tabIndex={0}>Disabled</span></>
+                : <button type="button" className={`char-use-button ${ability.open ? "chosen" : ""}`} onClick={event => { event.stopPropagation(); ability.onUse(); }}>{body}</button>}
+            </p>
+          ) : <p key={item.name}>{body}</p>;
+        })}
       </div>
       <footer>
         <span className="char-tags">{def.archetypes.map(a => LABEL[a]).join(" · ")}{kin ? ` · ${kin.name}` : " · Neutral"}</span>

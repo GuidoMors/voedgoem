@@ -69,7 +69,7 @@ Effect: Move the selected village and any slice buildings on the same tile to th
 ## Herne | Keen Eyed Huntress | Control | 2 power
 > ◫ Expert Hunter
 > Short description: (3 [[relics]]) - When you use this [[character]] to [[Harvest]] on a [[forest]], gain 2 [[food]].
-> Condition: You have at least 3 [[relics]]. The Harvesting army is on a Farmland.
+> Condition: You have at least 3 [[relics]]. The Harvesting army is on a forest.
 > Trigger: Harvest, after on trigger step.
 > Effect: gain 2 [[food]] instead of the 1 resource of that tile's type.
 

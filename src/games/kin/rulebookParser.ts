@@ -99,7 +99,7 @@ export interface Rulebook {
 // Links whose wording has no heading of its own; they point to the closest rule.
 const ALIASES: Record<string, string> = {
   forest: "tile type", mountain: "tile type", mountains: "tile type", desert: "tile type", snow: "tile type",
-  plains: "tile type", farmland: "tile type", river: "3. rivers",
+  plains: "tile type", farmland: "tile type", river: "4. rivers",
   building: "tile building", "path building": "edge building",
   "armies can be moved onto this tile": "tile building",
   authority: "dynasty of hanshu", vassal: "vassal treaty", dedication: "treaty",

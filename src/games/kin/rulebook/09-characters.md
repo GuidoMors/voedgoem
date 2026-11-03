@@ -107,8 +107,8 @@ Characters with no ability say “No ability”.
 ## Sneachy | Enigmatic Hooded Ratling | Control | 2 power
 > ↷ Infiltrate
 > Short description: An [[army]] you own may leaps over an adjacent building.
-> Condition: Control Phase. You own an army adjacent to a building, and the tile with that building on it has an empty tile adjacent.
-> On trigger: select an army adjacent to a building owned by another player. Then select a building owned by another player adjacent to the selected army. Then select an empty tile adjacent to the selected building.
+> Condition: Control Phase. You own an army adjacent to a building, and the tile with that building on it has an unbuilt tile without an army adjacent.
+> On trigger: select an army adjacent to a building owned by another player. Then select a building owned by another player adjacent to the selected army. Then select an unbuilt tile without an army on it adjacent to the selected building.
 > Payment: Tap this character
 > Effect: Move the army to the selected tile.
 

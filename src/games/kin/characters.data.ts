@@ -566,7 +566,7 @@ export const CHARACTERS: readonly CharacterDef[] = [
         "kind": "tap",
         "icon": "↷",
         "name": "Turning of Hearts",
-        "text": "[2 mana] - (6 virtue): Transfer command of a lesser strength army adjacent to your army to you, if they hold at least 3 of your treaties."
+        "text": "[2 mana] - (6 virtue): Transfer command of a lesser strength army adjacent to an army you own, if they hold at least 3 of your treaties."
       }
     ]
   },
@@ -854,7 +854,7 @@ export const CHARACTERS: readonly CharacterDef[] = [
         "kind": "passive",
         "icon": "◫",
         "name": "Aero Magnetism",
-        "text": "You may Explore with the Ark instead of an army, when you do, immediately Reclaim for free if its a treasure block or relic block."
+        "text": "You may Explore with the Ark instead of an army when the Ark is adjacent, when you do, immediately Reclaim for free if its a treasure block or relic block."
       }
     ]
   },

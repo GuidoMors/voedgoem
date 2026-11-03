@@ -90,7 +90,7 @@ Their society revolves around trade, economic deals, and business. Always busine
 > Condition: Every other player holds your trade treaty. You have trade treaties in your court. You have not yet used this ability this chapter.
 > Trigger: Click this ability ruletext.
 > Payment: Tap this character.
-> Effect: Gain 1 tradegood and 1 gold per trade treaty in your court.
+> Effect: Gain 1 [[relic]] per trade treaty in your court.
 
 ## Qumono | Sly Negotiator | Control | 1 power
 > ◫ Merciful Plea

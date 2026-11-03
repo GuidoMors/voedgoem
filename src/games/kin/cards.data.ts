@@ -645,7 +645,7 @@ export const CARDS: readonly CardDef[] = [
     "id": "virtue",
     "kind": "faction",
     "name": "Virtue",
-    "text": "[[Virtue]] equals the number of your treaties other players hold. It cannot be spent or bartered. Your characters use it as a requirement.",
+    "text": "[[Virtue]] equals the number of your treaties other players hold. It cannot be spent or bartered. Your characters use it for their abilities.",
     "kin": "lumon",
     "form": "passive",
     "core": false
