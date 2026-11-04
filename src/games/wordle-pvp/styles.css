@@ -1,0 +1,830 @@
+.wordle-pvp {
+  color-scheme: light;
+  --wp-bg: #fff;
+  --wp-surface: #fff;
+  --wp-text: #171717;
+  --wp-muted: #666;
+  --wp-border: #d7d7d7;
+  --wp-soft: #f3f3f3;
+  --wp-key: #e8e8e8;
+  --wp-correct: #4b8b62;
+  --wp-present: #bd963d;
+  --wp-absent: #777;
+  width: min(100%, 1120px);
+  margin: 0 auto;
+  padding: clamp(16px, 3vw, 32px);
+  background: var(--wp-bg);
+  color: var(--wp-text);
+  font-family: Inter, ui-sans-serif, system-ui, sans-serif;
+  transition: background-color 140ms ease, color 140ms ease;
+}
+
+.wordle-pvp.wp-night {
+  color-scheme: dark;
+  --wp-bg: #111;
+  --wp-surface: #171717;
+  --wp-text: #f4f4f4;
+  --wp-muted: #b7b7b7;
+  --wp-border: #414141;
+  --wp-soft: #222;
+  --wp-key: #333;
+  --wp-correct: #467c56;
+  --wp-present: #92732f;
+  --wp-absent: #555;
+  color-scheme: dark;
+}
+
+body[data-wordle-theme="day"] {
+  background: #fff;
+  color: #171717;
+}
+
+body[data-wordle-theme="night"] {
+  background: #111;
+  color: #f4f4f4;
+}
+
+#wordle-theme-slot {
+  display: none;
+  align-items: center;
+}
+
+body[data-game="wordle-pvp"] #wordle-theme-slot {
+  display: flex;
+}
+
+html body[data-game="wordle-pvp"] .topbar .wordle-theme-toggle {
+  display: grid;
+  width: 38px;
+  height: 38px;
+  flex: 0 0 38px;
+  place-items: center;
+  padding: 8px !important;
+}
+
+.wordle-theme-toggle svg {
+  width: 20px;
+  height: 20px;
+  fill: none;
+  stroke: currentColor;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 1.7;
+}
+
+#wordle-theme-slot .wordle-theme-toggle:focus-visible {
+  outline: 2px solid currentColor;
+  outline-offset: 3px;
+}
+
+body[data-game="wordle-pvp"] .topbar {
+  border-bottom: 1px solid var(--wp-app-border);
+  background: var(--wp-app-bg);
+  box-shadow: none;
+}
+
+body[data-game="wordle-pvp"] .topbar,
+body[data-game="wordle-pvp"] .topbar .brand,
+body[data-game="wordle-pvp"] .topbar .who,
+body[data-game="wordle-pvp"] .topbar nav a {
+  color: var(--wp-app-text);
+  text-shadow: none;
+}
+
+body[data-game="wordle-pvp"] .topbar nav a:hover,
+body[data-game="wordle-pvp"] .topbar nav a.active {
+  border-color: var(--wp-app-border);
+  background: var(--wp-app-soft);
+  box-shadow: none;
+  color: var(--wp-app-text);
+  text-shadow: none;
+}
+
+body[data-game="wordle-pvp"] .topbar button {
+  border: 1px solid var(--wp-app-border);
+  border-radius: 4px;
+  background: var(--wp-app-bg);
+  box-shadow: none;
+  color: var(--wp-app-text);
+  text-shadow: none;
+}
+
+body[data-game="wordle-pvp"] .topbar button:hover:not(:disabled) {
+  background: var(--wp-app-soft);
+  box-shadow: none;
+}
+
+body[data-game="wordle-pvp"] .page > .row h1 {
+  color: var(--wp-app-text);
+  font-family: inherit;
+  letter-spacing: normal;
+  text-shadow: none;
+}
+
+body[data-game="wordle-pvp"] .host-tag {
+  color: var(--wp-app-muted);
+}
+
+body[data-game="wordle-pvp"][data-wordle-theme="day"] {
+  --wp-app-bg: #fff;
+  --wp-app-text: #171717;
+  --wp-app-muted: #666;
+  --wp-app-border: #d7d7d7;
+  --wp-app-soft: #f3f3f3;
+}
+
+body[data-game="wordle-pvp"][data-wordle-theme="night"] {
+  --wp-app-bg: #111;
+  --wp-app-text: #f4f4f4;
+  --wp-app-muted: #b7b7b7;
+  --wp-app-border: #414141;
+  --wp-app-soft: #222;
+}
+
+html body[data-game="wordle-pvp"] .page,
+html body[data-game="wordle-pvp"] .shell {
+  background: var(--wp-app-bg) !important;
+  color: var(--wp-app-text) !important;
+}
+
+html body[data-game="wordle-pvp"] .topbar,
+html body[data-game="wordle-pvp"] .topbar .brand,
+html body[data-game="wordle-pvp"] .topbar .who,
+html body[data-game="wordle-pvp"] .topbar nav a,
+html body[data-game="wordle-pvp"] .page > .row h1,
+html body[data-game="wordle-pvp"] .host-tag {
+  color: var(--wp-app-text) !important;
+  text-shadow: none !important;
+}
+
+html body[data-game="wordle-pvp"] .topbar {
+  border: 0;
+  border-bottom: 1px solid var(--wp-app-border) !important;
+  background: var(--wp-app-bg) !important;
+  box-shadow: none !important;
+}
+
+html body[data-game="wordle-pvp"] .topbar nav a:hover,
+html body[data-game="wordle-pvp"] .topbar nav a.active {
+  border-color: var(--wp-app-border) !important;
+  background: var(--wp-app-soft) !important;
+  box-shadow: none !important;
+  color: var(--wp-app-text) !important;
+  text-shadow: none !important;
+}
+
+html body[data-game="wordle-pvp"] button,
+html body[data-game="wordle-pvp"] .button {
+  border: 1px solid var(--wp-app-border) !important;
+  border-radius: 4px !important;
+  background: var(--wp-app-bg) !important;
+  color: var(--wp-app-text) !important;
+  box-shadow: none !important;
+  font-family: inherit !important;
+  text-shadow: none !important;
+  transition: background-color 140ms ease, border-color 140ms ease;
+}
+
+html body[data-game="wordle-pvp"] button:hover:not(:disabled),
+html body[data-game="wordle-pvp"] .button:hover {
+  border-color: var(--wp-app-text) !important;
+  background: var(--wp-app-soft) !important;
+  color: var(--wp-app-text) !important;
+  box-shadow: none !important;
+  text-shadow: none !important;
+}
+
+html body[data-game="wordle-pvp"] button:disabled {
+  opacity: .5;
+}
+
+html body[data-game="wordle-pvp"] .wordle-pvp input:focus {
+  border-color: var(--wp-app-text) !important;
+  box-shadow: 0 0 0 2px var(--wp-app-border) !important;
+}
+
+html body[data-game="wordle-pvp"] .wp-primary,
+html body[data-game="wordle-pvp"] .wp-guess-form button {
+  border-color: var(--wp-app-text) !important;
+  background: var(--wp-app-text) !important;
+  color: var(--wp-app-bg) !important;
+}
+
+html body[data-game="wordle-pvp"] .wp-team-red .wp-join {
+  border-color: #b74242 !important;
+  background: #fff7f7 !important;
+  color: #9f3030 !important;
+}
+
+html body[data-game="wordle-pvp"][data-wordle-theme="night"] .wp-team-red .wp-join {
+  background: #291a1a !important;
+  color: #f0aaaa !important;
+}
+
+html body[data-game="wordle-pvp"] .wp-team-blue .wp-join {
+  border-color: #4376b8 !important;
+  background: #f5f9ff !important;
+  color: #315d96 !important;
+}
+
+html body[data-game="wordle-pvp"][data-wordle-theme="night"] .wp-team-blue .wp-join {
+  background: #182232 !important;
+  color: #a7c7f0 !important;
+}
+
+html body[data-game="wordle-pvp"] .wp-team-red .wp-join:hover:not(:disabled),
+html body[data-game="wordle-pvp"] .wp-team-blue .wp-join:hover:not(:disabled) {
+  filter: brightness(.96);
+}
+
+html body[data-game="wordle-pvp"] .wp-primary:hover:not(:disabled),
+html body[data-game="wordle-pvp"] .wp-guess-form button:hover:not(:disabled) {
+  border-color: var(--wp-app-muted) !important;
+  background: var(--wp-app-muted) !important;
+  color: var(--wp-bg) !important;
+}
+
+html body[data-game="wordle-pvp"] .wordle-pvp .wp-key {
+  border-color: transparent !important;
+  background: var(--wp-key) !important;
+  color: var(--wp-text) !important;
+}
+
+html body[data-game="wordle-pvp"] .wordle-pvp .wp-key-correct {
+  border-color: var(--wp-correct) !important;
+  background: var(--wp-correct) !important;
+  color: #fff !important;
+}
+
+html body[data-game="wordle-pvp"] .wordle-pvp .wp-key-present {
+  border-color: var(--wp-present) !important;
+  background: var(--wp-present) !important;
+  color: #fff !important;
+}
+
+html body[data-game="wordle-pvp"] .wordle-pvp .wp-key-absent {
+  border-color: var(--wp-absent) !important;
+  background: var(--wp-absent) !important;
+  color: #fff !important;
+}
+
+html body[data-game="wordle-pvp"] .wordle-pvp .wp-key:hover:not(:disabled) {
+  border-color: transparent !important;
+  background: var(--wp-border) !important;
+}
+
+html body[data-game="wordle-pvp"] .wordle-pvp .wp-key-correct:hover:not(:disabled) {
+  background: var(--wp-correct) !important;
+}
+
+html body[data-game="wordle-pvp"] .wordle-pvp .wp-key-present:hover:not(:disabled) {
+  background: var(--wp-present) !important;
+}
+
+html body[data-game="wordle-pvp"] .wordle-pvp .wp-key-absent:hover:not(:disabled) {
+  background: var(--wp-absent) !important;
+}
+
+html body[data-game="wordle-pvp"] .page .bot-panel.card {
+  border: 1px solid var(--wp-app-border) !important;
+  border-radius: 5px !important;
+  background: var(--wp-app-bg) !important;
+  box-shadow: none !important;
+  color: var(--wp-app-text) !important;
+  font-family: Inter, ui-sans-serif, system-ui, sans-serif !important;
+}
+
+html body[data-game="wordle-pvp"] .page .bot-panel h2,
+html body[data-game="wordle-pvp"] .page .bot-panel p,
+html body[data-game="wordle-pvp"] .page .bot-panel .small {
+  color: var(--wp-app-text) !important;
+  font-family: Inter, ui-sans-serif, system-ui, sans-serif !important;
+  text-shadow: none !important;
+}
+
+html body[data-game="wordle-pvp"] .page .bot-panel button:disabled:disabled:disabled:disabled:disabled:disabled:disabled {
+  border-color: var(--wp-app-border) !important;
+  background: var(--wp-app-soft) !important;
+  color: var(--wp-app-muted) !important;
+  filter: none !important;
+  opacity: .6 !important;
+}
+
+html body[data-game="wordle-pvp"] .page button:not(.cn-card):not(.dworf-card):not(.dworf-cell):not(.ts-word):not(.swatch):disabled:disabled:disabled:disabled:disabled:disabled:disabled {
+  border-color: var(--wp-app-border) !important;
+  background: var(--wp-app-soft) !important;
+  color: var(--wp-app-muted) !important;
+  filter: none !important;
+  opacity: .6 !important;
+  box-shadow: none !important;
+}
+
+html body[data-game="wordle-pvp"] .page .bot-panel button.primary {
+  border-color: var(--wp-app-text) !important;
+  background: var(--wp-app-text) !important;
+  color: var(--wp-app-bg) !important;
+}
+
+.wordle-pvp *,
+.wordle-pvp *::before,
+.wordle-pvp *::after { box-sizing: border-box; }
+.wordle-pvp button,
+.wordle-pvp input { font: inherit; }
+.wordle-pvp button { cursor: pointer; }
+.wordle-pvp button:hover:not(:disabled) { background: var(--wp-soft); }
+.wordle-pvp .wp-key:hover:not(:disabled) { background: var(--wp-key); }
+.wordle-pvp .wp-key-correct:hover:not(:disabled) { background: var(--wp-correct); }
+.wordle-pvp .wp-key-present:hover:not(:disabled) { background: var(--wp-present); }
+.wordle-pvp .wp-key-absent:hover:not(:disabled) { background: var(--wp-absent); }
+.wordle-pvp button:disabled { cursor: not-allowed; opacity: .5; }
+.wordle-pvp h1,
+.wordle-pvp h2,
+.wordle-pvp h3 { color: var(--wp-text); font-family: inherit; text-shadow: none; letter-spacing: normal; }
+.wordle-pvp h1,
+.wordle-pvp h2,
+.wordle-pvp h3,
+.wordle-pvp p { margin-top: 0; }
+.wordle-pvp .wp-muted { color: var(--wp-muted); }
+.wordle-pvp .wp-eyebrow {
+  margin-bottom: 5px;
+  color: var(--wp-muted);
+  font-size: .73rem;
+  font-weight: 700;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+}
+
+.wp-header,
+.wp-team-header,
+.wp-puzzle-header,
+.wp-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+.wp-header { border-bottom: 1px solid var(--wp-border); padding-bottom: 18px; }
+.wp-header h1 { margin: 0; font-size: clamp(1.7rem, 4vw, 2.4rem); letter-spacing: -.04em; }
+.wp-theme-toggle,
+.wp-join,
+.wp-leave,
+.wp-host-controls button,
+.wp-results button,
+.wp-guess-form button {
+  min-height: 40px;
+  padding: 8px 14px;
+  border: 1px solid var(--wp-border);
+  border-radius: 4px;
+  background: var(--wp-surface);
+  color: var(--wp-text);
+}
+.wp-theme-toggle { white-space: nowrap; }
+.wp-intro { max-width: 660px; margin: 20px 0; color: var(--wp-muted); }
+.wp-lobby-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(180px, 240px);
+  align-items: start;
+  gap: 14px;
+}
+.wp-teams,
+.wp-scoreboard {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+}
+.wp-spectators {
+  min-width: 0;
+  padding: 14px;
+  border: 1px solid var(--wp-border);
+  border-radius: 5px;
+  background: var(--wp-surface);
+}
+.wp-spectators h2 {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin: 0 0 12px;
+  font-size: 1rem;
+}
+.wp-spectators h2 span {
+  color: var(--wp-muted);
+  font-size: .85rem;
+  font-weight: 500;
+}
+.wp-spectators ul {
+  display: grid;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.wp-spectators li { min-width: 0; }
+.wp-spectators .person { max-width: 100%; }
+.wp-team {
+  min-width: 0;
+  padding: 16px;
+  border: 1px solid var(--wp-border);
+  border-radius: 5px;
+  background: var(--wp-surface);
+}
+.wp-team-timer { margin-bottom: 5px; }
+.wp-team-red .wp-team-timer { text-align: right; }
+.wp-team-blue .wp-team-timer { text-align: left; }
+.wp-team-red .wp-team-header { justify-content: flex-start; }
+.wp-team-blue .wp-team-header { justify-content: flex-end; }
+.wp-team-header h2 { margin: 0; font-size: 1.05rem; }
+.wp-team-red .wp-team-header h2,
+.wp-result-team.wp-team-red h3 { color: #b74242; }
+.wp-team-blue .wp-team-header h2,
+.wp-result-team.wp-team-blue h3 { color: #4376b8; }
+.wp-game-layout .wp-team-red {
+  border-color: color-mix(in srgb, #b74242 55%, var(--wp-border));
+  background: color-mix(in srgb, #b74242 8%, var(--wp-surface));
+}
+.wp-game-layout .wp-team-blue {
+  border-color: color-mix(in srgb, #4376b8 55%, var(--wp-border));
+  background: color-mix(in srgb, #4376b8 8%, var(--wp-surface));
+}
+.wp-clock { font-variant-numeric: tabular-nums; font-size: 1.25rem; }
+.wp-game-layout .wp-team-own .wp-clock { font-size: clamp(2rem, 3vw, 2.8rem); }
+.wp-team-opponent .wp-clock { font-size: 1.35rem; }
+.wp-clock-urgent { color: #c33; }
+.wp-team-score { display: flex; flex-direction: column; align-items: flex-start; gap: 2px; margin: 12px 0; color: var(--wp-muted); font-size: .9rem; }
+.wp-team-score-red { align-items: flex-end; text-align: right; }
+.wp-team-score strong { color: var(--wp-text); font-size: 1.3rem; }
+.wp-team-score .wp-team-solved { margin: 0; }
+.wp-player-list { display: grid; gap: 7px; margin: 0; padding: 0; list-style: none; }
+.wp-player-list li { display: flex; min-width: 0; align-items: center; gap: 8px; }
+.wp-player-status {
+  margin-left: auto;
+  color: var(--wp-muted);
+  font-size: .78rem;
+  white-space: nowrap;
+}
+.wp-player-list .wp-offline { opacity: .55; }
+.wp-you { border: 1px solid var(--wp-border); border-radius: 3px; padding: 2px 5px; color: var(--wp-muted); font-size: .7rem; }
+.wp-join { margin-top: 15px; }
+.wp-leave { margin-top: 12px; }
+.wp-host-controls { display: flex; align-items: center; flex-wrap: wrap; gap: 12px; }
+.wp-host-controls p { margin: 0; font-size: .85rem; }
+.wp-host-tab {
+  margin-top: 18px;
+  border-color: var(--wp-border);
+  border-radius: 5px;
+  background: var(--wp-surface);
+  color: var(--wp-text);
+}
+.wp-host-tablist {
+  display: flex;
+  border-bottom: 1px solid var(--wp-border);
+}
+.wp-host-tablist button {
+  min-height: 42px;
+  padding: 8px 14px;
+  border: 0 !important;
+  border-bottom: 2px solid transparent !important;
+  background: transparent !important;
+  color: var(--wp-muted) !important;
+  font-weight: 700;
+}
+.wp-host-tablist button[aria-selected="true"] {
+  border-bottom-color: var(--wp-text) !important;
+  color: var(--wp-text) !important;
+}
+.wp-host-panel {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+  padding: 14px;
+}
+.wp-host-panel p { margin: 0; font-size: .85rem; }
+.wp-settings-form {
+  display: flex;
+  align-items: end;
+  flex-wrap: wrap;
+  gap: 10px;
+  width: 100%;
+}
+.wp-settings-form label {
+  display: grid;
+  gap: 5px;
+  color: var(--wp-muted);
+  font-size: .8rem;
+}
+.wp-settings-form input {
+  width: 120px;
+  min-height: 40px;
+  padding: 8px;
+  border: 1px solid var(--wp-border);
+  border-radius: 4px;
+  background: var(--wp-bg);
+  color: var(--wp-text);
+  font: inherit;
+}
+.wp-primary { border-color: var(--wp-text) !important; background: var(--wp-text) !important; color: var(--wp-bg) !important; }
+.wp-game-layout {
+  display: grid;
+  grid-template-areas: "red puzzle blue";
+  grid-template-columns: minmax(0, 1fr) minmax(0, 520px) minmax(0, 1fr);
+  align-items: start;
+  gap: 16px;
+}
+.wp-game-layout > .wp-team-red { grid-area: red; }
+.wp-game-layout > .wp-team-blue { grid-area: blue; }
+.wp-game-layout > .wp-puzzle { grid-area: puzzle; }
+.wp-game-layout .wp-team {
+  width: max-content;
+  max-width: 100%;
+  margin: 0;
+  padding: 10px;
+}
+.wp-game-layout .wp-team-score { margin-bottom: 7px; }
+
+.wp-puzzle {
+  width: 100%;
+  min-width: 0;
+  margin: 0 auto;
+  padding: clamp(15px, 3vw, 24px);
+  border: 1px solid var(--wp-border);
+  border-radius: 5px;
+  background: var(--wp-surface);
+}
+.wp-puzzle-result {
+  display: grid;
+  min-height: 390px;
+  place-items: center;
+  text-align: center;
+}
+.wp-puzzle-result h2 {
+  margin: 0;
+  font-size: clamp(2rem, 6vw, 4rem);
+  font-weight: 800;
+  line-height: 1.1;
+}
+.wp-puzzle-result .wp-winner-red { color: #b74242; }
+.wp-puzzle-result .wp-winner-blue { color: #4376b8; }
+.wp-puzzle-header { margin-bottom: 16px; }
+.wp-puzzle-header h2 { margin: 0; font-size: 1.2rem; }
+.wp-puzzle-spots {
+  display: grid;
+  gap: 3px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.wp-puzzle-spot {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  min-width: 0;
+  min-height: 35px;
+  padding: 0;
+}
+.wp-puzzle-spot-red { flex-direction: row-reverse; }
+.wp-puzzle-spot-blue { flex-direction: row; }
+.wp-puzzle-spot-status {
+  color: var(--wp-muted);
+  font-size: .7rem;
+}
+.wp-puzzle-history {
+  display: grid;
+  flex: 0 0 auto;
+  gap: 1px;
+}
+.wp-puzzle-history-row {
+  display: flex;
+  gap: 1px;
+}
+.wp-puzzle-history-tile {
+  display: grid;
+  width: clamp(12px, 1.05vw, 16px);
+  aspect-ratio: 1;
+  place-items: center;
+  border: 1px solid var(--wp-border);
+  color: var(--wp-text);
+  font-size: .52rem;
+  font-weight: 700;
+}
+.wp-puzzle-history-tile.wp-tile-correct,
+.wp-puzzle-history-tile.wp-tile-present,
+.wp-puzzle-history-tile.wp-tile-absent {
+  color: #fff;
+}
+.wp-puzzle-waiting {
+  display: inline-flex;
+  align-items: center;
+  flex-wrap: nowrap;
+  gap: 3px;
+  min-width: 0;
+  color: var(--wp-muted);
+  font-size: .62rem;
+  white-space: nowrap;
+}
+.wp-puzzle-waiting-player .person-name {
+  display: none;
+}
+.wp-puzzle-waiting-player .avatar {
+  display: block;
+}
+.wp-puzzle-spot-player {
+  display: flex;
+  flex-wrap: nowrap;
+  min-width: 0;
+  align-items: center;
+  gap: 4px;
+}
+.wp-puzzle-spot-player .person {
+  min-width: 0;
+  font-size: .68rem;
+}
+.wp-puzzle-spot-player .person-name {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.wp-board {
+  display: grid;
+  justify-content: center;
+  gap: 5px;
+  max-height: 390px;
+  overflow: auto;
+  margin: 0 auto 17px;
+  scrollbar-color: var(--wp-border) transparent;
+}
+.wp-board-row { display: grid; grid-template-columns: repeat(5, 48px); gap: 5px; }
+.wp-tile {
+  display: grid;
+  width: 48px;
+  aspect-ratio: 1;
+  place-items: center;
+  border: 1px solid var(--wp-border);
+  color: var(--wp-text);
+  font-size: 1.2rem;
+  font-weight: 750;
+}
+.wp-tile-filled { border-color: var(--wp-muted); }
+.wp-tile-correct { border-color: var(--wp-correct); background: var(--wp-correct); color: #fff; }
+.wp-tile-present { border-color: var(--wp-present); background: var(--wp-present); color: #fff; }
+.wp-tile-absent { border-color: var(--wp-absent); background: var(--wp-absent); color: #fff; }
+.wp-guess-form { display: flex; gap: 8px; }
+.wp-guess-form input {
+  min-width: 0;
+  flex: 1;
+  height: 42px;
+  border: 1px solid var(--wp-border);
+  border-radius: 4px;
+  padding: 0 12px;
+  background: var(--wp-bg);
+  color: var(--wp-text);
+  font-size: 1rem;
+  letter-spacing: .15em;
+  text-transform: uppercase;
+}
+.wp-guess-form button { min-width: 78px; border-color: var(--wp-text); background: var(--wp-text); color: var(--wp-bg); }
+.wp-keyboard { display: grid; gap: 7px; margin-top: 14px; }
+.wp-key-row { display: flex; justify-content: center; gap: 5px; }
+.wp-key {
+  min-width: 0;
+  width: clamp(25px, 7vw, 42px);
+  height: 42px;
+  border: 0;
+  border-radius: 3px;
+  background: var(--wp-key);
+  color: var(--wp-text);
+  font-size: .8rem;
+  font-weight: 700;
+}
+.wp-key-wide { width: auto; padding: 0 8px; font-size: .68rem; }
+.wp-key-correct { background: var(--wp-correct); color: #fff; }
+.wp-key-present { background: var(--wp-present); color: #fff; }
+.wp-key-absent { background: var(--wp-absent); color: #fff; }
+.wp-hint { margin: 12px 0 0; font-size: .76rem; text-align: center; }
+.wp-feedback { margin: 0 0 12px; color: var(--wp-muted); font-size: .9rem; text-align: center; }
+.wp-feedback-solved { color: var(--wp-correct); font-weight: 700; }
+.wp-error { color: #c33; font-size: .85rem; }
+.wp-over {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 14px;
+  padding: 12px 14px;
+  border: 1px solid var(--wp-border);
+  background: var(--wp-soft);
+}
+.wp-over span { color: var(--wp-muted); font-size: .85rem; }
+.wp-wait-dots { display: inline-flex; margin-left: 5px; }
+.wp-wait-dots i { font-style: normal; animation: wp-dot 1s infinite; }
+.wp-wait-dots i:nth-child(2) { animation-delay: .15s; }
+.wp-wait-dots i:nth-child(3) { animation-delay: .3s; }
+@keyframes wp-dot { 0%, 60%, 100% { opacity: .25; } 30% { opacity: 1; } }
+.wp-results {
+  width: min(100%, 600px);
+  margin: 22px auto 0;
+  padding: 22px;
+  border: 1px solid var(--wp-border);
+  background: var(--wp-surface);
+  text-align: center;
+}
+.wp-results h2 { margin-bottom: 18px; }
+.wp-result-teams { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; margin-bottom: 20px; }
+.wp-result-team { display: grid; gap: 5px; padding: 14px; border: 1px solid var(--wp-border); }
+.wp-result-team h3 { margin: 0; }
+.wp-result-team strong { font-size: 1.35rem; }
+.wp-result-team span { color: var(--wp-muted); font-size: .85rem; }
+.wp-result-players {
+  display: grid;
+  gap: 8px;
+  margin: 12px 0 0;
+  padding: 0;
+  list-style: none;
+  text-align: left;
+}
+.wp-result-players li {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 5px 8px;
+  padding-top: 8px;
+  border-top: 1px solid var(--wp-border);
+}
+.wp-result-players li > span:last-child { color: var(--wp-muted); font-size: .78rem; }
+.wp-result-team .wp-result-players .wp-result-yellow { color: #bd963d; }
+.wp-result-team .wp-result-players .wp-result-green { color: #4b8b62; }
+.wp-footer { margin-top: 22px; color: var(--wp-muted); font-size: .75rem; }
+
+@media (max-width: 760px) {
+  html body[data-game="wordle-pvp"] .page {
+    max-width: none;
+    padding: 0;
+  }
+  .wordle-pvp { padding: 14px; }
+  .wp-lobby-layout { grid-template-columns: 1fr; }
+  .wp-teams { grid-template-columns: 1fr; }
+  .wp-spectators { order: 2; }
+  .wp-team { padding: 13px; }
+  .wp-game-layout {
+    grid-template-areas:
+      "puzzle"
+      "own"
+      "opponent";
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .wp-game-layout > .wp-team-own { grid-area: own; }
+  .wp-game-layout > .wp-team-opponent { grid-area: opponent; }
+  .wp-game-layout .wp-puzzle {
+    width: calc(100% + 28px);
+    margin-inline: -14px;
+    border-right: 0;
+    border-left: 0;
+    border-radius: 0;
+  }
+  .wp-board-row { grid-template-columns: repeat(5, min(15vw, 48px)); gap: 4px; }
+  .wp-tile { width: min(15vw, 48px); font-size: 1rem; }
+  .wp-key { height: 38px; }
+  .wp-over { align-items: flex-start; flex-direction: column; }
+}
+
+@media (min-width: 761px) and (max-width: 980px) {
+  .wp-game-layout {
+    grid-template-columns: minmax(0, 1fr) minmax(330px, 1.4fr) minmax(0, 1fr);
+    gap: 8px;
+  }
+  .wp-game-layout .wp-team { padding: 14px; }
+  .wp-game-layout > .wp-team-red { justify-self: end; }
+  .wp-game-layout > .wp-team-blue { justify-self: start; }
+  .wp-player-list li { flex-wrap: wrap; }
+}
+
+@media (min-width: 981px) {
+  .wp-game-layout {
+    position: relative;
+    left: 50%;
+    width: 100vw;
+    margin-left: -50vw;
+    grid-template-columns: minmax(0, 1fr) minmax(400px, 520px) minmax(0, 1fr);
+  }
+  .wp-game-layout > .wp-team-red { justify-self: end; }
+  .wp-game-layout > .wp-team-blue { justify-self: start; }
+}
+
+  .wp-game-layout.wp-results-layout {
+    position: static;
+    left: auto;
+    width: min(100%, 520px);
+    margin: 0 auto;
+    grid-template-areas: "puzzle";
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .wp-game-layout.wp-results-layout .wp-puzzle {
+    width: 100%;
+    margin: 0;
+    border: 1px solid var(--wp-border);
+    border-radius: 5px;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+  .wordle-pvp, .wp-wait-dots i { transition: none; animation: none; }
+}

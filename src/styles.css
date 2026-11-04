@@ -520,6 +520,18 @@ button:disabled {
   --hub-shadow: 0 3px 8px rgba(64,43,27,.18);
   --hub-text: #2b2117;
 }
+.lobby-list li.hub-lobby[data-game="wordle-pvp"] {
+  --hub-surface: #fff;
+  --hub-panel: #f5f5f5;
+  --hub-edge: #d7d7d7;
+  --hub-panel-font-color: #171717;
+  --hub-sub-text-color: #666;
+  --hub-font: Inter, ui-sans-serif, system-ui, sans-serif;
+  --hub-sub-font: Inter, ui-sans-serif, system-ui, sans-serif;
+  --hub-radius: 5px;
+  --hub-shadow: none;
+  --hub-text: #171717;
+}
 .lobby-list li.hub-lobby[data-game="new-template"] {
   --hub-surface: #15191f;
   --hub-panel: #202631;
@@ -1760,33 +1772,80 @@ body[data-game="blokus"] .blokus-seats {
   gap: 12px;
 }
 body[data-game="blokus"] .blokus-seat {
+  --seat-color: var(--neon-soft);
+  --seat-rgb: var(--neon-rgb);
   display: grid;
   align-content: start;
   gap: 10px;
   padding: 12px;
-  border: 1px solid var(--border);
+  border: 1px solid rgba(var(--seat-rgb), .72);
   border-radius: 12px;
-  background: rgba(var(--neon-rgb), .06);
+  background: rgba(var(--seat-rgb), .09);
+  box-shadow: 0 0 12px rgba(var(--seat-rgb), .2), inset 0 0 12px rgba(var(--seat-rgb), .08);
 }
 body[data-game="blokus"] .blokus-seat > strong {
-  color: var(--neon-soft);
-  text-shadow: 0 0 .4em var(--neon);
+  color: var(--seat-color);
+  text-shadow: 0 0 .55em var(--seat-color);
+}
+body[data-game="blokus"] .blokus-seat.blue {
+  --seat-color: #93c5fd;
+  --seat-rgb: 96, 165, 250;
+  --neon: var(--seat-color);
+  --neon-rgb: var(--seat-rgb);
+}
+body[data-game="blokus"] .blokus-seat.yellow {
+  --seat-color: #fde047;
+  --seat-rgb: 250, 204, 21;
+  --neon: var(--seat-color);
+  --neon-rgb: var(--seat-rgb);
+}
+body[data-game="blokus"] .blokus-seat.red {
+  --seat-color: #fda4af;
+  --seat-rgb: 251, 113, 133;
+  --neon: var(--seat-color);
+  --neon-rgb: var(--seat-rgb);
+}
+body[data-game="blokus"] .blokus-seat.green {
+  --seat-color: #86efac;
+  --seat-rgb: 74, 222, 128;
+  --neon: var(--seat-color);
+  --neon-rgb: var(--seat-rgb);
+}
+body[data-game="blokus"] .blokus-seat-open {
+  color: var(--seat-color);
+  text-shadow: 0 0 .45em var(--seat-color);
 }
 body[data-game="blokus"] .blokus-color-button.blue, body[data-game="blokus"] .blokus-player-list .blue {
   --player-color: #60a5fa;
+  --player-rgb: 96, 165, 250;
 }
 body[data-game="blokus"] .blokus-color-button.yellow, body[data-game="blokus"] .blokus-player-list .yellow {
   --player-color: #facc15;
+  --player-rgb: 250, 204, 21;
 }
 body[data-game="blokus"] .blokus-color-button.red, body[data-game="blokus"] .blokus-player-list .red {
   --player-color: #fb7185;
+  --player-rgb: 251, 113, 133;
 }
 body[data-game="blokus"] .blokus-color-button.green, body[data-game="blokus"] .blokus-player-list .green {
   --player-color: #4ade80;
+  --player-rgb: 74, 222, 128;
 }
 body[data-game="blokus"] .blokus-color-button {
   color: var(--player-color);
   border-color: var(--player-color);
+}
+body[data-game="blokus"] .blokus-seat .blokus-color-button {
+  color: var(--seat-color);
+  border-color: var(--seat-color);
+  background: rgba(var(--seat-rgb), .08);
+  box-shadow: 0 0 9px rgba(var(--seat-rgb), .24), inset 0 0 8px rgba(var(--seat-rgb), .12);
+  text-shadow: 0 0 .45em var(--seat-color);
+}
+body[data-game="blokus"] .blokus-seat .blokus-color-button:hover:not(:disabled) {
+  color: #080411;
+  background: var(--seat-color);
+  box-shadow: 0 0 16px rgba(var(--seat-rgb), .55);
 }
 body[data-game="blokus"] .blokus-rules {
   padding-left: 22px;
@@ -1834,6 +1893,9 @@ body[data-game="blokus"] .blokus-layout {
   align-items: start;
   gap: 14px;
 }
+body[data-game="blokus"] .blokus-center {
+  min-width: 0;
+}
 body[data-game="blokus"] .blokus-board-card {
   min-width: 0;
 }
@@ -1877,14 +1939,14 @@ body[data-game="blokus"] .blokus-cell.occupied.green {
   background: #16a34a;
   box-shadow: inset 0 0 5px rgba(255,255,255,.38);
 }
-body[data-game="blokus"] .blokus-cell.preview.legal {
-  background: #c084fc;
-  box-shadow: inset 0 0 0 1px #f3e8ff, 0 0 8px #c084fc;
-}
-body[data-game="blokus"] .blokus-cell.preview.illegal {
-  background: rgba(248, 113, 113, .8);
-  box-shadow: inset 0 0 0 1px #fecaca;
-}
+body[data-game="blokus"] .blokus-cell.preview.blue.illegal { background: rgba(96, 165, 250, .3); }
+body[data-game="blokus"] .blokus-cell.preview.blue.legal { background: #60a5fa; box-shadow: inset 0 0 0 1px #dbeafe, 0 0 8px rgba(96, 165, 250, .75); }
+body[data-game="blokus"] .blokus-cell.preview.yellow.illegal { background: rgba(250, 204, 21, .3); }
+body[data-game="blokus"] .blokus-cell.preview.yellow.legal { background: #fde047; box-shadow: inset 0 0 0 1px #fef9c3, 0 0 8px rgba(250, 204, 21, .75); }
+body[data-game="blokus"] .blokus-cell.preview.red.illegal { background: rgba(251, 113, 133, .3); }
+body[data-game="blokus"] .blokus-cell.preview.red.legal { background: #fda4af; box-shadow: inset 0 0 0 1px #ffe4e6, 0 0 8px rgba(251, 113, 133, .75); }
+body[data-game="blokus"] .blokus-cell.preview.green.illegal { background: rgba(74, 222, 128, .3); }
+body[data-game="blokus"] .blokus-cell.preview.green.legal { background: #86efac; box-shadow: inset 0 0 0 1px #dcfce7, 0 0 8px rgba(74, 222, 128, .75); }
 body[data-game="blokus"] .blokus-placement-tools {
   display: grid;
   justify-items: center;
@@ -1918,8 +1980,8 @@ body[data-game="blokus"] .blokus-player-list li .person {
   grid-column: 1 / -1;
 }
 body[data-game="blokus"] .blokus-player-list li.on-turn {
-  outline: 1px solid var(--neon);
-  box-shadow: 0 0 10px rgba(var(--neon-rgb), .2);
+  outline: 1px solid var(--player-color);
+  box-shadow: 0 0 12px rgba(var(--player-rgb), .65), inset 0 0 8px rgba(var(--player-rgb), .18);
 }
 body[data-game="blokus"] .blokus-player-list li.out {
   opacity: .55;
@@ -1928,6 +1990,55 @@ body[data-game="blokus"] .blokus-piece-list {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(76px, 1fr));
   gap: 6px;
+}
+body[data-game="blokus"] .blokus-opponent-hands {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+  margin-top: 12px;
+}
+body[data-game="blokus"] .blokus-opponent-hand {
+  min-width: 0;
+  border-top: 3px solid var(--player-color, var(--neon));
+}
+body[data-game="blokus"] .blokus-opponent-hand.blue { --player-color: #60a5fa; }
+body[data-game="blokus"] .blokus-opponent-hand.yellow { --player-color: #facc15; }
+body[data-game="blokus"] .blokus-opponent-hand.red { --player-color: #fb7185; }
+body[data-game="blokus"] .blokus-opponent-hand.green { --player-color: #4ade80; }
+body[data-game="blokus"] .blokus-opponent-hand h2 {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  margin-bottom: 10px;
+  font-size: .95rem;
+}
+body[data-game="blokus"] .blokus-opponent-piece-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(35px, 1fr));
+  gap: 5px;
+}
+body[data-game="blokus"] .blokus-opponent-piece {
+  display: grid;
+  min-height: 34px;
+  place-items: center;
+  border: 1px solid rgba(var(--neon-rgb), .18);
+  background: rgba(var(--neon-rgb), .035);
+}
+body[data-game="blokus"] .blokus-opponent-piece.blue { --neon: #93c5fd; --neon-rgb: 96, 165, 250; }
+body[data-game="blokus"] .blokus-opponent-piece.yellow { --neon: #fde047; --neon-rgb: 250, 204, 21; }
+body[data-game="blokus"] .blokus-opponent-piece.red { --neon: #fda4af; --neon-rgb: 251, 113, 133; }
+body[data-game="blokus"] .blokus-opponent-piece.green { --neon: #86efac; --neon-rgb: 74, 222, 128; }
+body[data-game="blokus"] .blokus-opponent-piece .blokus-piece-shape {
+  grid-auto-rows: 5px;
+}
+body[data-game="blokus"] .blokus-opponent-piece .blokus-piece-shape i {
+  width: 5px;
+  height: 5px;
+}
+body[data-game="blokus"] .blokus-opponent-piece .blokus-piece-shape i.filled {
+  border-color: var(--neon);
+  background: var(--neon);
+  box-shadow: 0 0 3px rgba(var(--neon-rgb), .6);
 }
 body[data-game="blokus"] .blokus-piece-choice {
   display: grid;
@@ -1939,8 +2050,16 @@ body[data-game="blokus"] .blokus-piece-choice {
   background: rgba(var(--neon-rgb), .04);
   box-shadow: none;
 }
+body[data-game="blokus"] .blokus-piece-choice.blue { --neon: #93c5fd; --neon-rgb: 96, 165, 250; }
+body[data-game="blokus"] .blokus-piece-choice.yellow { --neon: #fde047; --neon-rgb: 250, 204, 21; }
+body[data-game="blokus"] .blokus-piece-choice.red { --neon: #fda4af; --neon-rgb: 251, 113, 133; }
+body[data-game="blokus"] .blokus-piece-choice.green { --neon: #86efac; --neon-rgb: 74, 222, 128; }
+body[data-game="blokus"] .blokus-piece-choice:disabled {
+  filter: none;
+  opacity: 1;
+}
 body[data-game="blokus"] .blokus-piece-choice.selected {
-  border-color: var(--neon-soft);
+  border-color: var(--neon);
   background: rgba(var(--neon-rgb), .2);
   box-shadow: 0 0 10px rgba(var(--neon-rgb), .35);
 }
@@ -1949,6 +2068,10 @@ body[data-game="blokus"] .blokus-piece-shape {
   grid-auto-rows: 9px;
   gap: 1px;
 }
+body[data-game="blokus"] .blokus-piece-shape.blue { --neon: #93c5fd; --neon-rgb: 96, 165, 250; }
+body[data-game="blokus"] .blokus-piece-shape.yellow { --neon: #fde047; --neon-rgb: 250, 204, 21; }
+body[data-game="blokus"] .blokus-piece-shape.red { --neon: #fda4af; --neon-rgb: 251, 113, 133; }
+body[data-game="blokus"] .blokus-piece-shape.green { --neon: #86efac; --neon-rgb: 74, 222, 128; }
 body[data-game="blokus"] .blokus-piece-shape i {
   width: 9px;
   height: 9px;
@@ -1974,12 +2097,53 @@ body[data-game="blokus"] .blokus-player-list .green > span {
 @media (max-width: 760px) {
   body[data-game="blokus"] .blokus-layout {
     grid-template-columns: 1fr;
+    grid-template-areas:
+      "center"
+      "sidebar"
+      "hand";
   }
+  body[data-game="blokus"] .blokus-center { grid-area: center; }
+  body[data-game="blokus"] .blokus-hand { grid-area: hand; }
   body[data-game="blokus"] .blokus-sidebar {
-    grid-row: 1;
+    grid-area: sidebar;
   }
   body[data-game="blokus"] .blokus-player-list {
     grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  body[data-game="blokus"] .blokus-opponent-hands {
+    grid-template-columns: 1fr;
+  }
+}
+@media (min-width: 761px) and (max-width: 980px) {
+  body[data-game="blokus"] .blokus-layout {
+    grid-template-columns: minmax(0, 1fr) minmax(220px, .7fr);
+    grid-template-areas:
+      "center sidebar"
+      "hand sidebar";
+  }
+  body[data-game="blokus"] .blokus-center { grid-area: center; }
+  body[data-game="blokus"] .blokus-hand { grid-area: hand; }
+  body[data-game="blokus"] .blokus-sidebar { grid-area: sidebar; }
+  body[data-game="blokus"] .blokus-opponent-hands {
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  }
+}
+@media (min-width: 981px) {
+  body[data-game="blokus"] .blokus-layout {
+    position: relative;
+    left: 50%;
+    width: 100vw;
+    margin-left: -50vw;
+    grid-template-columns: minmax(190px, 1fr) minmax(500px, 680px) minmax(220px, 1fr);
+    grid-template-areas: "hand center sidebar";
+    gap: 14px;
+  }
+  body[data-game="blokus"] .blokus-hand { grid-area: hand; }
+  body[data-game="blokus"] .blokus-center { grid-area: center; }
+  body[data-game="blokus"] .blokus-sidebar { grid-area: sidebar; }
+  body[data-game="blokus"] .blokus-turn-bar {
+    align-items: flex-start;
+    flex-direction: column;
   }
 }
 @media (max-width: 480px) {
@@ -4028,6 +4192,19 @@ html body .cn-card:disabled, html body .dworf-card:disabled, html body .dworf-ce
   --stats-accent: #9ca3af;
   --font-big: system-ui, sans-serif;
   --font-small: system-ui, sans-serif;
+}
+
+.modal.stats-modal[data-game="wordle-pvp"] {
+  --stats-border-radius: 5px;
+  --stats-edge: #d7d7d7;
+  --stats-glow: rgba(0, 0, 0, 0);
+  --stats-surface: #fff;
+  --stats-panel: #f3f3f3;
+  --stats-text: #171717;
+  --stats-muted: #666;
+  --stats-accent: #222;
+  --font-big: Inter, ui-sans-serif, system-ui, sans-serif;
+  --font-small: Inter, ui-sans-serif, system-ui, sans-serif;
 }
 
 .modal.stats-modal[data-game="kin"] {
@@ -6490,6 +6667,10 @@ body[data-game="werewolves"] .werewolves-circle-seat.lynch-target {
 .modal.stats-modal[data-game] .stats-page .stats-tab[data-tab-game="codenames"] {
   --t-edge: #a8956b; --t-glow: rgba(122,28,28,.15); --t-surface: #e8dcc0; --t-panel: #fbf6e8; --t-text: #2b2118; --t-accent: #7a1c1c;
   font-family: 'Libre Baskerville', Georgia, serif;
+}
+.modal.stats-modal[data-game] .stats-page .stats-tab[data-tab-game="wordle-pvp"] {
+  --t-edge: #d7d7d7; --t-glow: rgba(0,0,0,0); --t-surface: #fff; --t-panel: #f3f3f3; --t-text: #171717; --t-accent: #222;
+  font-family: Inter, ui-sans-serif, system-ui, sans-serif;
 }
 .modal.stats-modal[data-game] .stats-page .stats-tab[data-tab-game] {
   background: var(--t-surface) !important;

@@ -7,6 +7,7 @@ import type { TetrisSnapshot } from "./games/tetris/types";
 import type { ThirtyOneSnapshot } from "./games/thirtyone/types";
 import type { WerewolvesSnapshot } from "./games/werewolves/types";
 import type { PassTimeSnapshot } from "./games/pass-time/types";
+import type { WordlePvpSnapshot } from "./games/wordle-pvp/types";
 
 export interface User {
   id: string;
@@ -55,4 +56,5 @@ export type LobbySnapshot =
   | PassTimeSnapshot
   | TetrisSnapshot
   | ThirtyOneSnapshot
-  | WerewolvesSnapshot;
+  | WerewolvesSnapshot
+  | WordlePvpSnapshot;

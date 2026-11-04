@@ -94,6 +94,7 @@ export default function App() {
       {kinStarted && <button type="button" className="kin-topbar-toggle" aria-label={`${topbarCollapsed ? "Show" : "Hide"} site menu`} aria-expanded={!topbarCollapsed} aria-controls="site-topbar" onClick={() => setTopbarCollapsed(value => !value)}>{topbarCollapsed ? "▼" : "▲"}</button>}
       <header id="site-topbar" className={`topbar${kinStarted ? ` kin-topbar${topbarCollapsed ? " collapsed" : ""}` : ""}`} inert={kinStarted && topbarCollapsed}>
         <a className="brand" href="#/" onClick={event => inGame && event.preventDefault()}>voedgoem</a>
+        <div id="wordle-theme-slot" />
         <button className="burger" aria-label="Menu" aria-expanded={menuOpen} onClick={() => setMenuOpen(open => !open)}>{menuOpen ? "✕" : "☰"}</button>
         <div className={`menu ${menuOpen ? "open" : ""}`}>
         <nav>
