@@ -74,7 +74,7 @@ export interface WerewolvesSnapshot extends BaseSnapshot {
   lovers: [string, string] | null;
   wolfchildTarget: string | null;
   publicStep: { phase: string; day: number; kind: string; prompt: string; voterId?: string; lynchTargetId?: string } | null;
-  privatePrompt: { kind: string; prompt: string; role: WerewolvesRoleId | null; data?: Record<string, unknown> } | null;
+  privatePrompt: { id: string; kind: string; prompt: string; role: WerewolvesRoleId | null; data?: Record<string, unknown> } | null;
   currentStep: WerewolvesStep | null;
   sparedPlayerIds: string[];
   stepsRemaining?: WerewolvesStep[];
@@ -109,7 +109,7 @@ export interface WerewolvesSnapshot extends BaseSnapshot {
     configure: boolean;
     setGM: boolean;
     start: boolean;
-    submitAction: boolean;
+    selectAction: boolean;
     gmAction: boolean;
     confirmStep: boolean;
   };

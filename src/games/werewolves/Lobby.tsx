@@ -15,6 +15,10 @@ const isRecord = (value: unknown): value is Record<string, unknown> =>
 function formatSubmission(snapshot: WerewolvesSnapshot, step: WerewolvesStep, submission: Record<string, unknown>): string {
   const playerName = (id: unknown) =>
     typeof id === "string" ? snapshot.seats.find(seat => seat.id === id)?.username ?? "Unknown player" : "No player selected";
+  const hasChoice = Object.entries(submission).some(([key, value]) =>
+    key !== "userId" && (Array.isArray(value) ? value.length > 0 : value !== "")
+  );
+  if (!hasChoice) return "No choice selected yet";
 
   switch (step.kind) {
     case "mayor-nominations":
@@ -32,7 +36,7 @@ function formatSubmission(snapshot: WerewolvesSnapshot, step: WerewolvesStep, su
     default:
       if (submission.pass === true) return "Pass";
       if (typeof submission.targetId === "string") return playerName(submission.targetId);
-      return "Choice recorded";
+      return "Choice selected";
   }
 }
 
@@ -228,104 +232,154 @@ function targetChoices(snapshot: WerewolvesSnapshot, step: WerewolvesStep, actor
   return candidates;
 }
 
-function ActionForm({ snapshot, step, actorId, title, submitLabel, initialAction, onSubmit }: {
+type ActionDraft = {
+  targetId: string;
+  secondTargetId: string;
+  name: string;
+  candidate: string;
+  boolean: string;
+  card: string;
+  usePotion: boolean;
+  usePoison: boolean;
+  pass: boolean;
+};
+
+function draftFromAction(action?: Record<string, unknown> | null): ActionDraft {
+  const targetIds = Array.isArray(action?.targetIds) ? action.targetIds : [];
+  return {
+    targetId: typeof action?.targetId === "string" ? action.targetId
+      : typeof action?.saveTarget === "string" ? action.saveTarget
+        : typeof targetIds[0] === "string" ? targetIds[0] : "",
+    secondTargetId: typeof action?.poisonTarget === "string" ? action.poisonTarget
+      : typeof targetIds[1] === "string" ? targetIds[1] : "",
+    name: typeof action?.name === "string" ? action.name : "",
+    candidate: typeof action?.candidate === "boolean" ? (action.candidate ? "yes" : "no") : "",
+    boolean: typeof action?.skip === "boolean" ? (action.skip ? "yes" : "no")
+      : typeof action?.reveal === "boolean" ? (action.reveal ? "yes" : "no") : "",
+    card: typeof action?.card === "string" ? action.card : action?.pass === true ? "pass" : "",
+    usePotion: action?.usePotion === true,
+    usePoison: action?.usePoison === true,
+    pass: action?.pass === true
+  };
+}
+
+function actionFromDraft(kind: string, draft: ActionDraft, optionCount: number): Record<string, unknown> {
+  const target = draft.targetId ? { targetId: draft.targetId } : {};
+  switch (kind) {
+    case "mayor-nominations":
+      return draft.candidate ? { candidate: draft.candidate === "yes" } : {};
+    case "town-name":
+      return { name: draft.name };
+    case "lovers":
+      return { targetIds: [draft.targetId, draft.secondTargetId].filter(Boolean) };
+    case "alchemist-actions":
+      return {
+        usePotion: draft.usePotion,
+        usePoison: draft.usePoison,
+        ...(draft.usePotion && draft.targetId ? { saveTarget: draft.targetId } : {}),
+        ...(draft.usePoison && (draft.usePotion ? draft.secondTargetId : draft.targetId)
+          ? { poisonTarget: draft.usePotion ? draft.secondTargetId : draft.targetId }
+          : {})
+      };
+    case "big-bad-wolf":
+    case "silence-target":
+    case "hunter-shot":
+    case "wolf-target":
+      return draft.pass ? { pass: true } : target;
+    case "skip-vote":
+      return draft.boolean ? { skip: draft.boolean === "yes" } : {};
+    case "moon-offer":
+      return draft.card === "pass" ? { pass: true } : draft.card ? { card: draft.card } : {};
+    case "mistrust-vote":
+      return { targetIds: [draft.targetId, ...(optionCount > 1 ? [draft.secondTargetId] : [])].filter(Boolean) };
+    case "judge-intervention":
+      return draft.boolean ? { reveal: draft.boolean === "yes" } : {};
+    case "good-manners-violation":
+      return draft.targetId ? { userId: draft.targetId } : {};
+    default:
+      return target;
+  }
+}
+
+function ActionForm({ snapshot, step, actorId, title, submitLabel, initialAction, onSubmit, onChange }: {
   snapshot: WerewolvesSnapshot;
   step: WerewolvesStep;
   actorId?: string;
   title?: string;
-  submitLabel: string;
+  submitLabel?: string;
   initialAction?: Record<string, unknown> | null;
-  onSubmit: (value: Record<string, unknown>) => void;
+  onSubmit?: (value: Record<string, unknown>) => void;
+  onChange?: (value: Record<string, unknown>) => void;
 }) {
-  const [targetId, setTargetId] = useState("");
-  const [secondTargetId, setSecondTargetId] = useState("");
-  const [name, setName] = useState("");
-  const [candidate, setCandidate] = useState(initialAction?.candidate === false ? "no" : "yes");
-  const [boolean, setBoolean] = useState("yes");
-  const [card, setCard] = useState("");
-  const [usePotion, setUsePotion] = useState(false);
-  const [usePoison, setUsePoison] = useState(false);
-  const [pass, setPass] = useState(false);
+  const [draft, setDraft] = useState(() => draftFromAction(initialAction));
+  const [touched, setTouched] = useState(false);
   const options = targetChoices(snapshot, step, actorId ?? step.actorId ?? step.voterId);
+  const { targetId, secondTargetId, name, candidate, boolean, card, usePotion, usePoison, pass } = draft;
+  const update = (patch: Partial<ActionDraft>) => {
+    setDraft(current => ({ ...current, ...patch }));
+    setTouched(true);
+  };
+  useEffect(() => {
+    if (touched && onChange) onChange(actionFromDraft(step.kind, draft, options.length));
+  }, [draft, touched]);
+  const submit = (event: FormEvent) => {
+    event.preventDefault();
+    if (onSubmit) onSubmit(actionFromDraft(step.kind, draft, options.length));
+  };
   const targetStep = [
     "mayor-election", "new-mayor", "wolfchild-target", "old-knight-target", "guard-check", "seer-check",
     "sniffer-check", "little-girl-check", "silence-target", "ghost-choice", "aid-target", "hunter-shot",
     "executioner-lynch", "executioner-vote", "executioner-tie", "lynch-spare", "lynch-result"
   ].includes(step.kind);
   const selectTarget = (value: string, setValue: (value: string) => void, label: string, choices = options) => (
-    <label>{label}<select value={value} onChange={event => setValue(event.target.value)} required>
+    <label>{label}<select value={value} onChange={event => setValue(event.target.value)}>
       <option value="">Choose a player</option>
       {choices.map(player => <option key={player.id} value={player.id}>{player.username}</option>)}
     </select></label>
   );
-  const submit = (event: FormEvent) => {
-    event.preventDefault();
-    let value: Record<string, unknown>;
-    switch (step.kind) {
-      case "mayor-nominations": value = { candidate: candidate === "yes" }; break;
-      case "town-name": value = { name }; break;
-      case "lovers": value = { targetIds: [targetId, secondTargetId] }; break;
-      case "alchemist-actions": value = {
-        usePotion, usePoison,
-        ...(usePotion ? { saveTarget: targetId } : {}),
-        ...(usePoison ? { poisonTarget: usePotion ? secondTargetId : targetId } : {})
-      }; break;
-      case "big-bad-wolf":
-      case "silence-target":
-      case "hunter-shot":
-        value = pass ? { pass: true } : { targetId };
-        break;
-      case "skip-vote": value = { skip: boolean === "yes" }; break;
-      case "moon-offer": value = card ? { card } : { pass: true }; break;
-      case "mistrust-vote": value = { targetIds: [targetId, ...(options.length > 1 ? [secondTargetId] : [])] }; break;
-      case "judge-intervention": value = { reveal: boolean === "yes" }; break;
-      case "good-manners-violation": value = { userId: targetId }; break;
-      default: value = { targetId };
-    }
-    onSubmit(value);
-  };
 
   return <form className="werewolves-action-form" onSubmit={submit}>
     {title && <h4>{title}</h4>}
-    {step.kind === "mayor-nominations" && <label>Run for mayor?<select value={candidate} onChange={event => setCandidate(event.target.value)}><option value="yes">Yes</option><option value="no">No</option></select></label>}
-    {step.kind === "town-name" && <label>Town name<input value={name} onChange={event => setName(event.target.value)} maxLength={60} required /></label>}
+    {step.kind === "mayor-nominations" && <label>Run for mayor?<select value={candidate} onChange={event => update({ candidate: event.target.value })}><option value="">Choose</option><option value="yes">Yes</option><option value="no">No</option></select></label>}
+    {step.kind === "town-name" && <label>Town name<input value={name} onChange={event => update({ name: event.target.value })} maxLength={60} /></label>}
     {step.kind === "lovers" && <>
-      {selectTarget(targetId, setTargetId, "First lover")}
-      {selectTarget(secondTargetId, setSecondTargetId, "Second lover", options.filter(player => player.id !== targetId))}
+      {selectTarget(targetId, value => update({ targetId: value }), "First lover")}
+      {selectTarget(secondTargetId, value => update({ secondTargetId: value }), "Second lover", options.filter(player => player.id !== targetId))}
     </>}
     {step.kind === "alchemist-actions" && <>
-      {snapshot.resources?.potion && <label className="werewolves-check"><input type="checkbox" checked={usePotion} onChange={event => setUsePotion(event.target.checked)} /> Use potion</label>}
-      {snapshot.resources?.poison && <label className="werewolves-check"><input type="checkbox" checked={usePoison} onChange={event => setUsePoison(event.target.checked)} /> Use poison</label>}
-      {usePotion && selectTarget(targetId, setTargetId, "Save", snapshot.seats.filter(player => player.alive && !player.absent && (player.id === snapshot.nightResolution?.wolfTarget || player.id === snapshot.nightResolution?.oldKnightSaveTarget)))}
-      {usePoison && selectTarget(secondTargetId, setSecondTargetId, "Poison", usePotion ? options.filter(player => player.id !== targetId) : options)}
+      {snapshot.resources?.potion && <label className="werewolves-check"><input type="checkbox" checked={usePotion} onChange={event => update({ usePotion: event.target.checked })} /> Use potion</label>}
+      {snapshot.resources?.poison && <label className="werewolves-check"><input type="checkbox" checked={usePoison} onChange={event => update({ usePoison: event.target.checked })} /> Use poison</label>}
+      {usePotion && selectTarget(targetId, value => update({ targetId: value }), "Save", snapshot.seats.filter(player => player.alive && !player.absent && (player.id === snapshot.nightResolution?.wolfTarget || player.id === snapshot.nightResolution?.oldKnightSaveTarget)))}
+      {usePoison && selectTarget(secondTargetId, value => update({ secondTargetId: value }), "Poison", usePotion ? options.filter(player => player.id !== targetId) : options)}
     </>}
     {targetStep && step.kind !== "lovers" && step.kind !== "alchemist-actions" && step.kind !== "good-manners-violation" && !["big-bad-wolf", "silence-target", "hunter-shot"].includes(step.kind)
-      && selectTarget(targetId, setTargetId, step.kind === "lynch-spare" ? "Player to spare" : step.kind === "executioner-vote" ? "Executioner vote" : "Choose a player")}
-    {step.kind === "good-manners-violation" && selectTarget(targetId, setTargetId, "Player who interrupted")}
-    {step.kind === "big-bad-wolf" && <label className="werewolves-check"><input type="checkbox" checked={pass} onChange={event => setPass(event.target.checked)} /> Pass</label>}
-    {step.kind === "silence-target" && <label className="werewolves-check"><input type="checkbox" checked={pass} onChange={event => setPass(event.target.checked)} /> Do not silence anyone</label>}
-    {step.kind === "hunter-shot" && <label className="werewolves-check"><input type="checkbox" checked={pass} onChange={event => setPass(event.target.checked)} /> Do not shoot</label>}
+      && selectTarget(targetId, value => update({ targetId: value }), step.kind === "lynch-spare" ? "Player to spare" : step.kind === "executioner-vote" ? "Executioner vote" : "Choose a player")}
+    {step.kind === "good-manners-violation" && selectTarget(targetId, value => update({ targetId: value }), "Player who interrupted")}
+    {step.kind === "big-bad-wolf" && <label className="werewolves-check"><input type="checkbox" checked={pass} onChange={event => update({ pass: event.target.checked })} /> Pass</label>}
+    {step.kind === "silence-target" && <label className="werewolves-check"><input type="checkbox" checked={pass} onChange={event => update({ pass: event.target.checked })} /> Do not silence anyone</label>}
+    {step.kind === "hunter-shot" && <label className="werewolves-check"><input type="checkbox" checked={pass} onChange={event => update({ pass: event.target.checked })} /> Do not shoot</label>}
     {step.kind === "wolf-target" && <>
-      {!pass && selectTarget(targetId, setTargetId, "Werewolf target")}
-      <label className="werewolves-check"><input type="checkbox" checked={pass} onChange={event => setPass(event.target.checked)} /> Skip the attack</label>
+      {!pass && selectTarget(targetId, value => update({ targetId: value }), "Werewolf target")}
+      <label className="werewolves-check"><input type="checkbox" checked={pass} onChange={event => update({ pass: event.target.checked })} /> Skip the attack</label>
       {snapshot.wolfWarning && <p className="error">Wise Wolf warning: this target is protected or dangerous.</p>}
     </>}
     {["big-bad-wolf", "silence-target", "hunter-shot"].includes(step.kind) && !pass
-      && selectTarget(targetId, setTargetId, step.kind === "big-bad-wolf" ? "Kill" : step.kind === "silence-target" ? "Silence" : "Shoot")}
-    {step.kind === "executioner-tie" && selectTarget(targetId, setTargetId, "Break the tie")}
+      && selectTarget(targetId, value => update({ targetId: value }), step.kind === "big-bad-wolf" ? "Kill" : step.kind === "silence-target" ? "Silence" : "Shoot")}
+    {step.kind === "executioner-tie" && selectTarget(targetId, value => update({ targetId: value }), "Break the tie")}
     {(step.kind === "skip-vote" || step.kind === "judge-intervention") && <label>{step.kind === "skip-vote" ? "Skip the lynch?" : "Reveal as the Judge?"}
-      <select value={boolean} onChange={event => setBoolean(event.target.value)}><option value="yes">Yes</option><option value="no">No</option></select>
+      <select value={boolean} onChange={event => update({ boolean: event.target.value })}><option value="">Choose</option><option value="yes">Yes</option><option value="no">No</option></select>
     </label>}
-    {step.kind === "moon-offer" && <label>Moon card<select value={card} onChange={event => setCard(event.target.value)}>
-      <option value="">Pass / no card</option>
+    {step.kind === "moon-offer" && <label>Moon card<select value={card} onChange={event => update({ card: event.target.value })}>
+      <option value="">Choose</option>
+      <option value="pass">Pass / no card</option>
       {snapshot.moonOffers.map(id => <option key={id} value={id}>{snapshot.moonCatalog.find(item => item.id === id)?.name ?? id}</option>)}
     </select></label>}
     {step.kind === "mistrust-vote" && <>
-      {selectTarget(targetId, setTargetId, "Closest friend")}
-      {options.length > 1 && selectTarget(secondTargetId, setSecondTargetId, "Second closest friend", options.filter(player => player.id !== targetId))}
+      {selectTarget(targetId, value => update({ targetId: value }), "Closest friend")}
+      {options.length > 1 && selectTarget(secondTargetId, value => update({ secondTargetId: value }), "Second closest friend", options.filter(player => player.id !== targetId))}
     </>}
-    {step.kind === "alchemist-actions" && !usePotion && !usePoison && <p className="muted small">Submit to save both remaining items.</p>}
-    <button className="primary" type="submit">{submitLabel}</button>
+    {step.kind === "alchemist-actions" && !usePotion && !usePoison && <p className="muted small">{onChange ? "Leave both unused or select an item; the GM confirms your choice." : "Leave both unused or select an item."}</p>}
+    {onSubmit && <button className="primary" type="submit">{submitLabel ?? "Save choice"}</button>}
   </form>;
 }
 
@@ -361,7 +415,7 @@ function Circle({ snapshot, userId }: { snapshot: WerewolvesSnapshot; userId: st
 
 function PlayerActions({ snapshot, userId, send }: Pick<GameLobbyProps<WerewolvesSnapshot>, "snapshot" | "userId" | "send">) {
   const step = snapshot.currentStep ?? (snapshot.privatePrompt ? {
-    id: `private-${snapshot.privatePrompt.kind}`,
+    id: snapshot.privatePrompt.id,
     phase: snapshot.publicStep?.phase ?? "night",
     day: snapshot.day,
     kind: snapshot.privatePrompt.kind,
@@ -376,17 +430,45 @@ function PlayerActions({ snapshot, userId, send }: Pick<GameLobbyProps<Werewolve
   return <section className="card werewolves-player-action">
     <h2>Your private action</h2>
     <p>{snapshot.privatePrompt?.prompt}</p>
-    {value && <p className="muted small">Your choice has been submitted. You can update it before the GM confirms.</p>}
-    <ActionForm key={`${step.id}-${userId}`} snapshot={snapshot} step={step} actorId={userId} initialAction={value} submitLabel={value ? "Update choice" : "Submit choice"} onSubmit={action => send({ type: "submit_action", value: action })} />
+    <p className="muted small">{value ? "Your current choice is visible to the GM. You can change it until the GM confirms." : "Choose on your device; the GM sees your current choice and confirms what happens."}</p>
+    <ActionForm key={`${step.id}-${userId}`} snapshot={snapshot} step={step} actorId={userId} initialAction={value} onChange={action => send({ type: "select_action", value: action })} />
   </section>;
 }
 
+function gmInitialAction(snapshot: WerewolvesSnapshot, step: WerewolvesStep): Record<string, unknown> | null {
+  if (step.override) return step.override;
+  if (step.kind === "mayor-election") {
+    const counts = new Map<string, number>();
+    for (const submission of Object.values(step.submissions ?? {})) {
+      if (typeof submission.targetId === "string") {
+        counts.set(submission.targetId, (counts.get(submission.targetId) ?? 0) + 1);
+      }
+    }
+    const highest = Math.max(0, ...counts.values());
+    const leaders = [...counts].filter(([, count]) => count === highest);
+    if (leaders.length === 1 && highest > 0) return { targetId: leaders[0][0] };
+  }
+  const actorId = step.actorId ?? step.voterId ?? snapshot.mayorId ?? undefined;
+  if (actorId && step.submissions?.[actorId]) return step.submissions[actorId] ?? null;
+  const submissions = Object.values(step.submissions ?? {});
+  if (step.kind === "wolf-target" && submissions.length) return submissions[0];
+  if (typeof step.targetId === "string") return { targetId: step.targetId };
+  return null;
+}
+
+const GM_CHOICE_STEPS = new Set([
+  "mayor-election", "new-mayor", "town-name", "lovers", "wolfchild-target", "old-knight-target",
+  "guard-check", "seer-check", "sniffer-check", "little-girl-check", "wolf-target", "silence-target",
+  "alchemist-actions", "big-bad-wolf", "moon-offer", "ghost-choice", "executioner-lynch",
+  "executioner-tie", "aid-target", "hunter-shot", "judge-intervention", "lynch-spare",
+  "lynch-result", "mayor-nominations", "skip-vote", "mistrust-vote", "executioner-vote"
+]);
+
 function GMControls({ snapshot, userId, send }: Pick<GameLobbyProps<WerewolvesSnapshot>, "snapshot" | "userId" | "send">) {
   const step = snapshot.currentStep;
-  const [override, setOverride] = useState(false);
   const [groupUser, setGroupUser] = useState("");
   const [notice, setNotice] = useState("");
-  useEffect(() => { setOverride(false); setGroupUser(""); setNotice(""); }, [step?.id]);
+  useEffect(() => { setGroupUser(""); setNotice(""); }, [step?.id]);
   if (!snapshot.isGM || !step || snapshot.phase !== "playing") return null;
 
   const groupAction = step.actorMode === "living" || step.actorMode === "voter";
@@ -400,7 +482,9 @@ function GMControls({ snapshot, userId, send }: Pick<GameLobbyProps<WerewolvesSn
       : snapshot.seats.filter(seat => seat.alive && !seat.absent)
     : [];
   const selectedMember = membersForStep.find(seat => seat.id === groupUser) ?? membersForStep[0];
-  const showDirect = !groupAction || step.kind === "wolf-target" || step.kind === "mayor-election";
+  const showDirect = GM_CHOICE_STEPS.has(step.kind)
+    && (!groupAction || step.kind === "wolf-target" || step.kind === "mayor-election");
+  const initialGMAction = gmInitialAction(snapshot, step);
   const gmActionStep = { ...step, actorId: step.actorId ?? step.voterId ?? userId };
   const nightResolutionSummary = snapshot.gmActions?.nightResolutionSummary;
 
@@ -441,11 +525,11 @@ function GMControls({ snapshot, userId, send }: Pick<GameLobbyProps<WerewolvesSn
           return <p key={player.id}>{player.username}: {submission ? formatSubmission(snapshot, step, submission) : "Waiting"}</p>;
         })}
         {!snapshot.seats.some(player => player.alive && !player.absent && player.faction === "werewolf")
-          && <p className="muted">No living Werewolves can submit a target.</p>}
-        {step.wiseWolfWarning && <p className="error">Wise Wolf warning: the submitted target is dangerous. The wolves may still keep it unanimously.</p>}
+          && <p className="muted">No living Werewolves can choose a target.</p>}
+        {step.wiseWolfWarning && <p className="error">Wise Wolf warning: a current target choice is dangerous. The wolves may still keep it unanimously.</p>}
       </div>}
       {groupAction && <div className="werewolves-submissions">
-        <strong>Votes and submissions</strong>
+        <strong>Players’ current choices</strong>
         {membersForStep.map(player => {
           const submission = step.submissions?.[player.id];
           return <p key={player.id}>{player.username}: {submission ? formatSubmission(snapshot, step, submission) : "Waiting"}</p>;
@@ -453,26 +537,25 @@ function GMControls({ snapshot, userId, send }: Pick<GameLobbyProps<WerewolvesSn
         {membersForStep.length > 0 && <div className="werewolves-gm-entry">
           <label>Record or update a choice for
             <select value={selectedMember?.id ?? ""} onChange={event => setGroupUser(event.target.value)}>
-              {membersForStep.map(player => <option key={player.id} value={player.id}>{player.username}{step.submissions?.[player.id] ? " (recorded)" : ""}</option>)}
+              {membersForStep.map(player => <option key={player.id} value={player.id}>{player.username}{step.submissions?.[player.id] ? " (choice selected)" : ""}</option>)}
             </select>
           </label>
           {selectedMember && <ActionForm
-            key={`${step.id}-${selectedMember.id}`}
+            key={`${step.id}-${selectedMember.id}-${JSON.stringify(step.submissions?.[selectedMember.id] ?? null)}`}
             snapshot={snapshot}
             step={step}
             actorId={selectedMember.id}
-            title="Enter player choice"
-            submitLabel={step.submissions?.[selectedMember.id] ? "Update recorded choice" : "Record for player"}
+            title="Edit this player's choice"
+            submitLabel="Save GM choice"
             initialAction={step.submissions?.[selectedMember.id] ?? null}
             onSubmit={value => submitGM({ forUserId: selectedMember.id, vote: value })}
           />}
         </div>}
       </div>}
       {showDirect && <div className="werewolves-gm-entry">
-        <button type="button" onClick={() => setOverride(value => !value)}>{override ? "Hide GM override" : groupAction ? "Override / resolve by GM" : "Enter or override action"}</button>
-        {override && <ActionForm key={`${step.id}-gm`} snapshot={snapshot} step={gmActionStep} actorId={gmActionStep.actorId} title="GM input / override" submitLabel="Save GM action" onSubmit={submitGM} />}
+        <ActionForm key={`${step.id}-gm-${JSON.stringify(initialGMAction)}`} snapshot={snapshot} step={gmActionStep} actorId={gmActionStep.actorId} title="GM choice (prefilled from the player's current choice)" initialAction={initialGMAction} submitLabel="Use this GM choice" onSubmit={submitGM} />
       </div>}
-      {step.optional && <p className="muted small">Optional step: use the action above to record a choice, or confirm to pass.</p>}
+      {step.optional && <p className="muted small">Optional step: confirm to pass, or select a GM choice before confirming.</p>}
       {notice && <p className="muted small">{notice}</p>}
       <button className="primary" onClick={() => send({ type: "confirm_step" })}>Confirm step and continue</button>
       {snapshot.stepsRemaining && snapshot.stepsRemaining.length > 1 && <details className="werewolves-step-list">
