@@ -5,7 +5,8 @@ const GAME_FAVICONS: Record<string, string> = {
   dworf: "dworf.ico",
   blokus: "blokus.ico",
   werewolves: "werewolves.ico",
-  kin: "kin.ico"
+  kin: "kin.ico",
+  "pass-time": "pass-time.ico"
 };
 
 export function gameFaviconUrl(game: string): string | undefined {

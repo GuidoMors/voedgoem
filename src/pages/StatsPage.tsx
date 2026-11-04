@@ -50,10 +50,15 @@ export function StatsPage({ userId, defaultGame, onGameChange }: { userId: strin
 
   useEffect(() => {
     if (!game) return;
+    let active = true;
     setData(null);
+    setError("");
     setPage(1);
     setPageInput("1");
-    api<GameStats>(`/api/stats/${game}`).then(setData).catch(e => setError(e.message));
+    api<GameStats>(`/api/stats/${game}`)
+      .then(result => { if (active) setData(result); })
+      .catch(e => { if (active) setError(e.message); });
+    return () => { active = false; };
   }, [game]);
 
   useEffect(() => {

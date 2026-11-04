@@ -508,6 +508,18 @@ button:disabled {
   --hub-shadow: none;
   --hub-text: #fffaf0;
 }
+.lobby-list li.hub-lobby[data-game="pass-time"] {
+  --hub-surface: #e9dcba;
+  --hub-panel: #f5ebd0;
+  --hub-edge: #a77a31;
+  --hub-panel-font-color: #79551f;
+  --hub-sub-text-color: #74634a;
+  --hub-font: Georgia, "Times New Roman", serif;
+  --hub-sub-font: Georgia, "Times New Roman", serif;
+  --hub-radius: 8px;
+  --hub-shadow: 0 3px 8px rgba(64,43,27,.18);
+  --hub-text: #2b2117;
+}
 .lobby-list li.hub-lobby[data-game="new-template"] {
   --hub-surface: #15191f;
   --hub-panel: #202631;
@@ -6339,6 +6351,10 @@ body[data-game="werewolves"] .werewolves-circle-seat.lynch-target {
 }
 
 /* Each statistics tab wears the look of the game it selects. */
+.modal.stats-modal[data-game] .stats-page .stats-tab[data-tab-game="pass-time"] {
+  --t-edge: #a77a31; --t-glow: rgba(167,122,49,.15); --t-surface: #f5ebd0; --t-panel: #e9dcba; --t-text: #2b2117; --t-accent: #79551f;
+  font-family: Georgia, "Times New Roman", serif;
+}
 .modal.stats-modal[data-game] .stats-page .stats-tab[data-tab-game="dworf"] {
   --t-edge: #1a1109; --t-glow: rgba(0,0,0,.4); --t-surface: #2a1d12; --t-panel: #3b2a1a; --t-text: #efe4d0; --t-accent: #f3e3c3;
   font-family: 'VT323', 'Courier New', monospace;
