@@ -1,15 +1,31 @@
 # Pride of Lumon
+
 Color: yellow
 
+Gameplay: **Diplomacy** - They wish to spread their treaties to all the other Kin, and to live in peace.
+
+## Lore
 The Lion-kin of the greater plains were once a vicious Kin, whose men fought each other for a place within their heartless hierarchy, and whose women were delegated to work. But as the disparate groups of the Lion-kin were tamed by the Hanshu, a shift in outlook changed their society to the very core. Although at first loyal subjects of the crown, a fire burned in the hearts of the Lion-kin that could not be quenched. A revolutionary movement of equality and peace called the White Wave overthrew their cruel leaders. At the core of this movement was Lumon; the White Prophet.
 
 Their unshaken faith in their prophet has led them to pacifism and diplomacy, and away from conquering and dictatorship. They see themselves and their beliefs as morally superior, and as such their ways must be spread to the other more ignorant and barbaric factions of the world.
 
 ## Starting setup
 
-- Place your starting buildings: 1 village, 1 worksite.
-- Place your starting army: Strength 1 on the village.
-- Claim the Faction Effects cards and the Faction Building Bluprint.
+// Each faction also claims their faction effect cards, faction building blueprint.
+// These tables are the setup source of truth. See README.md: Editing Kin starting setups.
+
+| Step | Building | Location | Terrain | Adjacent terrain | River | Minimum distance | Road to | Road length | Dedication | Placement |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| village | village | world | plains, snow | - | no | 3 | - | 0 | no | choose |
+| worksite | worksite | village | - | farmland, forest, mountain | no | 0 | - | 0 | no | choose |
+| market | market | village | - | - | no | 0 | - | 0 | no | choose |
+| university | university | village | - | - | no | 0 | - | 0 | no | choose |
+
+| Army count | Strength | Location |
+| --- | --- | --- |
+| 1 | 1 | village |
+
+**Technologies**
 - Claim the following technologies: Promise Diplomacy, Market Construction.
 
 # Faction building

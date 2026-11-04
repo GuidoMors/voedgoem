@@ -1,15 +1,33 @@
 # Seven Streams Syndicate
+
 Color: blue
 
+Gameplay: **Trade** - They levy their position on rivers to grow rich on trade.
+
+## Lore
 The water-dwelling, scaly, and slimy creatures that live in the rivers crisscrossing the world were always lorded over by others. They might have been in a position for domination, but the smartest among them smelled opportunity. While the kings, emperors, and chieftains fought, they sold them arms; while they bickered over laws and grudges, they bribed their diplomats.
 
 Their society revolves around trade, economic deals, and business. Always business. And business is ruthless. The biggest businessmen among them have conglomerated into a syndicate that holds an iron grip on the market. Against their monopoly, no other stands a chance of breaking in.
 
 # Starting setup
 
-- Place your starting buildings: 1 village next to a river, 1 worksite.
-- Place your starting army: Strength 1 on the village.
-- Claim the Faction Effects cards and the Faction Building Bluprint.
+// Each faction also claims their faction effect cards, faction building blueprint.
+// These tables are the setup source of truth. See README.md: Editing Kin starting setups.
+
+| Step | Building | Location | Terrain | Adjacent terrain | River | Minimum distance | Road to | Road length | Dedication | Placement |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| village | village | world | plains, snow | - | yes | 3 | - | 0 | no | choose |
+| worksite | worksite | village | - | farmland, forest, mountain | no | 0 | - | 0 | no | choose |
+| harbor | harbor | village | - | - | no | 0 | - | 0 | no | choose |
+| university | university | village | - | - | no | 0 | - | 0 | no | choose |
+
+// The starting Harbor follows normal Harbor conditions: adjacent to a river or ocean, with at most one Harbor per tile building.
+
+| Army count | Strength | Location |
+| --- | --- | --- |
+| 1 | 1 | village |
+
+**Technologies**
 - Claim the following technologies: Trade Diplomacy, Harbor Construction, River Movement
 
 # Faction building Blueprint

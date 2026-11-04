@@ -1,6 +1,8 @@
 # Commonwealth Law Cards | ䷓
 Commonwealth Law cards are enacted in the [[Council]] [[event]], but only during the Commonwealth chapter. They remain active until the next council event, where they are discarded, and new ones are drawn.
 
+Their effects only apply to Commonwealth members. Each reward grants 1 [[gold]] once per successfully completed matching action, regardless of power spent or the number of targets. [[Revoke]] can discard an enacted Commonwealth law. Normal Council technology requirements apply, and eligible Opposition members may also vote.
+
 ## Freedom of Movement | ䷓
 > (commonwealth): Gain 1 gold when you Move.
 

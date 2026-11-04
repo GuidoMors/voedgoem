@@ -62,7 +62,7 @@ You may activate cards of the current phase on the phase board and cards of the 
 // Condition: None.
 // On trigger: Select an untapped Discovery Character/Activation Card. Select a player. Then select a certain amount of bartering goods from your court. Then select a certain amount of bartering goods from the selected player's court.
 // Payment: Tap the selected character/activation card.
-// Effect: The selected player may accept or decline the offer. If accepted, move the items selected in your court to their court and the items selected in their court to your court. If declined, no items are transferred.
+// Effect: The selected player may accept or decline the offer. If accepted, move the items selected in your court to their court and the items selected in their court to your court. If declined, no resources or cards are transferred, the selected character/activation card remains tapped, and the offering player's turn ends.
 // Extra Rules: You can only barter your own trade treaties. You cannot barter the trade treaties you have received from others. A barter is successful only if the selected player accepts it.
 
 ## Dissolve | action card

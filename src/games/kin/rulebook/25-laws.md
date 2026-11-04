@@ -1,6 +1,8 @@
 # Law Cards | 𝌭
 Law cards are enacted in the [[Council]] [[event]]. They remain active until the next council event, where they are discarded, and new ones are drawn.
 
+Naval Blockade is only added to the law deck once someone knows [[Harbor Construction]]. Cargo Enforcement and Protect Ancestry are only added once someone knows [[Archeology Science]]. Public technologies count as known.
+
 
 ## General Blockade | 𝌭
 > You may not [[Move]].
@@ -28,6 +30,11 @@ Law cards are enacted in the [[Council]] [[event]]. They remain active until the
 
 ## Cargo Enforcement | 𝌭
 > You may not [[Reclaim]].
+// Only added to the law deck once Archeology Science has been researched.
+
+## Protect Ancestry | 𝌭
+> You may not [[Explore]].
+// Only added to the law deck once Archeology Science has been researched.
 
 ## Peace Resolution | 𝌭
 > You may not [[Battle]].
@@ -40,3 +47,4 @@ Law cards are enacted in the [[Council]] [[event]]. They remain active until the
 
 ## Naval Blockade | 𝌭
 > You may not [[Embark]].
+// Only added to the law deck once Harbor Construction has been researched.

@@ -1,10 +1,10 @@
 import type { ReactNode } from "react";
 
-export function HostControlsTab({ children }: { children: ReactNode }) {
+export function HostControlsTab({ children, showHeading = true }: { children: ReactNode; showHeading?: boolean }) {
   return (
     <section className="host-controls-tab">
       <div className="card host-controls-panel">
-        <h2>Host controls &amp; rules</h2>
+        {showHeading && <h2>Host controls &amp; rules</h2>}
         {children}
       </div>
     </section>

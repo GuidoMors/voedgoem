@@ -1,6 +1,10 @@
 # Beastmen Tribes
+
 Color: dark red
 
+Gameplay: **War** - They wish for armies to face eachother in mortal combat.
+
+## Lore
 Those that have been outcast from the civilizations of the world have nowhere else to turn than the Beastmen Tribes. Slowly, these outcasts’ bodies have become warped and mangled over time due to cross-species breeding. Bits and pieces of every species can be found if you look close enough at the body of a Beastman.
 
 They call the resource-starved deserts their home, the only place the others would allow them to live.
@@ -11,9 +15,21 @@ Their evolution has left them with little brains but lots of brawn. They have no
 
 ## Starting setup
 
-- Place your starting buildings: 1 village on a desert, 1 worksite.
-- Place your starting army: Strength 1 on the village.
-- Claim the Faction Effects cards and the Faction Building Bluprint.
+// Each faction also claims their faction effect cards, faction building blueprint.
+// These tables are the setup source of truth. See README.md: Editing Kin starting setups.
+
+| Step | Building | Location | Terrain | Adjacent terrain | River | Minimum distance | Road to | Road length | Dedication | Placement |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| village | village | world | desert | - | no | 3 | - | 0 | no | choose |
+| worksite | worksite | village | - | farmland, forest, mountain | no | 0 | - | 0 | no | choose |
+| worksite2 | worksite | village | - | farmland, forest, mountain | no | 0 | - | 0 | no | choose |
+| university | university | village | - | - | no | 0 | - | 0 | no | choose |
+
+| Army count | Strength | Location |
+| --- | --- | --- |
+| 1 | 1 | village |
+
+**Technologies**
 - Claim the following technologies: Desert Movement, Greater Army Strength.
 
 # Faction building
@@ -22,8 +38,8 @@ Their evolution has left them with little brains but lots of brawn. They have no
 > Resource cost: 1 lumber
 > Build Power cost: 1
 > Garrison: 1
-> Build conditions: Must be built on deserts.
-> Effects: You may recruit on it as if it was a barracks.
+> Build conditions: Must be built on [[desert]].
+> Effects: You may [[Recruit]] and [[Deploy]] on it as if it was a [[Barracks]].
 
 # Faction Effects
 

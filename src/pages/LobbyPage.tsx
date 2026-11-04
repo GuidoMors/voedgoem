@@ -44,7 +44,7 @@ function getTurnBotId(snapshot: LobbySnapshot): string | null {
   }
 }
 
-export function LobbyPage({ lobbyId, user, onGameChange, chatOpen, onChatClose }: { lobbyId: string; user: User; onGameChange: (game: string | null) => void; chatOpen: boolean; onChatClose: () => void }) {
+export function LobbyPage({ lobbyId, user, onGameChange, chatOpen, onChatClose }: { lobbyId: string; user: User; onGameChange: (game: string | null, started?: boolean) => void; chatOpen: boolean; onChatClose: () => void }) {
   const { snapshot, status, send, notice, avatars, chatMessages, passwordRequired, submitPassword } = useLobbyConnection(lobbyId);
   const [controlling, setControlling] = useState<string | null>(null);
   const [password, setPassword] = useState("");
@@ -56,12 +56,13 @@ export function LobbyPage({ lobbyId, user, onGameChange, chatOpen, onChatClose }
   };
 
   const gameId = snapshot?.game;
+  const started = !!snapshot && snapshot.phase !== "lobby";
   useEffect(() => {
-    onGameChange(gameId ?? null);
+    onGameChange(gameId ?? null, started);
     if (!gameId) return;
     document.body.dataset.game = gameId;
     return () => { delete document.body.dataset.game; onGameChange(null); };
-  }, [gameId, onGameChange]);
+  }, [gameId, started, onGameChange]);
 
   const sendAsBot = useCallback<Send>(message => {
     if (controlling && !user.isDisplay) {
@@ -99,7 +100,7 @@ export function LobbyPage({ lobbyId, user, onGameChange, chatOpen, onChatClose }
   const view = acting ? ({ ...snapshot, ...botView } as LobbySnapshot) : snapshot;
   const turnBotId = getTurnBotId(snapshot);
 
-  const botControls = user.isAdmin && (
+  const botControls = user.isAdmin && (snapshot.phase === "lobby" || snapshot.bots.length > 0) && (
         <section className="card bot-panel">
           <div className="row between">
             <h2>Test bots</h2>

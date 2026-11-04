@@ -182,7 +182,7 @@ A tap ability is [[activate]]d by clicking the ruletext of the [[ability]] on a 
 A passive ability is an [[ability]] which can not be [[activate]]d by clicking the ruletext of the ability. Instead it triggers in response to another action being activated. Some passive abilities trigger automatically (they have no cost or conditions). Some passive abilities show a pop-up on your screen asking you if you want to activate it (they have a cost or a condition).
 ## connected
 Two players are connected if one of the following is true: they own buildings adjacent to eachother.
-They can connect a [[Harbor]] to another Harbor through [[ocean]]s or [[river]]s.
+Either player's [[Harbor]] can reach a [[tile building]] owned by the other player through a continuous route of [[river]]s and [[ocean]] tiles. The route may pass between rivers and ocean tiles where they meet. The destination does not need a Harbor.
 ## tile speed cost
 Relevant for the [[Move]] action. Each tile type has its own speed cost:
 | Tile | Cost |

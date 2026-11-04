@@ -1,15 +1,31 @@
 # Wanderers
+
 Color: light blue
 
+Gameplay: **Exploration** - They wish to explore the ruins of the world and find its relics.
+
+## Lore
 While the Monkeys and Lions tower and bicker over vast lands and empires, they miss the small secrets right below them. But those that they trampled on, the critters that hid from their violence, did not have such poor wisdom. Below the earth are buried ancient treasures of learning and wealth. Having no taste or skill for war, the critters gained a taste and skill for adventure.
 
 The most adventurous of these critters were the foxes of the poles, who with their camps wandered the world, away from the war in search of these relics of times past. Having lived in these harsh frozen lands for as long as they can remember, they have learned to squeeze every last drop out of every last resource.
 
 ## Starting setup
 
-- Place your starting buildings: 1 village on snow, 1 worksite.
-- Place your starting army: Strength 1 on the village.
-- Claim the Faction Effects cards and the Faction Building Bluprint.
+// Each faction also claims their faction effect cards, faction building blueprint.
+// These tables are the setup source of truth. See README.md: Editing Kin starting setups.
+
+| Step | Building | Location | Terrain | Adjacent terrain | River | Minimum distance | Road to | Road length | Dedication | Placement |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| village | village | world | snow | - | no | 3 | - | 0 | no | choose |
+| worksite | worksite | village | - | farmland, forest, mountain | no | 0 | - | 0 | no | choose |
+| worksite2 | worksite | village | - | farmland, forest, mountain | no | 0 | - | 0 | no | choose |
+| university | university | village | - | - | no | 0 | - | 0 | no | choose |
+
+| Army count | Strength | Location |
+| --- | --- | --- |
+| 1 | 1 | village |
+
+**Technologies**
 - Claim the following technologies: Archeology Science, Ambush Combat.
 
 # Faction building

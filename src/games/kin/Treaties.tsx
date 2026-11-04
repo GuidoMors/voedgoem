@@ -1,13 +1,19 @@
 import { useState } from "react";
-import { cardDef, RuleText } from "./Cards";
+import { Modal } from "../../components/Modal";
+import { cardDef, GameCard, ItemCard, RuleText } from "./Cards";
 import { CHARACTERS } from "./characters.data";
 import { CharacterCard } from "./CharacterCard";
 import { NumberInput } from "./NumberInput";
-import type { KinBarterOffer, KinBarterTreaty, KinGoods, KinSeat, KinWorld } from "./types";
+import { kinColor } from "./KinCard";
+import type { KinBarterOffer, KinBarterTreaty, KinGoods, KinInfo, KinSeat, KinWorld } from "./types";
 
 const RESOURCES = ["gold", "lumber", "stone", "food", "gear", "mana", "relic", "tradegood"];
 const treatyName = (def: string) => cardDef(def)?.name ?? def;
 const characterName = (id: string) => CHARACTERS.find(def => def.id === id)?.name ?? id;
+const partnerColors = (kin: KinInfo | undefined) => kin ? {
+  backgroundColor: kinColor(kin),
+  color: ["pink", "light blue", "yellow", "grey"].includes(kin.color.toLowerCase()) ? "#221a10" : "#fff"
+} : undefined;
 
 function BarterResource({ name }: { name: string }) {
   return <RuleText text={`[[${name === "tradegood" ? "tradegoods" : name}]]`} />;
@@ -20,37 +26,47 @@ function GoodsSummary({ goods, world }: { goods: KinGoods; world: KinWorld }) {
       <strong>{amount}</strong> <BarterResource name={name} />
       {name === "tradegood" && goods.tradegoodAs && <> <span aria-label="becomes">&rarr;</span> <BarterResource name={goods.tradegoodAs} /></>}
     </span>)}
-    {goods.characters.map(id => <span className="kin-barter-chip" key={id}>{characterName(id)}</span>)}
-    {goods.treaties.map(id => <span className="kin-barter-chip" key={id}>{treatyName(world.items.find(item => item.id === id)?.def ?? id)}</span>)}
-    {resources.length + goods.characters.length + goods.treaties.length === 0 && <span className="muted small">Nothing</span>}
+    {CHARACTERS.filter(def => goods.characters.includes(def.id)).map(def => <CharacterCard key={def.id} def={def} kins={world.kins} state="claimed" borrowedAbility={world.borrowed?.[def.id]} />)}
+    {goods.treaties.map(id => {
+      const item = world.items.find(item => item.id === id);
+      return item && <ItemCard key={id} item={item} kins={world.kins} kinPicks={world.kinPicks} />;
+    })}
+    {resources.length === 0 && <span className="muted small">No resources</span>}
   </div>;
-}
-
-function describeMint(entry: KinBarterTreaty, offer: KinBarterOffer, names: Record<string, string>): string {
-  const giver = entry.giver === "from" ? offer.from : offer.to;
-  const extra = [
-    entry.duration !== undefined ? `${entry.duration} seasons` : "",
-    entry.promise ? `"${entry.promise}"` : "",
-    entry.arbiter ? `arbiter ${names[entry.arbiter] ?? entry.arbiter}` : ""
-  ].filter(Boolean).join(", ");
-  return `a new ${treatyName(entry.def)} given by ${names[giver] ?? giver}${extra ? ` (${extra})` : ""}`;
 }
 
 // The offer, as the other player sees it, with Accept and Decline when it is theirs to answer.
 export function BarterOfferBanner({ world, offer, userId, names, send }: { world: KinWorld; offer: KinBarterOffer; userId: string; names: Record<string, string>; send: (action: Record<string, unknown>) => void }) {
   const mine = offer.to === userId;
+  const [open, setOpen] = useState(true);
+  if (!open) return <button type="button" onClick={() => setOpen(true)}>View Barter offer</button>;
   return (
+    <Modal title="Barter offer" onClose={() => setOpen(false)} wide className="kin-action-modal">
     <div className="kin-barter-banner" role="alert">
-      <h3>Barter offer</h3>
       <div className="kin-barter-sides">
-        <section className="kin-barter-side"><h4>{names[offer.from]} gives</h4><GoodsSummary goods={offer.give} world={world} /></section>
-        <section className="kin-barter-side"><h4>{names[offer.to]} gives</h4><GoodsSummary goods={offer.take} world={world} /></section>
+        {(["from", "to"] as const).map(side => {
+          const giver = offer[side];
+          const kin = world.kins.find(kin => kin.id === world.kinPicks[giver]);
+          return <section key={side} className="kin-barter-side">
+            <h4>{names[giver]} gives</h4>
+            <GoodsSummary goods={side === "from" ? offer.give : offer.take} world={world} />
+            <div className="kin-barter-goods">{offer.mint.filter(entry => entry.giver === side).map((entry, index) => <GameCard
+              key={index} def={cardDef(entry.def)!} kins={world.kins} giver={kin ? kinColor(kin) : undefined}
+              details={[
+                `Given by ${names[giver]}`,
+                ...(entry.duration !== undefined ? [`${entry.duration} seasons`] : []),
+                ...(entry.promise ? [`Promise: ${entry.promise}`] : []),
+                ...(entry.arbiter ? [`Arbiter: ${names[entry.arbiter] ?? entry.arbiter}`] : [])
+              ]}
+            />)}</div>
+          </section>;
+        })}
       </div>
-      {offer.mint.length > 0 && <ul>{offer.mint.map((entry, index) => <li key={index}>{describeMint(entry, offer, names)}</li>)}</ul>}
       {mine
         ? <div className="kin-barter-answer"><button type="button" className="primary" onClick={() => send({ type: "barterRespond", accept: true })}>Accept</button><button type="button" onClick={() => send({ type: "barterRespond", accept: false })}>Decline</button></div>
         : <p className="muted small">Waiting for {names[offer.to]} to answer.</p>}
     </div>
+    </Modal>
   );
 }
 
@@ -140,6 +156,7 @@ export function BarterComposer({ world, players: seats, userId, names, targets, 
   const charactersOf = (player: string) => CHARACTERS.filter(def => world.charClaims[def.id] === player && def.id !== "lumon" && def.id !== "ethereal" && !(source.kind === "character" && source.id === def.id)).map(def => def.id);
   const players = Object.keys(names);
   const receiveMintable = targets.find(target => target.player === to)?.mintable ?? [];
+  const selectedKin = world.kins.find(kin => kin.id === world.kinPicks[to]);
   const updateMint = (index: number, patch: Partial<KinBarterTreaty>) => setMint(list => list.map((entry, position) => position === index ? { ...entry, ...patch } : entry));
   const clean = (entry: KinBarterTreaty): KinBarterTreaty => ({
     def: entry.def,
@@ -151,11 +168,11 @@ export function BarterComposer({ world, players: seats, userId, names, targets, 
   return (
     <div className="kin-barter">
       <h3>Barter</h3>
-      <label className="kin-barter-partner">Trade with <select value={to} onChange={event => { setTo(event.target.value); setTake(emptyGoods()); setMint([]); }}>
+      <label className="kin-barter-partner">Trade with <select value={to} style={partnerColors(selectedKin)} onChange={event => { setTo(event.target.value); setTake(emptyGoods()); setMint([]); }}>
         {targets.map(target => {
           const kin = world.kins.find(entry => entry.id === world.kinPicks[target.player]);
           const holdsTradeTreaty = world.items.some(item => item.def === "trade-treaty" && item.zone === `court:${target.player}` && item.owner === target.player && item.giver === userId);
-          return <option key={target.player} value={target.player}>{names[target.player]} ({kin?.name ?? "No Kin"}) - {holdsTradeTreaty ? "Holds your Trade Treaty" : "No Trade Treaty from you"}</option>;
+          return <option key={target.player} value={target.player} style={partnerColors(kin)} data-light={kin && ["pink", "light blue", "yellow", "grey"].includes(kin.color.toLowerCase())}>{names[target.player]} ({kin?.name ?? "No Kin"}) - {holdsTradeTreaty ? "Holds your Trade Treaty" : "No Trade Treaty from you"}</option>;
         })}
       </select></label>
       <div className="kin-barter-sides">
@@ -164,21 +181,33 @@ export function BarterComposer({ world, players: seats, userId, names, targets, 
       </div>
       <div className="kin-barter-sides">
       {(["from", "to"] as const).map(giver => {
-        const options = giver === "from" ? (targets.find(target => target.player === to)?.giveMintable ?? mintable) : receiveMintable;
+        const available = giver === "from" ? (targets.find(target => target.player === to)?.giveMintable ?? mintable) : receiveMintable;
         const title = giver === "from" ? "I give treaty to you" : "I receive treaty from you";
+        const treatyGiver = giver === "from" ? userId : to;
+        const treatyReceiver = giver === "from" ? to : userId;
+        const alreadyHoldsTrade = world.items.some(item => item.def === "trade-treaty" && item.zone === `court:${treatyReceiver}` && item.giver === treatyGiver);
+        const options = available.filter(type => type !== "trade" || (!alreadyHoldsTrade && !mint.some(entry => entry.giver === giver && entry.def === "trade-treaty")));
+        const knowsTradeDiplomacy = world.items.some(item => item.def === "trade-diplomacy" && (item.zone === `court:${treatyGiver}` || item.zone === "board:public"));
+        const disconnected = targets.find(target => target.player === to)?.connected === false;
         return <fieldset key={giver} className="kin-barter-side">
         <legend>{title}</legend>
         <select aria-label={title} value="" disabled={options.length === 0} onChange={event => {
-          if (options.includes(event.target.value)) setMint(list => [...list, { def: `${event.target.value}-treaty`, giver }]);
+          const type = event.target.value;
+          if (options.includes(type)) setMint(list => type === "trade" && list.some(entry => entry.giver === giver && entry.def === "trade-treaty") ? list : [...list, { def: `${type}-treaty`, giver }]);
         }}>
           <option value="">{options.length ? "Add a treaty..." : "No treaties available"}</option>
           {options.map(type => <option key={type} value={type}>{treatyName(`${type}-treaty`)}</option>)}
         </select>
-        {mint.map((entry, index) => entry.giver === giver && (
+        {knowsTradeDiplomacy && disconnected && !options.includes("trade") && <p className="muted small">
+          {giver === "from" ? "You cannot give a Trade Treaty" : `${names[to]} cannot give you a Trade Treaty`} because you are not connected. Connect your buildings, or connect either player's Harbor to the other player's tile building through rivers and ocean tiles.
+        </p>}
+        {mint.map((entry, index) => {
+          if (entry.giver !== giver) return null;
+          const def = cardDef(entry.def)!;
+          const giverKin = world.kins.find(kin => kin.id === world.kinPicks[treatyGiver]);
+          return (
           <div key={index} className="kin-barter-mint">
-            <select value={entry.def} onChange={event => updateMint(index, { def: event.target.value })}>
-              {options.map(type => <option key={type} value={`${type}-treaty`}>{treatyName(`${type}-treaty`)}</option>)}
-            </select>
+            <GameCard def={def} kins={world.kins} giver={giverKin ? kinColor(giverKin) : undefined} details={[`Given by ${names[treatyGiver]}`]} />
             {entry.def === "peace-treaty" && <span>seasons <NumberInput aria-label="Treaty seasons" min={1} max={10} value={entry.duration ?? 3} onValueChange={value => updateMint(index, { duration: Number(value) })} /></span>}
             {entry.def === "promise-treaty" && (
               <>
@@ -191,7 +220,7 @@ export function BarterComposer({ world, players: seats, userId, names, targets, 
             )}
             <button type="button" onClick={() => setMint(list => list.filter((_, position) => position !== index))} aria-label="Remove treaty">✕</button>
           </div>
-        ))}
+        ); })}
       </fieldset>;
       })}
       </div>

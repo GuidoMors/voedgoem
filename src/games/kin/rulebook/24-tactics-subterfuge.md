@@ -42,7 +42,7 @@ These cards are shuffled into the [[tactics deck]] upon someone researching the 
 > Extra rules: you cannot publicize Steampower
 
 ## Great Archeologist | 🕀
-> Short description: This round when you [[Explore]] an [[ruins]] you choose whether they are a [[treasure block]], [[warp]] or [[relic block]].
+> Short description: This round when you [[Explore]] a [[ruins]] you choose whether they are a [[treasure block]], [[warp]] or [[relic block]].
 > Condition: discovery, expansion, or control phase
 > Trigger: click the activate button on the card.
 > Payment: this card goes to the tactics deck discard pile.

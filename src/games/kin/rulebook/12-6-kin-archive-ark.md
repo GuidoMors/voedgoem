@@ -1,6 +1,10 @@
 # Archive Ark
+
 Color: grey
 
+Gameplay: **Technology** - To increase their knowledge of the world through research from their floating Ark.
+
+## Lore
 With their frail and squishy bodies, the frog-kin have evolved to use their brains over their brawn. They elude predators by outsmarting them with tools, traps, and plans of escape. Their numbers never grew high, and their kin spread all throughout the world. From their earliest days, they had to learn how to adapt to any situation.
 
 As the world advanced into an age of civilization, their disparate underdog Kin united to construct an Ark of learning and safety. A technological marvel, the floating city brought hope to a world of fighting Kin, where the huddled masses were trampled upon. For you could be allowed entry into the Ark if you passed their tests and questions.
@@ -9,10 +13,22 @@ In recent years, their power has evolved beyond mere intelligence, allowing them
 
 ## Starting setup
 
-- Place your starting buildings: 1 Ark, 1 worksite inside the Ark.
-- Place your starting army: Strength 1 on The Ark.
-- Claim the Faction Effects cards and the Faction Building Bluprint.
-- Claim the following technologies: University Construction.
+// Each faction also claims their faction effect cards, faction building blueprint.
+// These tables are the setup source of truth. See README.md: Editing Kin starting setups.
+
+| Step | Building | Location | Terrain | Adjacent terrain | River | Minimum distance | Road to | Road length | Dedication | Placement |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| ark | the-ark | world | mountain, forest, farmland, plains, snow, desert | - | no | 0 | - | 0 | no | choose |
+| worksite | worksite | ark-board | - | - | no | 0 | - | 0 | no | automatic |
+| university | university | ark-board | - | - | no | 0 | - | 0 | no | choose |
+| university2 | university | ark-board | - | - | no | 0 | - | 0 | no | choose |
+
+| Army count | Strength | Location |
+| --- | --- | --- |
+| 1 | 1 | ark |
+
+**Technologies**
+- Claim the following technologies: Active Discovery.
 
 # Faction building Blueprint
 
@@ -35,7 +51,7 @@ In recent years, their power has evolved beyond mere intelligence, allowing them
 // Effect: The Archive Ark gets a popup where they choose a player, an action card, and a character in their court. When this action card is taken by that player, and it is activated by that player, and this is the first time this happens this round, the Archive Ark gains 1 gear for each technology in their court. This card taps.
 
 ## Drifting Citadel | action card
-> [[Move]] the [[Ark]] 1 [[unbuilt]] tile of any tile type.
+> [[Move]] the [[Ark]] to an adjacent [[unbuilt]] tile.
 // Phase: Discovery
 // Condition: The Ark has an adjacent unbuilt tile.
 // On trigger: Select a untapped Discovery Character/Activation Card. Select an unbuilt tile adjacent to the Ark.

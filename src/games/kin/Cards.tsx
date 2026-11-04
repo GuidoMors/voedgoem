@@ -95,8 +95,18 @@ export function RuleText({ text, resources = false }: { text: string; resources?
 }
 
 const KIND_LABEL: Record<CardDef["kind"], string> = {
-  action: "Action", event: "Event", technology: "Technology", blueprint: "Blueprint", faction: "Effect", treaty: "Treaty", ban: "Ban", activation: "Activation"
+  action: "Action", event: "Event", technology: "Technology", blueprint: "Blueprint", faction: "Effect", chapter: "Chapter effect", treaty: "Treaty", ban: "Ban", activation: "Activation"
 };
+
+const CHAPTER_COLORS: Record<string, string> = {
+  "new-dawn": "#fffaf0",
+  commonwealth: "#427845",
+  kingdom: "#b79525",
+  empire: "#8e1b1b",
+  exploration: "#5798b5",
+  "machine-age": "#555b64"
+};
+const chapterLabel = (chapter: string) => chapter.split("-").map(word => word[0].toUpperCase() + word.slice(1)).join(" ");
 
 function Lines({ lines }: { lines: [string, string][] }) {
   return <dl className="kc-lines">{lines.map(([label, value]) => <div key={label}><dt>{label}</dt><dd><RuleText text={value} /></dd></div>)}</dl>;
@@ -148,13 +158,15 @@ export function GameCard({ def, kins, giver, details, tapped, selectable, select
   const style: CSSProperties = {};
   const category = technologyCategory(def);
   if (category) style.borderColor = TECHNOLOGY_COLORS[category];
+  if (def.kind === "blueprint" && kin) style.border = `3px solid ${kinColor(kin)}`;
   // Faction action and event cards look like ordinary ones, with a pill naming the Kin.
-  const playForm = def.kind === "faction" && (def.form === "action" || def.form === "event") ? def.form : null;
+  const playForm = (def.kind === "faction" || def.kind === "chapter") && (def.form === "action" || def.form === "event") ? def.form : null;
   const kindClass = playForm ?? def.kind;
   // Action-type cards take their archetype as a class (discovery, expansion, control or universal); the CSS draws the border and background.
-  const archetypeClass = def.kind === "action" || (def.kind === "faction" && def.form === "action") ? (def.phase ?? "discovery")
+  const archetypeClass = def.kind === "action" || playForm === "action" ? (def.phase ?? "discovery")
     : def.kind === "activation" ? (def.archetype ?? "universal") : "";
   if (def.kind === "faction" && !playForm && kin) { style.borderColor = kinColor(kin); style.background = `color-mix(in srgb, ${kinColor(kin)} 12%, #f4ead2)`; }
+  if (def.chapter && CHAPTER_COLORS[def.chapter]) style.borderColor = CHAPTER_COLORS[def.chapter];
   if (def.kind === "treaty" && giver) style.borderColor = giver;
   const classes = `kc kc-${kindClass} ${archetypeClass} ${def.kind === "faction" && def.core ? "core" : ""} ${tapped ? "tapped" : ""} ${selectable ? "selectable" : ""} ${selected ? "chosen" : ""} ${disabledReason ? "unavailable" : ""} ${def.notes?.length ? "has-info" : ""}`;
   const info = def.notes && def.notes.length > 0 && (
@@ -185,6 +197,10 @@ export function GameCard({ def, kins, giver, details, tapped, selectable, select
           <h4>{def.name}</h4>
           {(def.kind === "action" || playForm === "action") && def.phase && <span className="kc-phase" style={{ background: ARCHETYPE_COLORS[def.phase] }}>{def.phase}</span>}
           {playForm && kin && <span className="kc-phase kc-kin-pill" style={{ background: kinColor(kin), color: ["pink", "light blue", "yellow", "grey"].includes(kin.color.toLowerCase()) ? "#221a10" : "#fff" }}>{kin.name}</span>}
+          {def.chapter && <span className="kc-phase kc-chapter-pill" style={CHAPTER_COLORS[def.chapter] ? {
+            background: CHAPTER_COLORS[def.chapter],
+            color: ["new-dawn", "kingdom"].includes(def.chapter) ? "#221a10" : "#fff"
+          } : undefined}>{chapterLabel(def.chapter)}</span>}
           {def.lines ? <Lines lines={def.lines} /> : <CardText text={def.text} />}
         </>
       )}
@@ -197,7 +213,7 @@ export function GameCard({ def, kins, giver, details, tapped, selectable, select
 
 // Every card of a kind, for the "Card templates" gallery.
 export function CardGallery({ kins }: { kins: KinInfo[] }) {
-  const kinds: CardDef["kind"][] = ["technology", "event", "action", "blueprint", "faction", "treaty", "ban", "activation"];
+  const kinds: CardDef["kind"][] = ["technology", "event", "action", "blueprint", "faction", "chapter", "treaty", "ban", "activation"];
   return (
     <div className="kc-gallery">
       {kinds.map(kind => (

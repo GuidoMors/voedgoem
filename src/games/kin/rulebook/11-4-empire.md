@@ -1,5 +1,6 @@
 # Empire | Chapter
 
+Color: dark red
 
 ## Rules: 
 The leader is the Emperor.

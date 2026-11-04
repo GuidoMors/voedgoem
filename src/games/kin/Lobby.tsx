@@ -3,10 +3,11 @@ import { Person } from "../../avatar/Avatar";
 import { HostControlsTab } from "../../components/HostControlsTab";
 import { KickButton } from "../../components/KickButton";
 import type { GameLobbyProps } from "../types";
-import { TERRAIN_NAMES, WorldBoard } from "./Board";
-import { ArkBoard, BuildingGallery } from "./Buildings";
-import { CardGallery, CourtCards } from "./Cards";
+import { TERRAIN_COLORS, TERRAIN_NAMES, WorldBoard } from "./Board";
+import { ArkBoard } from "./Buildings";
+import { CourtCards } from "./Cards";
 import { MainGame } from "./MainGame";
+import { ChapterChoice } from "./Commonwealth";
 import { KinCard, kinColor } from "./KinCard";
 import { CharacterCard } from "./CharacterCard";
 import { CHARACTERS } from "./characters.data";
@@ -79,14 +80,14 @@ function Waiting({ snapshot, userId, isHost, send }: GameLobbyProps<KinSnapshot>
         </section>
       </div>
       {isHost && (
-        <HostControlsTab>
+        <HostControlsTab showHeading={false}>
           <div className="host-actions kin-host-options">
             <label>Game type{" "}
               <select value={snapshot.options.mode} onChange={event => send({ type: "setOptions", mode: event.target.value })}>
                 {MODES.map(mode => <option key={mode.id} value={mode.id}>{mode.name}</option>)}
               </select>
             </label>
-            <label>
+            <label className="kin-testing-toggle">
               <input type="checkbox" checked={snapshot.options.testing} onChange={event => send({ type: "setOptions", testing: event.target.checked })} /> Testing (host cheats)
             </label>
             <button className="primary" disabled={!canStart} onClick={() => send({ type: "start" })}>Start Kin</button>
@@ -113,13 +114,7 @@ const CHARACTER_PROMPTS = [
 const rowClimate = (row: number) => row < 2 || row >= 12 ? "snow" : row === 6 || row === 7 ? "desert" : "plains";
 
 function setupPrompt(world: KinWorld) {
-  switch (world.setup?.task) {
-    case "worksite": return "Your turn: click a highlighted side of your village to build your Worksite.";
-    case "village2": return "Your turn: click a highlighted tile for your second village, three tiles from the first. Roads will connect them.";
-    case "ark": return "Your turn: click a highlighted tile to place the Ark. Its Worksite goes on the Ark board.";
-    case "tree": return "Your turn: click a highlighted forest tile to plant the Great Tree.";
-    default: return "Your turn: click a highlighted tile to build your village.";
-  }
+  return world.setup?.prompt;
 }
 
 function stepTitle(world: KinWorld) {
@@ -133,6 +128,7 @@ function stepTitle(world: KinWorld) {
 
 function Started(props: GameLobbyProps<KinSnapshot> & { hostControls?: ReactNode }) {
   const { snapshot, userId, isHost, send, hostControls } = props;
+  if (snapshot.victory?.pending) return <ChapterChoice snapshot={snapshot} userId={userId} send={send} />;
   if (snapshot.world?.step === "done") {
     return (
       <MainGame snapshot={snapshot} userId={userId} isHost={isHost} send={send} hostControls={hostControls} />
@@ -184,7 +180,7 @@ function SetupScreen({ snapshot, userId, isHost, send }: GameLobbyProps<KinSnaps
                         className={`kin-pile-type ${type} ${chosen === type && myTurn ? "selected" : ""}`}
                         disabled={!myTurn || world.pile[type] === 0}
                         onClick={() => setPick(type)}
-                      >{TERRAIN_NAMES[type]} <span className="pill">{world.pile[type]}</span></button>
+                      ><span aria-hidden="true" style={{ color: TERRAIN_COLORS[type] }}>⬢</span> {TERRAIN_NAMES[type]} <span className="pill">{world.pile[type]}</span></button>
                     ))}
                   </div>
                 )}
@@ -198,18 +194,17 @@ function SetupScreen({ snapshot, userId, isHost, send }: GameLobbyProps<KinSnaps
                         className={`kin-pile-type ${type} ${lastChosen === type && myTurn ? "selected" : ""}`}
                         disabled={!myTurn || lastPile[type] === 0}
                         onClick={() => setLastPick(type)}
-                      >{TERRAIN_NAMES[type]} <span className="pill">{lastPile[type]}</span></button>
+                      ><span aria-hidden="true" style={{ color: TERRAIN_COLORS[type] }}>⬢</span> {TERRAIN_NAMES[type]} <span className="pill">{lastPile[type]}</span></button>
                     ))}
                   </div>
                 )}
-              </div>
               <p className={myTurn ? "kin-prompt mine" : "kin-prompt muted"}>
-                {world.step === "tiles" && (myTurn ? `Your turn: choose a pile above, then click an ocean tile to place a ${chosen ?? "land"} tile.` : `Waiting for ${turnName} to place a tile.`)}
-                {world.step === "lastTiles" && (myTurn ? `Your turn: choose a pile above, then click an ocean tile in a ${lastChosen ?? "matching"} row to place a ${lastChosen ?? "climate"} tile.` : `Waiting for ${turnName} to place a tile.`)}
+                {world.step === "tiles" && (myTurn ? `Your turn: choose a tile type above, then click an ocean tile to place a ${chosen ?? "land"} tile.` : `Waiting for ${turnName} to place a tile.`)}
+                {world.step === "lastTiles" && (myTurn ? `Your turn: choose a tile type above, then click an ocean tile in a ${lastChosen ?? "matching"} row to place a ${lastChosen ?? "climate"} tile.` : `Waiting for ${turnName} to place a tile.`)}
                 {world.step === "rivers" && (myTurn
                   ? (world.freeEnd ? "Click a highlighted corner to extend your river. It ends when it touches a river or the ocean." : "Click a highlighted corner of a mountain to start your river.")
                   : `Waiting for ${turnName} to draw river ${world.riversDone + 1} of ${world.riverTotal}.`)}
-                {world.step === "kin" && (myTurn ? "Your turn: pick a Kin. Each Kin can only be taken once." : `Waiting for ${turnName} to pick a Kin.`)}
+                {world.step === "kin" && (myTurn ? "Your turn: pick a Kin." : `Waiting for ${turnName} to pick a Kin.`)}
                 {world.step === "setup" && (myTurn ? setupPrompt(world) : `Waiting for ${turnName} to place their starting buildings.`)}
                 {world.step === "setup" && myTurn && world.setup?.dedicate && (
                   <select value={dedication} onChange={event => setDedication(event.target.value)} aria-label="Dedicate the village to a resource">
@@ -219,11 +214,13 @@ function SetupScreen({ snapshot, userId, isHost, send }: GameLobbyProps<KinSnaps
                 {world.step === "characters" && (myTurn ? `Your turn: ${CHARACTER_PROMPTS[world.charRound ?? 0]}` : `Waiting for ${turnName}: ${CHARACTER_PROMPTS[world.charRound ?? 0]}`)}
                 {world.step === "done" && "The character draft is complete. The starting setup arrives in a later milestone."}
               </p>
+              </div>
               {world.step === "kin" && (
                 <div className="kin-cards">
                   {world.kins.map(kin => {
                     const ownerId = Object.keys(world.kinPicks).find(id => world.kinPicks[id] === kin.id);
-                    return <KinCard key={kin.id} kin={kin} owner={ownerId && (names.get(ownerId)?.username ?? "?")} available={myTurn && !ownerId} onPick={() => send({ type: "pickKin", kin: kin.id })} />;
+                    const retired = world.retiredKins?.includes(kin.id);
+                    return <KinCard key={kin.id} kin={kin} owner={ownerId && (names.get(ownerId)?.username ?? "?")} unavailableReason={retired ? "Collapsed — unavailable" : undefined} available={myTurn && !ownerId && !retired} onPick={() => send({ type: "pickKin", kin: kin.id })} />;
                   })}
                 </div>
               )}
@@ -242,7 +239,7 @@ function SetupScreen({ snapshot, userId, isHost, send }: GameLobbyProps<KinSnaps
                   </section>)}
                 </div>
               )}
-              {world.step !== "characters" && <WorldBoard
+              {world.step !== "characters" && world.step !== "kin" && <WorldBoard
                 world={world}
                 onTile={world.step === "tiles" && myTurn && chosen ? index => send({ type: "placeTile", tile: index, terrain: chosen })
                   : world.step === "lastTiles" && myTurn && lastChosen ? index => send({ type: "placeLastTile", tile: index, terrain: lastChosen }) : undefined}
@@ -251,23 +248,11 @@ function SetupScreen({ snapshot, userId, isHost, send }: GameLobbyProps<KinSnaps
                 onSetupTile={world.step === "setup" && myTurn ? tile => send({ type: "setupPlace", tile, ...(world.setup?.dedicate ? { dedication } : {}) }) : undefined}
                 onSetupSide={world.step === "setup" && myTurn ? side => send({ type: "setupPlace", side }) : undefined}
               />}
-              {world.step !== "characters" && world.step !== "tiles" && world.step !== "lastTiles" && world.step !== "rivers" && world.step !== "kin" && <ArkBoard world={world} />}
-              {world.step !== "characters" && (
-                <details className="kin-templates">
-                  <summary>Building templates</summary>
-                  <BuildingGallery />
-                </details>
-              )}
+              {world.step !== "characters" && world.step !== "tiles" && world.step !== "lastTiles" && world.step !== "rivers" && world.step !== "kin" && <ArkBoard world={world} onSetupSide={world.step === "setup" && myTurn ? side => send({ type: "setupPlace", side }) : undefined} />}
               {world.step === "setup" && (
                 <details className="kin-templates" open>
                   <summary>Claimed starting cards</summary>
                   <CourtCards world={world} player={snapshot.seats.some(s => s.id === userId) ? userId : snapshot.order[0]} />
-                </details>
-              )}
-              {world.step !== "characters" && (
-                <details className="kin-templates">
-                  <summary>Card templates</summary>
-                  <CardGallery kins={world.kins} />
                 </details>
               )}
             </>
@@ -286,9 +271,7 @@ function SetupScreen({ snapshot, userId, isHost, send }: GameLobbyProps<KinSnaps
                   <div className="kin-setup-player-info">
                   <Person id={seat.id} name={seat.username} />
                   {kin && <span className="kin-setup-player-kin">{kin.name}</span>}
-                  <span className="kin-setup-player-status">
-                    {[world?.turn === id && "Turn", !seat.connected && "Offline", seat.id === userId && "You"].filter(Boolean).join(" · ")}
-                  </span>
+                  {!seat.connected && <span className="kin-setup-player-status">Offline</span>}
                   </div>
                 </li>
               );
@@ -299,7 +282,7 @@ function SetupScreen({ snapshot, userId, isHost, send }: GameLobbyProps<KinSnaps
         </aside>
       </div>
       {isHost && (
-        <HostControlsTab>
+        <HostControlsTab showHeading={false}>
           <div className="host-actions">
             <button onClick={() => window.confirm("Return to the lobby and discard this game?") && send({ type: "abort" })}>Back to lobby</button>
           </div>

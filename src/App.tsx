@@ -29,6 +29,8 @@ export default function App() {
   const [modal, setModal] = useState<"stats" | "history" | "chat" | "admin" | "profile" | "wordFeedback" | "rulebook" | null>(null);
   const [hasHistory, setHasHistory] = useState(false);
   const [lobbyGame, setLobbyGame] = useState<string | null>(null);
+  const [kinStarted, setKinStarted] = useState(false);
+  const [topbarCollapsed, setTopbarCollapsed] = useState(true);
   const [statsGame, setStatsGame] = useState<string | null>(null);
   const closeModal = useCallback(() => setModal(null), []);
   const [rulebookJump, setRulebookJump] = useState<RulebookJump | undefined>();
@@ -40,7 +42,14 @@ export default function App() {
     window.addEventListener(RULEBOOK_EVENT, onJump);
     return () => window.removeEventListener(RULEBOOK_EVENT, onJump);
   }, []);
-  const updateLobbyGame = useCallback((game: string | null) => setLobbyGame(game), []);
+  const updateLobbyGame = useCallback((game: string | null, started = false) => {
+    setLobbyGame(game);
+    setKinStarted(game === "kin" && started);
+  }, []);
+  useEffect(() => {
+    setTopbarCollapsed(true);
+    setMenuOpen(false);
+  }, [kinStarted]);
 
   useEffect(() => {
     const onHash = () => { setRoute(readHash()); setMenuOpen(false); setModal(null); };
@@ -82,7 +91,8 @@ export default function App() {
   return (
     <div className="shell">
       {user.isDisplay && <DisplayQr url={window.location.href} />}
-      <header className="topbar">
+      {kinStarted && <button type="button" className="kin-topbar-toggle" aria-label={`${topbarCollapsed ? "Show" : "Hide"} site menu`} aria-expanded={!topbarCollapsed} aria-controls="site-topbar" onClick={() => setTopbarCollapsed(value => !value)}>{topbarCollapsed ? "▼" : "▲"}</button>}
+      <header id="site-topbar" className={`topbar${kinStarted ? ` kin-topbar${topbarCollapsed ? " collapsed" : ""}` : ""}`} inert={kinStarted && topbarCollapsed}>
         <a className="brand" href="#/" onClick={event => inGame && event.preventDefault()}>voedgoem</a>
         <button className="burger" aria-label="Menu" aria-expanded={menuOpen} onClick={() => setMenuOpen(open => !open)}>{menuOpen ? "✕" : "☰"}</button>
         <div className={`menu ${menuOpen ? "open" : ""}`}>

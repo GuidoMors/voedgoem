@@ -1,5 +1,7 @@
 # Machine Age | Chapter
 
+color: dark grey
+
 ## Rules: 
 In natural order each player moves a technology from the public track to the research track, until 9 such technologies are moved this way, or if no more technologies remain on the public track.
 

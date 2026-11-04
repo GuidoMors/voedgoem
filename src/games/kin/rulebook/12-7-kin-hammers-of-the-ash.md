@@ -1,6 +1,10 @@
 # Hammers of the Ash
+
 Color: black
 
+Gameplay: **Production** - They wish to create great crafts from their mountain cities.
+
+## Lore
 The stout and rugged Ashen-dwarves have dwelt deep in the caverns beneath the mountain peaks. Unopposed and unphased by the outside world, they have dug deep halls into the depths of the earth.
 
 In their excavations, they find all kinds of valuable minerals and metals, with which their craftsdwarves complete unmatched artifacts and projects. Most prized and rare of all their mined valuables is gold, which they gladly trade with the surface dwellers for their artifacts.
@@ -9,9 +13,21 @@ Their giant underground fortresses of golden halls and diamond thrones are unmat
 
 ## Starting setup
 
-- Place your starting buildings: 1 village on a mountain, 1 worksite.
-- Place your starting army: Strength 1 on the village.
-- Claim the Faction Effects cards and the Faction Building Bluprint.
+// Each faction also claims their faction effect cards, faction building blueprint.
+// These tables are the setup source of truth. See README.md: Editing Kin starting setups.
+
+| Step | Building | Location | Terrain | Adjacent terrain | River | Minimum distance | Road to | Road length | Dedication | Placement |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| village | village | world | mountain | - | no | 3 | - | 0 | no | choose |
+| worksite | worksite | village | - | farmland, forest, mountain | no | 0 | - | 0 | no | choose |
+| worksite2 | worksite | village | - | farmland, forest, mountain | no | 0 | - | 0 | no | choose |
+| university | university | village | - | - | no | 0 | - | 0 | no | choose |
+
+| Army count | Strength | Location |
+| --- | --- | --- |
+| 1 | 1 | village |
+
+**Technologies**
 - Claim the following technologies: Tactician Science, Mountain Movement, Smith Construction.
 
 

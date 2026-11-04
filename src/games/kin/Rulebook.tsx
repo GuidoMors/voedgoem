@@ -3,9 +3,9 @@ import { normalize, slugify, type Block, type Doc, type Rulebook as Book } from 
 import { book } from "./rulebookData";
 import { GameCard, RESOURCE_COLORS, ResourceIcon, RuleText } from "./Cards";
 import { CharacterCard } from "./CharacterCard";
-import { kinColor } from "./KinCard";
+import { kinColor, kinImage } from "./KinCard";
 import { CHARACTERS } from "./characters.data";
-import { cardById, type CardDef } from "./cards.data";
+import { START_SETUPS, cardById, type CardDef, type StartingSetup } from "./cards.data";
 import type { KinInfo } from "./types";
 
 interface Pos {
@@ -116,7 +116,7 @@ function BlockView({ b, go, k, head }: { b: Block; go: (d: string, i: string) =>
 }
 
 // The Kin a faction card belongs to, read from its rulebook file, so the card shows the Kin name and colour.
-function kinsOf(doc: Doc, def: CardDef): KinInfo[] {
+function kinsOf(doc: Doc, def: Pick<CardDef, "kin">): KinInfo[] {
   const color = doc.blocks.map(b => b.t === "p" ? /^Color:\s*(.+)$/i.exec(b.text)?.[1].trim() : undefined).find(Boolean);
   return def.kin && color ? [{ id: def.kin, name: doc.title, color }] : [];
 }
@@ -125,6 +125,45 @@ interface TabNode {
   doc: Doc;
   depth: number;
   children: TabNode[];
+}
+
+function StartingSetupView({ setup, go }: { setup: StartingSetup; go: (doc: string, id: string) => void }) {
+  const buildingName = (id: string) => cardById(id)!.name;
+  const locationName = (step: string) => {
+    const index = setup.buildings.findIndex(building => building.step === step);
+    const building = setup.buildings[index];
+    const matches = setup.buildings.filter(other => other.building === building.building);
+    const ordinal = matches.length > 1 ? `number ${matches.findIndex(other => other.step === step) + 1} ` : "";
+    const name = buildingName(building.building);
+    return `your ${ordinal}[[${name}|${name.replace(/^The /, "")}]]`;
+  };
+  const terrainList = (terrains: string[]) => terrains.join(" or ");
+  return (
+    <div className="rb-starting-setup">
+      <p><strong>Buildings</strong></p>
+      <ul>{setup.buildings.map(building => {
+        const parts = [`${building.placement === "automatic" ? "Automatically place" : "Place"} 1 [[${buildingName(building.building)}]]`];
+        parts.push(building.location === "world" ? `on ${terrainList(building.terrain)}`
+          : building.location === "ark-board" ? "on a free slice of the Ark board"
+          : `on a free slice inside ${locationName(building.location)}`);
+        if (building.adjacentTerrain.length) parts.push(`facing ${terrainList(building.adjacentTerrain)}`);
+        if (building.building === "harbor" && building.location !== "ark-board") parts.push("adjacent to a river or ocean");
+        if (building.river) parts.push("next to a [[river]]");
+        if (building.minDistance) parts.push(`at least ${building.minDistance} tiles from other [[tile building]]s`);
+        let text = `${parts.join(", ")}.`;
+        if (building.roadTo) text += ` Place it exactly ${building.roadLength} tiles from ${locationName(building.roadTo)}; ${building.roadLength} connecting [[road]]s are placed automatically.`;
+        if (building.dedication) text += " Dedicate the village to gold, lumber, stone or food of your choice.";
+        return <li key={building.step}>{inline(text, go, building.step)}</li>;
+      })}</ul>
+      {setup.armies.some(army => army.count > 0) && <>
+        <p><strong>Armies</strong></p>
+        <ul>{setup.armies.filter(army => army.count > 0).map((army, index) => <li key={index}>
+          {inline(`Place ${army.count} ${army.count === 1 ? "[[army]]" : "[[army|armies]]"}, ${army.count === 1 ? "with" : "each with"} strength ${army.strength}, on ${locationName(army.location)}.`, go, `army${index}`)}
+        </li>)}</ul>
+      </>}
+      {setup.otherFactionTreaties && <p>{inline("Claim the [[Faction Treaty|Faction Treaties]] of all other chosen Kin, even without the technology.", go, "extra")}</p>}
+    </div>
+  );
 }
 
 // File names start with numbers: "11-0-chapters" is a tab that owns "11-1-…", and "11-2-0-…" is a tab inside it that owns "11-2-1-…".
@@ -194,10 +233,12 @@ export function RulebookView({ book: b = book, jump }: { book?: Book; jump?: { d
   }, [pos.doc]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const renderTabs = (list: TabNode[]): ReactNode => list.map(node => {
-    const kinColorName = node.doc.file.startsWith("12-") && !node.doc.file.startsWith("12-0")
-      ? node.doc.blocks.map(b => b.t === "p" ? /^Color:\s*(.+)$/i.exec(b.text)?.[1].trim() : undefined).find(Boolean) : undefined;
-    const tint = kinColorName ? kinColor({ id: "", name: node.doc.title, color: kinColorName }) : undefined;
-    const light = ["pink", "light blue", "yellow", "grey"].includes((kinColorName ?? "").toLowerCase());
+    const isChapter = node.doc.file.startsWith("11-");
+    const kinColorName = isChapter || (node.doc.file.startsWith("12-") && !node.doc.file.startsWith("12-0"))
+      ? node.doc.blocks.map(b => b.t === "p" ? /^Color:\s*(.+)$/i.exec(b.text)?.[1].trim().toLowerCase() : undefined).find(Boolean) : undefined;
+    const chapterColors: Record<string, string> = { white: "#fffaf0", green: "#2e6b3a", "dark yellow": "#b79525", "dark red": "#8e1b1b", "dark light blue": "#5798b5", "dark grey": "#555b64" };
+    const tint = kinColorName ? (isChapter ? chapterColors[kinColorName] : undefined) ?? kinColor({ id: "", name: node.doc.title, color: kinColorName }) : undefined;
+    const light = ["white", "pink", "light blue", "yellow", "grey", "dark yellow", "dark light blue"].includes(kinColorName ?? "");
     const tabStyle = tint ? { "--rb-kin": tint, "--rb-kin-text": light ? "#221a10" : "#fff" } as React.CSSProperties : undefined;
     const cardTab = node.doc.file === "10-1-neutral-characters.md" ? "rb-neutral-tab"
       : node.doc.file === "03-1-events.md" ? "rb-event-tab"
@@ -253,6 +294,12 @@ export function RulebookView({ book: b = book, jump }: { book?: Book; jump?: { d
     if (jump && jump.n !== firstJump.current) { go(jump.doc, jump.id); firstJump.current = jump.n; }
   }, [jump?.n]); // eslint-disable-line react-hooks/exhaustive-deps
 
+  const kinPage = doc?.file.startsWith("12-") && doc.file !== "12-0-kin.md"
+    ? doc.blocks.map(block => block.t === "h" ? cardById(slugify(block.text.split("|")[0].trim()))?.kin : undefined).find(Boolean)
+    : undefined;
+  const artwork = kinPage ? kinImage(kinPage) : undefined;
+  const factionColor = kinPage ? kinsOf(doc, { kin: kinPage })[0] : undefined;
+
   const content = useMemo(() => {
     if (!doc) return null;
     const out: ReactNode[] = [];
@@ -263,15 +310,35 @@ export function RulebookView({ book: b = book, jump }: { book?: Book; jump?: { d
       run = [];
     };
     const blocks = doc.blocks;
+    let inStartingSetup = false;
     for (let i = 0; i < blocks.length; i++) {
       const blk = blocks[i];
       const next = blocks[i + 1];
+      if (blk.t === "h") inStartingSetup = blk.text === "Starting setup";
+      if (inStartingSetup && kinPage && blk.t === "table") continue;
+      if (inStartingSetup && kinPage && blk.t === "h") {
+        flush();
+        out.push(<Heading key={i} b={blk} go={go} />);
+        out.push(<StartingSetupView key={`setup${i}`} setup={START_SETUPS[kinPage]} go={go} />);
+        continue;
+      }
+      if (i === 0 && blk.t === "h" && artwork && factionColor) {
+        out.push(
+          <div key={i} className="rb-kin-heading">
+            <Heading b={blk} go={go} />
+            <img className="rb-kin-art" src={artwork} alt={doc.title} style={{ borderColor: kinColor(factionColor) }} />
+          </div>
+        );
+        continue;
+      }
       // A card is a sub-heading directly followed by its rule box: the heading is drawn inside the box.
       if (blk.t === "h" && blk.level >= 2 && next?.t === "quote") {
         const [name, ...tags] = blk.text.split("|").map(s => s.trim());
         const found = cardById(slugify(name));
         const isKinFile = doc.file.startsWith("12-");
         const character = tags.length >= 3 ? CHARACTERS.find(c => c.id === slugify(name)) : undefined;
+        // Chapter effects from any chapter are cards, alongside the chapter event and action cards.
+        const chapterCard = found?.kind === "chapter" && doc.file.startsWith("11-");
         // Event, action, blueprint, technology, treaty and ban headings, and the faction effects in a Kin file, are drawn as the in-game card.
         const def = found && (
           (found.kind === "event" && tags[0] === "event card")
@@ -280,6 +347,7 @@ export function RulebookView({ book: b = book, jump }: { book?: Book; jump?: { d
           || (found.kind === "technology" && tags[0] === "technology card")
           || ((found.kind === "treaty" || found.kind === "ban") && doc.file.startsWith("09-") && tags.length === 0)
           || (found.kind === "faction" && isKinFile)
+          || chapterCard
         ) ? found : undefined;
         const charKins = character?.kin ? kinsOf(doc, { kin: character.kin } as CardDef) : [];
         const lore = tags[0] === "𝌭" || tags[0] === "䷓" ? "law" : tags[0] === "🕀" ? "tactic" : tags[0] === "☽" ? "subterfuge" : undefined;
@@ -308,7 +376,7 @@ export function RulebookView({ book: b = book, jump }: { book?: Book; jump?: { d
     }
     flush();
     return out;
-  }, [doc]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [doc, artwork, kinPage]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const previous = docs.find(d => d.slug === history[history.length - 1]?.doc);
 
@@ -326,7 +394,9 @@ export function RulebookView({ book: b = book, jump }: { book?: Book; jump?: { d
         </div>
       </div>
       <div className="rb-body" ref={body}>
-        <Fragment key={doc.slug}>{content}</Fragment>
+        <Fragment key={doc.slug}>
+          {content}
+        </Fragment>
       </div>
     </div>
   );

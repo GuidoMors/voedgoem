@@ -24,7 +24,7 @@ Buildings can occupy different parts of a tile:
 | [[Market]] | [[Market Construction]] |
 | [[Smith]] | [[Smith Construction]] |
 | [[Harbor]] | [[Harbor Construction]] |
-| [[University]] | [[University Construction]] |
+| [[University]] | None |
 | [[Mage College]] | [[Mage College Construction]] |
 | [[Wall]] | [[Wall Construction]] |
 | [[Fort]] | [[Fort Construction]] |
@@ -58,7 +58,7 @@ Buildings can occupy different parts of a tile:
 > Resource cost: 2 [[lumber]], 1 [[stone]]
 > Build Power cost: 2
 > Garrison: 0
-> Build conditions: Inside a [[tile building]], on [[plains]] or [[snow]].
+> Build conditions: -
 > Effects: Adds 2 [[garrison]] to the [[tile building]] and increases your [[army limit]] by 1. [[army|Armies]] can [[Deploy]] and [[Recruit]] here.
 
 ## Road | building blueprint | +
@@ -68,6 +68,13 @@ Buildings can occupy different parts of a tile:
 > Build conditions: Must not cross into [[ocean]].
 > Effects: Movement across costs ½ speed. 
 // Roads are not owned by anyone, but can be used as a connection building to another building you own for the purposes of placing new buildings.
+
+## University | building blueprint | ⨺ | 📖
+> Resource cost: 2 [[stone]], 2 [[gold]]
+> Build Power cost: 3
+> Garrison: 0
+> Build conditions: Limit of 1 per [[tile building]].
+> Effects: Produces 1 [[gear]].
 
 ## Market | building blueprint | ⨺ | ⚖️
 > Resource cost: 1 [[lumber]], 1 [[food]]
@@ -87,15 +94,8 @@ Buildings can occupy different parts of a tile:
 > Resource cost: 2 [[stone]], 2 [[lumber]]
 > Build Power cost: 3
 > Garrison: 0
-> Build conditions: Adjacent to [[ocean]] or a [[river]].Limit 1 per [[tile building]].
-> Effects: Is used to [[Embark]] and to connect players for the [[Trade Treaty]].
-
-## University | building blueprint | ⨺ | 🕮
-> Resource cost: 2 [[stone]], 2 [[gold]]
-> Build Power cost: 3
-> Garrison: 0
-> Build conditions: One per [[city]]. Must be built in a [[city]].
-> Effects: Produces 1 [[gear]].
+> Build conditions: Adjacent to [[ocean]] or a [[river]]. Limit 1 per [[tile building]].
+> Effects: Is used to [[Embark]] and to connect players for the [[Trade Treaty]]. A Harbor connects through a continuous route of rivers and ocean tiles to another player's tile building; the destination does not need a Harbor.
 
 ## Mage College | building blueprint | ⨺ | 🟣
 > Resource cost: 2 [[stone]], 2 [[gold]]

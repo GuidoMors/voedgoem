@@ -1,6 +1,10 @@
 # The Ethereal
+
 Color: pink
 
+Gameplay: **Versatility** - They start with a faction effect from every other faction, and can cycle characters from their court.
+
+## Lore
 On a day like any other, from a distant place beyond our horizons, an ethereal being landed on our planet. Its origins unknown, its intentions unclear. At first the citizens of the world were hesitant or even outright aggressive.
 
 But regardless of how they tried, they could not harm it and it did not seem as if it could harm them.
@@ -11,12 +15,26 @@ Kin began to worship it as a God, which it seemed to enjoy. It ordered its belie
 
 ## Starting setup
 
-- Place your starting buildings: 1 village, 1 worksite.
-- Place your starting army: Strength 1 on the village.
-- Claim the Faction Effects cards and the Faction Building Bluprint.
-- Claim the following technologies: [[Faction Diplomacy]].
+// Each faction also claims their faction effect cards, faction building blueprint.
+// These tables are the setup source of truth. See README.md: Editing Kin starting setups.
 
-- An extra step unique to the Ethereal: Claim all [[Faction Treaty|Faction Treaties]] of all other chosen Kin (even though they don't have the technology). 
+| Step | Building | Location | Terrain | Adjacent terrain | River | Minimum distance | Road to | Road length | Dedication | Placement |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| village | village | world | plains, snow | - | no | 3 | - | 0 | no | choose |
+| worksite | worksite | village | - | farmland, forest, mountain | no | 0 | - | 0 | no | choose |
+| worksite2 | worksite | village | - | farmland, forest, mountain | no | 0 | - | 0 | no | choose |
+| university | university | village | - | - | no | 0 | - | 0 | no | choose |
+
+| Army count | Strength | Location |
+| --- | --- | --- |
+| 1 | 1 | village |
+
+| Extra | Enabled |
+| --- | --- |
+| other-faction-treaties | yes |
+
+**Technologies**
+- Claim the following technologies: [[Faction Diplomacy]].
 
 
 # Faction building
@@ -32,7 +50,7 @@ Kin began to worship it as a God, which it seemed to enjoy. It ordered its belie
 # Faction Effects
 
 ## Open Source | effect card | core
-> When you [[Publicize]], gain 2 [[gear]].
+> When you [[Publicize]], gain 1 [[gear]].
 // Trigger: Publicize, after it resolves fully.
 // Effect: Gain 1 gear.
 

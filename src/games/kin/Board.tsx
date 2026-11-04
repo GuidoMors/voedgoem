@@ -48,10 +48,11 @@ interface BoardProps {
   movingArmy?: string;
   moveTargets?: { tile: number; cost: number }[];
   onMoveTile?: (tile: number) => void;
+  onExplorationTile?: (tile: number) => void;
   spots?: Spot[];
 }
 
-export function WorldBoard({ world, onTile, tileAllowed, onVertex, onSetupTile, onSetupSide, pickableArmies, onArmy, movingArmy, moveTargets, onMoveTile, spots }: BoardProps) {
+export function WorldBoard({ world, onTile, tileAllowed, onVertex, onSetupTile, onSetupSide, pickableArmies, onArmy, movingArmy, moveTargets, onMoveTile, onExplorationTile, spots }: BoardProps) {
   const polygons = useMemo(() => Array.from({ length: ROWS * COLS }, (_, index) => cornersOf(index).map(point)), []);
   const minX = -HALF_W - 4;
   const minY = -2 * HALF_H - 4;
@@ -84,16 +85,29 @@ export function WorldBoard({ world, onTile, tileAllowed, onVertex, onSetupTile, 
           return <line key={edge} x1={a[0]} y1={a[1]} x2={b[0]} y2={b[1]}><title>River</title></line>;
         })}
       </g>
-      <BuildingLayer world={world} spots={spots} onSetupTile={onSetupTile} onSetupSide={onSetupSide} pickableArmies={pickableArmies} onArmy={onArmy} movingArmy={movingArmy} moveTargets={moveTargets} onMoveTile={onMoveTile} />
+      <BuildingLayer world={world} spots={spots} onSetupTile={onSetupTile} onSetupSide={onSetupSide} pickableArmies={pickableArmies} onArmy={onArmy} movingArmy={movingArmy} moveTargets={moveTargets} onMoveTile={onMoveTile}
+        inspectionDisabled={!!(onTile || onVertex || world.exploration?.placing)} />
+      {world.exploration?.placing && onExplorationTile && world.exploration.tiles.map(tile => (
+        <polygon key={`exploration-${tile}`} className="kin-spot"
+          points={polygons[tile].map(([x, y]) => `${x},${y}`).join(" ")}
+          role="button" tabIndex={0} aria-label={`Place Exploration ruins on tile ${tile}`}
+          onClick={() => onExplorationTile(tile)}
+          onKeyDown={event => {
+            if (event.key === "Enter" || event.key === " ") { event.preventDefault(); onExplorationTile(tile); }
+          }}>
+          <title>Place Exploration ruins here</title>
+        </polygon>
+      ))}
       {world.freeEnd && (() => {
         const [x, y] = point(world.freeEnd);
         return <circle className="kin-free-end" cx={x} cy={y} r={5}><title>Free end of the river</title></circle>;
       })()}
       {onVertex && world.riverChoices.map(vertex => {
         const [x, y] = point(vertex);
+        const endsRiver = world.riverEndChoices?.includes(vertex);
         return (
-          <circle key={vertex} className="kin-vertex-choice" cx={x} cy={y} r={5.5} onClick={() => onVertex(vertex)}>
-            <title>{world.freeEnd ? "Extend the river here" : "Start the river here"}</title>
+          <circle key={vertex} className={`kin-vertex-choice${endsRiver ? " ends-river" : ""}`} cx={x} cy={y} r={5.5} onClick={() => onVertex(vertex)}>
+            <title>{endsRiver ? "End the river here" : world.freeEnd ? "Extend the river here" : "Start the river here"}</title>
           </circle>
         );
       })}

@@ -1,5 +1,10 @@
 # Dynasty of Hanshu
+
 Color: brown
+
+Gameplay: **Expansion** - They rapidly expand their villages across the map. Using their great population enact their laws.
+
+## Lore
 
 The Hanshu were the first Kin of the world. It was them that first evolved from hunters and beasts into farmers and civilization. Their ancient traditions taught them that the creator of the world and all life is the sun, who shaped all living beings from clay. Just as the sun has given life to all animals, it also feeds the plants in the soil. The harvesting of plants is sacred, and the wasting of it is severely punished.
 
@@ -9,10 +14,20 @@ The apelike Kin of the Hanshu rigorously follow their ancient traditions of mart
 
 ## Starting setup
 
-- Place your starting buildings: 1 village, 1 other village at a distance of 3 tiles from the other village, and 3 roads connecting them (placed automatically).
-- Both starting villages may be placed on [[plains]], [[snow]], or [[farmland]].
-- Place your starting army: Strength 1 on the village.
-- Claim the Faction Effects cards and the Faction Building Bluprint.
+// Each faction also claims their faction effect cards, faction building blueprint.
+// These tables are the setup source of truth. See README.md: Editing Kin starting setups.
+
+| Step | Building | Location | Terrain | Adjacent terrain | River | Minimum distance | Road to | Road length | Dedication | Placement |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| village | village | world | plains, snow, farmland | - | no | 3 | - | 0 | no | choose |
+| village2 | village | world | plains, snow, farmland | - | no | 3 | village | 3 | no | choose |
+| university | university | village | - | - | no | 0 | - | 0 | no | choose |
+
+| Army count | Strength | Location |
+| --- | --- | --- |
+| 1 | 1 | village |
+
+**Technologies**
 - Claim the following technologies: Election Research.
 
 # Faction building

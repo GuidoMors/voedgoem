@@ -1,5 +1,5 @@
-This is how to deploy shit to the rulebook and the game:
-node scripts/gen-cards.mjs (also does technologies, treaties, etc)
+This is how to deploy shit to the rulebook and the game (on voedgoem-server):
+node scripts/gen-cards.mjs (also does technologies, treaties, starting setup, etc)
 node scripts/gen-buildings.mjs
 node scripts/gen-characters.mjs
 

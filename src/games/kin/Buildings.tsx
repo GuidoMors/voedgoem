@@ -1,3 +1,7 @@
+import { useState, type ReactNode } from "react";
+import { Modal } from "../../components/Modal";
+import { GameCard } from "./Cards";
+import { cardById } from "./cards.data";
 import { BUILDINGS, buildingById, type BuildingDef } from "./buildings.data";
 import { HALF_H, HALF_W, corner, tileCenter } from "./geometry";
 import { kinColor } from "./KinCard";
@@ -107,6 +111,7 @@ function sideNeighborOf(tile: number, side: number): number | null {
 
 interface LayerProps {
   world: KinWorld;
+  inspectionDisabled?: boolean;
   spots?: Spot[];
   onSetupTile?: (index: number) => void;
   onSetupSide?: (side: number) => void;
@@ -120,6 +125,33 @@ interface LayerProps {
 
 const costLabel = (halves: number) => halves === 1 ? "½" : halves % 2 === 0 ? String(halves / 2) : `${Math.floor(halves / 2)}½`;
 
+function InspectableBuilding({ world, building, disabled, children }: { world: KinWorld; building: KinBuilding; disabled: boolean; children: ReactNode }) {
+  const [open, setOpen] = useState(false);
+  const blueprint = cardById(building.def);
+  const inspectable = !disabled && blueprint?.kind === "blueprint";
+  return (
+    <g className={inspectable ? "kin-building-inspect" : undefined}
+      role={inspectable ? "button" : undefined} tabIndex={inspectable ? 0 : undefined}
+      aria-label={inspectable ? `View ${blueprint.name} blueprint` : undefined}
+      onClick={inspectable ? event => {
+        event.stopPropagation();
+        if (event.target instanceof Node && event.currentTarget.contains(event.target)) setOpen(true);
+      } : undefined}
+      onKeyDown={inspectable ? event => {
+        if (event.target === event.currentTarget && (event.key === "Enter" || event.key === " ")) {
+          event.preventDefault();
+          event.stopPropagation();
+          setOpen(true);
+        }
+      } : undefined}>
+      {children}
+      {open && inspectable && <Modal title={`${blueprint.name} blueprint`} className="kin-blueprint-preview" onClose={() => setOpen(false)}>
+        <GameCard def={blueprint} kins={world.kins} />
+      </Modal>}
+    </g>
+  );
+}
+
 // A place on the world board where the player can click to Build, Deploy or Demolish: a whole tile, a side of a tile (slice), an edge (wall) or a road between two tiles.
 export interface Spot {
   key: string;
@@ -131,9 +163,10 @@ export interface Spot {
   onClick: () => void;
 }
 
-export function BuildingLayer({ world, spots, onSetupTile, onSetupSide, pickableArmies, onArmy, movingArmy, moveTargets, onMoveTile }: LayerProps) {
+export function BuildingLayer({ world, spots, onSetupTile, onSetupSide, pickableArmies, onArmy, movingArmy, moveTargets, onMoveTile, inspectionDisabled }: LayerProps) {
   const ordered = [...world.buildings].filter(b => b.tile >= 0).sort((a, b) => ORDER[a.kind] - ORDER[b.kind]);
   const setup = world.setup;
+  const selecting = !!(inspectionDisabled || spots?.length || onSetupTile || onSetupSide || onArmy || movingArmy || onMoveTile);
   return (
     <g className="kin-buildings">
       {ordered.map(building => {
@@ -144,12 +177,14 @@ export function BuildingLayer({ world, spots, onSetupTile, onSetupSide, pickable
         const color = building.def === "road" ? ROAD_COLOR : colorOf(world, building.owner);
         return (
           <g key={building.id} transform={`translate(${x} ${y})`}>
+            <InspectableBuilding world={world} building={building} disabled={selecting}>
             <BuildingShape def={def} side={building.side} reach={reach} color={color} icon={iconOf(def, world, building)} />
             {building.dedication && <g className="kin-dedication">
               <title>{`Dedicated to ${building.dedication}`}</title>
               <circle cx={0} cy={-12} r={5} fill="#8a4fb3" stroke="none" />
               <text x={0} y={-12} textAnchor="middle" dominantBaseline="central">{DEDICATION_ICON[building.dedication] ?? "?"}</text>
             </g>}
+            </InspectableBuilding>
           </g>
         );
       })}
@@ -202,13 +237,13 @@ export function BuildingLayer({ world, spots, onSetupTile, onSetupSide, pickable
           </g>
         );
       })}
-      {onSetupSide && setup?.tile !== null && setup?.tile !== undefined && setup.sides.map(side => {
+      {onSetupSide && setup?.tile !== null && setup?.tile !== undefined && setup.tile >= 0 && setup.sides.map(side => {
         const [x, y] = tileCenter(setup.tile!);
         const a = corner(side);
         const b = corner(side + 1);
         return (
           <g key={side} transform={`translate(${x} ${y})`}>
-            <polygon className="kin-spot" points={points([a, b, scale(b, 0.5), scale(a, 0.5)])} onClick={() => onSetupSide(side)}><title>Build the worksite on this side</title></polygon>
+            <polygon className="kin-spot" points={points([a, b, scale(b, 0.5), scale(a, 0.5)])} onClick={() => onSetupSide(side)}><title>Place the {buildingById(setup.building)?.name} on this slice</title></polygon>
           </g>
         );
       })}
@@ -220,9 +255,12 @@ export function BuildingLayer({ world, spots, onSetupTile, onSetupSide, pickable
 const ORDER: Record<string, number> = { cross: 0, edge: 1, tile: 2, slice: 3, center: 4 };
 
 // The Ark's own board holds the buildings with tile -1.
-export function ArkBoard({ world, spots }: { world: KinWorld; spots?: Spot[] }) {
+export function ArkBoard({ world, spots, selecting = false, onSetupSide }: { world: KinWorld; spots?: Spot[]; selecting?: boolean; onSetupSide?: (side: number) => void }) {
   const mine = world.buildings.filter(b => b.tile < 0);
-  const places = spots?.filter(spot => spot.tile < 0) ?? [];
+  const places: Spot[] = spots?.filter(spot => spot.tile < 0) ?? [];
+  if (onSetupSide && world.setup?.tile === -1) for (const side of world.setup.sides) places.push({
+    key: `setup-${side}`, shape: "slice", tile: -1, side, title: `Place the ${buildingById(world.setup.building)?.name} on this slice`, onClick: () => onSetupSide(side)
+  });
   const ark = world.buildings.find(building => building.def === "the-ark" && building.tile >= 0);
   if (!ark && mine.length === 0 && places.length === 0) return null;
   const kin = world.kins.find(entry => entry.id === "ark");
@@ -235,7 +273,9 @@ export function ArkBoard({ world, spots }: { world: KinWorld; spots?: Spot[] }) 
           <polygon className="kin-ark-tile" points={hex} fill="#b9bdc4" stroke={color} strokeWidth={2} />
           {mine.filter(building => (building.side ?? 0) % 2 === tile).map(building => {
             const def = buildingById(building.def);
-            return def && <BuildingShape key={building.id} def={def} side={Math.floor((building.side ?? 0) / 2)} color={colorOf(world, building.owner)} />;
+            return def && <InspectableBuilding key={building.id} world={world} building={building} disabled={selecting || !!spots?.length || world.step === "setup"}>
+              <BuildingShape def={def} side={Math.floor((building.side ?? 0) / 2)} color={colorOf(world, building.owner)} />
+            </InspectableBuilding>;
           })}
           {places.filter(spot => (spot.side ?? 0) % 2 === tile).map(spot => {
             const side = Math.floor((spot.side ?? 0) / 2);

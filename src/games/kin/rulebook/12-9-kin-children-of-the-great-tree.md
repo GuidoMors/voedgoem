@@ -1,15 +1,30 @@
 # Children of the Great Tree
+
 Color: dark green
 
+Gameplay: **Magic** - To cast great spells that are unrivaled by the others.
+
+## Lore
 For thousands of years, the Great Tree has stood while insects and lesser creatures roamed its dirt and roots. It provided for them and kept them safe within its ever-expanding roots. Some of its branches, infused with magical energies, slowly became sentient. In symbiosis with the Great Tree, its offshoots cared for each other. The Great Tree provides them with protection and mana, and its Children maintain the vines and roots and deal with any threats that may harm the Tree and its vast network of roots.
 
 But as time passed, some of the lesser creatures of the world strayed away from its roots into the wider world. And the ruthless wider world corrupted them, turning them into vile beings of war and flame. They turned against the hand that once fed them, cutting and burning down the roots of the Great Tree. Although it did not know war and destruction, it did know growth and creation. It used the only way it knew how to defend itself: expanding its roots further and further until there was no more room for the destroyers.
 
 # Starting setup
 
-- Place your starting buildings: The Great Tree.
-- Place your starting army: Strength 1 on the Great Tree.
-- Claim the Faction Effects cards and the Faction Building Bluprint.
+// Each faction also claims their faction effect cards, faction building blueprint.
+// These tables are the setup source of truth. See README.md: Editing Kin starting setups.
+
+| Step | Building | Location | Terrain | Adjacent terrain | River | Minimum distance | Road to | Road length | Dedication | Placement |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| tree | the-great-tree | world | forest | - | no | 0 | - | 0 | no | choose |
+| university | university | tree | - | - | no | 0 | - | 0 | no | choose |
+| mage-college | mage-college | tree | - | - | no | 0 | - | 0 | no | choose |
+
+| Army count | Strength | Location |
+| --- | --- | --- |
+| 1 | 1 | tree |
+
+**Technologies**
 - Claim the following technologies: Mage College Construction.
 
 # Faction building Blueprint
@@ -19,7 +34,7 @@ But as time passed, some of the lesser creatures of the world strayed away from 
 > Build Power cost: Cannot be built
 > Garrison: 6
 > Build conditions: Must be placed on a forest. Starting building only.
-> Effects: Produces 1 mana. Any number of Mage Colleges can be built inside it, but no other buildings. Its ownership cannot be transferred by any means, including combat.
+> Effects: Produces 1 mana. Any number of Mage Colleges and one University can be built inside it, but no other buildings. Its ownership cannot be transferred by any means, including combat.
 
 
 # Faction Effects

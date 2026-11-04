@@ -1,15 +1,31 @@
 # Deep Ones
+
 Color: purple
 
+Gameplay: **Subterfuge** - Through their scheming ways, they try to pit the other Kin against eachother.
+
+## Lore
 Dwelling in the deep lurk the Deep Ones. They have patiently kept an eye on the races living above the waterline, learning and scheming. The more they learn, the bolder they become; the more they scheme, the more naïve the landwalkers seem. Slowly, they pit them against each other from the shadowy background. A little betrayal here, a little sabotage there; emperors have fallen over less.
 
 From the deep depths of the ocean, their sorcerers commune. Their rites and prophecies have revealed to them their destiny: conquering the world above is only the first of many steps toward domination of the vast galaxy in the stars above.
 
 ## Starting setup
 
-- Place your starting buildings: 1 village on an ocean tile, dedicated to a resource of your choice, and 1 worksite.
-- Place your starting army: Strength 1 on the village.
-- Claim the Faction Effects cards and the Faction Building Bluprint.
+// Each faction also claims their faction effect cards, faction building blueprint.
+// These tables are the setup source of truth. See README.md: Editing Kin starting setups.
+
+| Step | Building | Location | Terrain | Adjacent terrain | River | Minimum distance | Road to | Road length | Dedication | Placement |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| village | village | world | ocean | - | no | 3 | - | 0 | yes | choose |
+| worksite | worksite | village | - | - | no | 0 | - | 0 | no | choose |
+| worksite2 | worksite | village | - | - | no | 0 | - | 0 | no | choose |
+| university | university | village | - | - | no | 0 | - | 0 | no | choose |
+
+| Army count | Strength | Location |
+| --- | --- | --- |
+| 1 | 1 | village |
+
+**Technologies**
 - Claim the following technologies: Subterfuge Science.
 
 # Faction building Blueprint

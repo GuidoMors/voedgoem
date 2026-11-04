@@ -45,6 +45,8 @@ export interface KinGameResult {
 }
 export interface KinVictory {
   chapter: string;
+  pending?: { player: string; choices: string[] } | null;
+  history: { chapter: string; winner: string; round: number }[];
   leader: string | null;
   needed: number;
   standings: Record<string, Record<KinArea, number>>;
@@ -85,7 +87,9 @@ export interface KinArmy {
 // What the player on turn has to place in the starting setup and where they may click.
 export interface KinSetup {
   player: string;
-  task: "village" | "village2" | "worksite" | "ark" | "tree";
+  task: string;
+  building: string;
+  prompt: string;
   tiles: number[];
   tile: number | null;
   sides: number[];
@@ -246,6 +250,9 @@ export interface KinQuantum {
 }
 
 export interface KinPlay {
+  donation?: { activator: string; order: string[]; donations: Record<string, number> } | null;
+  schemer?: { player: string; activator: string; event: string } | null;
+  oppose?: { player: string; leader: string } | null;
   selectionStep?: string | null;
   phase: "event" | "discovery" | "expansion" | "control";
   turn: string;
@@ -253,7 +260,7 @@ export interface KinPlay {
   forcePass?: string[];
   autoEventPass?: boolean;
   move: { player: string; army: string; source: { kind: "character" | "item"; id: string }; speed: number; moved: boolean; targets: { tile: number; cost: number }[] } | null;
-  options: { sources: KinMoveSource[]; armies: string[]; research: KinTechOption[]; publicize: KinTechOption[]; dissolve: string[]; barter: KinBarterInfo | null; build?: KinBuildOption[]; observatory?: { id: string; name: string }[]; deploy?: string[]; demolish?: KinDemolishOption[]; recruit?: string[]; reinforce?: { army: string; partners: string[] }[];   harvest?: string[];   explore?: string[]; oxylium?: number[]; reclaim?: { building: string; tile: number; treasure: number; relic: number }[]; revoke?: boolean; craft?: boolean; embark?: { army: string; tiles: number[] }[]; battle?: { army: string; targets: number[] }[]; smite?: boolean; goldRecruit?: boolean; manaRecruit?: boolean; recruitCost?: number; yuguan?: boolean; predict?: boolean; longReach?: boolean; hunt?: { army: string; tiles: number[] }[]; nomads?: { village: string; tiles: number[] }[]; ruthless?: string[]; drift?: number[]; dice?: KinDiceKind[] } | null;
+  options: { sources: KinMoveSource[]; armies: string[]; research: KinTechOption[]; publicize: KinTechOption[]; dissolve: string[]; barter: KinBarterInfo | null; build?: KinBuildOption[]; observatory?: { id: string; name: string }[]; deploy?: string[]; demolish?: KinDemolishOption[]; recruit?: string[]; reinforce?: { army: string; partners: string[] }[]; harvest?: string[]; explore?: string[]; oxylium?: number[]; reclaim?: { building: string; tile: number; treasure: number; relic: number }[]; revoke?: boolean; revokeLaws?: string[]; ironGrip?: { laws: string[]; power: number }; rebel?: boolean; craft?: boolean; embark?: { army: string; tiles: number[] }[]; battle?: { army: string; targets: number[] }[]; smite?: boolean; goldRecruit?: boolean; manaRecruit?: boolean; recruitCost?: number; yuguan?: boolean; predict?: boolean; longReach?: boolean; hunt?: { army: string; tiles: number[] }[]; nomads?: { village: string; tiles: number[] }[]; ruthless?: string[]; drift?: number[]; dice?: KinDiceKind[] } | null;
   consent?: { player: string; owner: string; building: string; counterfuge?: string; plea?: boolean } | null;
   predictions?: { player: string; target: string; action: string; character: string; round: number }[];
   calculators?: { players: { player: string; characters: string[] }[]; actions: string[] } | null;
@@ -322,6 +329,7 @@ export interface KinLaw {
   id: string;
   name: string;
   forbids: string[];
+  rewards?: string[];
 }
 
 export interface KinCouncil {
@@ -329,6 +337,7 @@ export interface KinCouncil {
   laws: string[];
   voters: string[];
   votes: Record<string, string>;
+  king?: string;
   canGrand?: boolean;
   grandBy?: string[];
 }
@@ -338,6 +347,7 @@ export interface KinCouncilResult {
   laws: string[];
   tally: Record<string, number>;
   enacted: string | null;
+  track?: "rebel" | "kingdom";
 }
 
 export interface KinBlock {
@@ -345,7 +355,19 @@ export interface KinBlock {
   kind: "ruins" | "treasure" | "relic";
 }
 
+export interface KinExploration {
+  placed: number;
+  target: number;
+  placing: boolean;
+  player: string | null;
+  tiles: number[];
+  ruins: number;
+}
+
 export interface KinWorld {
+  exploration?: KinExploration | null;
+  commonwealth?: KinCommonwealth | null;
+  kingdom?: KinKingdom | null;
   step: "tiles" | "lastTiles" | "rivers" | "kin" | "setup" | "characters" | "done";
   play: KinPlay | null;
   items: KinItem[];
@@ -354,6 +376,8 @@ export interface KinWorld {
   // The enacted law, all law cards, and the size of the law deck and its discard pile.
   law?: KinLaw | null;
   lawList?: KinLaw[];
+  activeLaws?: string[];
+  forbiddenActions?: Record<string, string[]>;
   lawDeck?: { deck: number; discard: number };
   tacticsList?: KinTacticCard[];
   subterfugeList?: KinTacticCard[];
@@ -373,8 +397,10 @@ export interface KinWorld {
   turn: string | null;
   // Vertices that can be clicked now to start or extend the river.
   riverChoices: string[];
+  riverEndChoices?: string[];
   // Player id -> Kin id.
   kinPicks: Record<string, string>;
+  retiredKins?: string[];
   kins: KinInfo[];
   // Character id -> owner id, for every claimed character.
   charClaims: Record<string, string>;
@@ -387,4 +413,22 @@ export interface KinWorld {
   charRound: number | null;
   // What the player on turn may claim right now.
   charEligible: string[];
+}
+
+export interface KinKingdom {
+  king: string;
+  rebel: string[];
+  kingdom: string[];
+  strength: Record<string, number>;
+  personalStrength: Record<string, number>;
+  directVassals: string[];
+}
+
+export interface KinCommonwealth {
+  members: string[];
+  leader: string;
+  oppositionLeader: string | null;
+  step: number;
+  value: number;
+  gold: Record<string, number>;
 }

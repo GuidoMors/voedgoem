@@ -15,7 +15,18 @@ React + Vite frontend for Voedgoem: a game hub with lobbies. The first game is m
 
 The Kin character draft separates draftable and undraftable characters, followed by one section per player's drafted characters. Cards wrap onto new lines within each section.
 
+Setup does not show Building templates or Card templates galleries. Keep the actual setup board and claimed starting cards.
+
+River setup selectors are blue when starting or continuing a river, and red when that placement ends it. The server predicts endings using the same rules as actual river placement.
+
+Kin setup host controls omit the "Host controls & rules" heading, while retaining their controls. During a started game, hide the Test bots panel when no bots exist; retain it in the waiting lobby so admins can add bots.
+
 Claim a draftable character by clicking its card or pressing Enter/Space while focused. Draftable cards keep their archetype borders without an extra highlight outline.
+
+Pick an available Kin by clicking its card or pressing Enter/Space while focused; there is no separate Pick button. Eligible cards enlarge and glow on hover/focus. Each card's top-right information button opens that Kin's rulebook page without picking the Kin.
+Kin selection cards show the Gameplay description from their Kin document, followed by the core faction effect rendered with the shared card template in a compact, width-fitting layout.
+After a Kin game starts, the site navigation defaults to collapsed. Its fixed top-right arrow reveals the menu over the game header with a fast slide animation, without shifting the board; waiting lobbies and other games retain normal navigation.
+Buildings on the world and Ark boards open their blueprint card when clicked or activated with Enter/Space. Inspection is disabled during active board selection so building placement, movement, and other targeting keep priority.
 
 ```
 npm install
@@ -30,7 +41,39 @@ For a production build set `VITE_API_BASE_URL` to the deployed API origin (see `
 
 After changing Kin card rules, run `node scripts/gen-cards.mjs` in `voedgoem-server` to regenerate the shared card data. Resource links in blueprint costs must be retained for resource icons; the server parses those links when calculating payments.
 
+### Editing Kin starting setups
+
+The **Starting setup** section of each `src/games/kin/rulebook/12-*-kin-*.md` is the single source of truth for that faction's starting buildings, armies, technologies and special extras. Edit the Markdown, then run `node scripts/gen-cards.mjs` in the sibling `voedgoem-server` project. It validates the tables and generates both projects' shared data; do not edit the generated data or add faction-specific rules to the setup engine. Changes apply to new setups, not already placed pieces. Do not reorder or rename steps while a saved game's setup is in progress.
+The in-game rulebook presents these setup tables as readable building and army instructions, not tables. Those instructions are generated from the same setup data, so edits do not need a separate prose update.
+
+The building table runs from top to bottom, with one building per row:
+
+- **Step**: a unique identifier for this placement, such as `village` or `village2`. Other rows refer to this identifier.
+- **Building**: an existing blueprint ID, such as `village`, `worksite`, `university`, `the-ark`, or `the-great-tree`.
+- **Location**: `world` to choose a tile, an earlier world step's identifier to choose a slice inside that building, or `ark-board` for one of the Ark's twelve internal slices.
+- **Terrain**: comma-separated allowed world tile types: `ocean`, `plains`, `snow`, `desert`, `farmland`, `forest`, `mountain`. Use `-` for slice buildings. The normal ocean-conversion fallback still applies when no matching unbuilt tile exists.
+- **Adjacent terrain**: allowed terrain facing a world-hosted slice, or `-` for no terrain restriction. Worksites must still face an existing tile without another tile building; Ark-board slices ignore this normal Worksite condition.
+- **River**: `yes` requires a river touching the world tile; otherwise `no`.
+- **Minimum distance**: minimum tile distance from existing tile buildings, or `0` for no separation requirement.
+- **Road to** and **Road length**: an earlier world step and a positive distance. The new building must be exactly that far away and is automatically connected by that many neutral roads over land. Use `-` and `0` when no road connection is needed.
+- **Dedication**: `yes` lets the player dedicate a starting village to a resource; otherwise `no`.
+- **Placement**: `choose` asks the player to click a highlighted tile/slice; `automatic` takes the first legal option. Starting Universities remain `choose`. Steps with no legal placement are skipped, as in the normal setup rules.
+
+For example, change the Wanderers' village **Terrain** cell from `snow` to `desert` to change their required starting terrain. Change the Ark Worksite's **Placement** from `automatic` to `choose` to let its player choose the internal slice, or its **Location** from `ark-board` to `ark` to place it on a slice of the Ark's world tile instead.
+
+The army table controls **Army count**, **Strength**, and **Location** (a world building's Step). Armies are placed when that building is placed. Set count to `0` for no army, or add rows for armies at other starting buildings.
+
+The existing **Claim the following technologies:** list controls starting technologies. The optional **Extra / Enabled** table supports `other-faction-treaties` (`yes`/`no`), which claims treaties from the other selected factions. Every faction also claims its own effect cards and faction blueprints, as noted in each setup comment.
+
+Validate edits in the server with `node --import tsx --test scripts/kin-setup.test.mjs src/games/kin/kin.setup.test.ts`.
+
 During a Kin game, hosts and admins have a **Host controls** court tab. It contains the host controls and, for admins, the existing test-bot tools. The game fits the viewport without page scrolling; the bottom court expands to its content, with internal scrolling only when content exceeds the available space.
+
+Chapter transitions show the server's pending choices to the designated player and pause normal gameplay. Commonwealth displays party membership and leaders, the ten-step marker and donation target, and its ordered victory conditions with lord-attributed gold. Donation, Cautious Schemer ordering, and Oppose approval use dedicated responder panels; normal actions and passing remain blocked until the decision resolves. Oppose taps the selected Control source immediately, even when permission is later declined. Overthrow compares personal gold rather than lord-attributed victory gold. Commonwealth laws reward matching actions only for Commonwealth members.
+Kingdom displays the Rebel and Kingdom law tracks, royal faction strength, direct vassals, and ordered victory conditions. During Council the King chooses the enacted law and its track; Revoke and Iron Grip let the player choose the specific law, with Iron Grip also requiring a destination track and normal Control-source payment.
+Replacement Kin drafts retain the normal setup flow and mark collapsed Kin as unavailable.
+
+Exploration makes Archeology Science public permanently and pauses ordinary actions, passing, and relic tapping while nine additional ruins are placed one at a time, starting with the first natural-order Kin and cycling (fewer if legal tiles run out). Existing ruins remain. Only the designated placer can click highlighted legal tiles on the world board. The victory panel shows placement progress, all remaining ruins, and server-authoritative court relic totals including tapped/preexisting relics and ultimate-lord vassal aggregation; vassals cannot win. At the end of Control, no ruins means the most relics wins, regardless of leftover treasure/relic blocks. A tie (including zero) awards the chapter leader even if not tied for most, or their ultimate lord if a vassal; cycles have no eligible winner. Normal Archeology continues and later ruins count. Cleanup clears all court relics and tapped counts, leaving world blocks and public Science. The authoritative rules are in `src/games/kin/rulebook/11-5-exploration.md`.
 
 The top header shows the round in slightly larger text at font weight 100, followed immediately by a full-Kin-color current-player pill labelled `Name (Kin)`. The larger phase dots on the right replace the redundant phase-name pill. Center next-click guidance on the whole bar for everyone, not only the active player; describe what to click rather than enumerating action cards. Local action selections share only a generic step (card, army, tile, building, technology, treaty, or form), never form contents or secret card choices; gameplay clears the shared step.
 
@@ -47,6 +90,7 @@ Only the Syndicate's side can contribute Tradegoods. The offer composer chooses 
 Held treaties cannot be offered or requested in Barter. Create a new treaty through the directional treaty selectors, subject to the existing diplomacy requirements.
 
 Add barter characters through the dropdown on either side. Multiple characters can be selected; each appears as a full character card with a Remove button and is excluded from the dropdown until removed.
+Incoming Barter offers open in a modal with character and treaty cards grouped under their giver, including treaty terms. Closing the preview does not accept or decline; use View Barter offer to reopen it. Only the recipient can accept or decline.
 
 Lumon and the Ethereal cannot be offered or requested in Barter.
 
@@ -87,6 +131,10 @@ The Event track also previews events granted by unresearched technologies as dis
 The shared technology board keeps Public and Research as continuous panels with Construction, Science, Combat (including Greater Army Strength), Active, Movement, Diplomacy, and Steampower rows inside. Each category fits six technologies per row. Player technology boards sit below the shared tracks, two side by side, with six technologies per row and no categories.
 
 Building links throughout the game and rulebook show their blueprint icons (or their shape symbol when no separate icon exists), with a pale backing and shadow for contrast. These icons come from the building headings in the rulebook, including faction buildings.
+
+Rulebook chapter tabs use the chapter markdown's case-insensitive `Color:` metadata, with contrasting text and the existing selected-tab outline.
+
+Kin draft cards and individual Kin rulebook pages share the supplied artwork from `../voedgoem-server/content/kin/kin-image/`. Copy the current top-level WebP files (not the archived `old/` variants) into `public/images/kin/`; the shared mapping in `src/games/kin/KinCard.tsx` handles differences between Kin IDs and artwork filenames. Keep the full image visible without cropping.
 
 The building, technology, and phase boards include a section for every player's privately known blueprints, technologies, and actions respectively. These cards are no longer displayed in the court menu; passive faction effects remain there. All claimed events stay on the shared Event track. This is a display organization only: ownership, knowledge, and activation permissions are unchanged.
 

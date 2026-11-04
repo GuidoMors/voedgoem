@@ -21,7 +21,6 @@ Public action cards go on their respective track of the phase board.
 | [[Wall Construction]] | 1 | |
 | [[Fort Construction]] | 2 | |
 | [[Smith Construction]] | 2 | [[Hammers of the Ash]]|
-| [[University Construction]] | 2 | [[Archive Ark]]|
 | [[Mage College Construction]] | 2 | [[Children of the Great Tree]]|
 | [[Archeology Science]] | 3 | [[Wanderers]]|
 | [[Tactician Science]] | 3 | [[Hammers of the Ash]]|
@@ -69,11 +68,6 @@ Public action cards go on their respective track of the phase board.
 > Gear cost: 2
 > Learn how to build the [[Smith]].
 // Cards: Smith building blueprint.
-
-## University Construction | technology card
-> Gear cost: 2
-> Learn how to build the [[University]].
-// Cards: University building blueprint.
 
 ## Mage College Construction | technology card
 > Gear cost: 2

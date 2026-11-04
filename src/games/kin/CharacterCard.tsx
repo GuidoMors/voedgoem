@@ -52,7 +52,7 @@ export function CharacterCard({ def, kins, owner, state, onPick, tapped, selecta
     }
   } : {};
   return (
-    <article className={`char-card ${state} ${neutral ? "neutral" : ""} ${tapped ? "tapped" : ""} ${selectable ? "selectable" : ""} ${selected ? "chosen" : ""}`} style={style} aria-label={def.name} {...behaviour}>
+    <article className={`char-card ${state} ${neutral ? "neutral" : ""} ${tapped ? "tapped" : ""} ${selectable ? "selectable" : ""} ${selected ? "chosen" : ""}`} data-kin={def.kin ?? undefined} style={style} aria-label={def.name} {...behaviour}>
       <header>
         <h3>{def.name}</h3>
         <span className={`char-power pa-${def.archetypes[0]} pb-${def.archetypes[1] ?? def.archetypes[0]}`} title="Power">{def.power}</span>
