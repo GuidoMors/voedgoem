@@ -44,7 +44,7 @@ Buildings can occupy different parts of a tile:
 > Effects: Worth 2 [[population]]
 // Upgrade in this context means you select a village and turn it into a City instead.
 
-## Worksite | building blueprint | ⨺ | 🪚,⛏️,🪏
+## Worksite | building blueprint | ⨺ | 🪓,⛏️,🪏
 > Resource cost: 2 [[basic resource]]s
 > Build Power cost: 1
 > Garrison: 0
@@ -52,7 +52,8 @@ Buildings can occupy different parts of a tile:
 > Effects: Produces 1 [[basic resource]] of the tile its adjacent to.
 // If the adjacent tile is farmland: The Worksite is a Farm 🪏 that produces 1 food.
 //If the adjacent tile is a mountain: The Worksite is a Quarry ⛏️ that produces 1 stone.
-// If the adjacent tile is forest: The Worksite is a Lumberyard 🪚 that produces 1 lumber.
+// If the adjacent tile is forest: The Worksite is a Lumberyard 🪓 that produces 1 lumber.
+// Deep Ones' Worksites are called Shrines 🪬. On ocean tiles, Underwater Cult makes them produce their tile building's dedicated resource.
 
 ## Barracks | building blueprint | ⨺ | ⚔️
 > Resource cost: 2 [[lumber]], 1 [[stone]]

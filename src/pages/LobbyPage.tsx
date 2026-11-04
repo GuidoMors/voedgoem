@@ -140,12 +140,12 @@ export function LobbyPage({ lobbyId, user, onGameChange, chatOpen, onChatClose }
   return (
     <AvatarsContext.Provider value={avatars}>
     <div className="page">
-          <div className="row between">
+          {!(snapshot.game === "werewolves" && snapshot.phase === "playing") && <div className="row between">
             <h1>{snapshot.name}</h1>
             <div className="row lobby-head-right">
               <span className="host-tag">Hosted by {snapshot.host.name}{status === "reconnecting" && " · reconnecting…"}</span>
             </div>
-          </div>
+          </div>}
           {notice && <p className="error">{notice}</p>}
           {acting && <p className="cn-status">Controlling <strong>{bot.username}</strong>. Everything you do is done as this bot.</p>}
           <GameLobby

@@ -23,7 +23,7 @@ Their evolution has left them with little brains but lots of brawn. They have no
 | village | village | world | desert | - | no | 3 | - | 0 | no | choose |
 | worksite | worksite | village | - | farmland, forest, mountain | no | 0 | - | 0 | no | choose |
 | worksite2 | worksite | village | - | farmland, forest, mountain | no | 0 | - | 0 | no | choose |
-| university | university | village | - | - | no | 0 | - | 0 | no | choose |
+| barracks | barracks | village | - | - | no | 0 | - | 0 | no | choose |
 
 | Army count | Strength | Location |
 | --- | --- | --- |

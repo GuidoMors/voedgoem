@@ -21,11 +21,14 @@ export interface WerewolvesSeat {
   username: string;
   order: number;
   alive: boolean;
+  inactive?: boolean;
   connected: boolean;
   mayor: boolean;
   silenced: boolean;
+  throatCut?: boolean;
   absent: boolean;
   publiclyRevealed: boolean;
+  packRevealed?: boolean;
   role?: WerewolvesRoleId | null;
   faction?: WerewolvesFaction;
 }
@@ -76,15 +79,23 @@ export interface WerewolvesSnapshot extends BaseSnapshot {
   publicStep: { phase: string; day: number; kind: string; prompt: string; voterId?: string; lynchTargetId?: string } | null;
   privatePrompt: { id: string; kind: string; prompt: string; role: WerewolvesRoleId | null; data?: Record<string, unknown> } | null;
   currentStep: WerewolvesStep | null;
+  stepHistory?: {
+    step: WerewolvesStep;
+    submissions: Record<string, Record<string, unknown>>;
+    override: Record<string, unknown> | null;
+    chosen: Record<string, unknown> | null;
+    names: Record<string, string>;
+  }[];
   sparedPlayerIds: string[];
   stepsRemaining?: WerewolvesStep[];
-  upcomingSteps?: { phase: string; steps: string[] }[];
+  upcomingSteps?: { phase: string; current?: boolean; steps: string[] }[];
   canAct: boolean;
   action: Record<string, unknown> | null;
   privateResults: Record<string, unknown>;
   gmPrivateResults?: Record<string, Record<string, unknown>>;
   gmActions?: Record<string, unknown>;
   nightResolution?: Record<string, unknown>;
+  nightDeathPreview?: { deaths: { id: string; reason: string }[]; notes: string[] };
   wolfSubmissions?: { userId: string; targetId: string | null }[];
   wolfTarget?: string | null;
   wolfWarning?: boolean;

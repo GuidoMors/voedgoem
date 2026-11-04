@@ -15,7 +15,7 @@ const scale = ([x, y]: [number, number], by: number): [number, number] => [x * b
 const mid = (a: [number, number], b: [number, number]): [number, number] => [(a[0] + b[0]) / 2, (a[1] + b[1]) / 2];
 
 // The worksite shows the resource of the tile it touches: farmland a farm, mountain a quarry, forest a lumberyard.
-const WORKSITE_ICON: Record<string, number> = { mountain: 0, farmland: 1, forest: 2 };
+const WORKSITE_ICON: Record<string, number> = { mountain: 1, farmland: 2, forest: 0 };
 
 interface ShapeProps {
   def: BuildingDef;
@@ -91,6 +91,7 @@ const DEDICATION_ICON: Record<string, string> = { gold: "🪙", lumber: "🪵", 
 
 function iconOf(def: BuildingDef, world: KinWorld, building: KinBuilding) {
   if (def.id !== "worksite" || building.tile < 0) return undefined;
+  if (building.owner && world.kinPicks[building.owner] === "deepones") return "🪬";
   const next = sideNeighborOf(building.tile, building.side ?? 0);
   if (next !== null && world.board[next] === "plains") return "🌾";
   return next === null ? undefined : def.icons[WORKSITE_ICON[world.board[next]] ?? 0];
@@ -129,10 +130,11 @@ function InspectableBuilding({ world, building, disabled, children }: { world: K
   const [open, setOpen] = useState(false);
   const blueprint = cardById(building.def);
   const inspectable = !disabled && blueprint?.kind === "blueprint";
+  const name = building.def === "worksite" && building.owner && world.kinPicks[building.owner] === "deepones" ? "Shrine" : blueprint?.name;
   return (
     <g className={inspectable ? "kin-building-inspect" : undefined}
       role={inspectable ? "button" : undefined} tabIndex={inspectable ? 0 : undefined}
-      aria-label={inspectable ? `View ${blueprint.name} blueprint` : undefined}
+      aria-label={inspectable ? `View ${name} blueprint` : undefined}
       onClick={inspectable ? event => {
         event.stopPropagation();
         if (event.target instanceof Node && event.currentTarget.contains(event.target)) setOpen(true);
@@ -145,7 +147,7 @@ function InspectableBuilding({ world, building, disabled, children }: { world: K
         }
       } : undefined}>
       {children}
-      {open && inspectable && <Modal title={`${blueprint.name} blueprint`} className="kin-blueprint-preview" onClose={() => setOpen(false)}>
+      {open && inspectable && <Modal title={`${name} blueprint`} className="kin-blueprint-preview" onClose={() => setOpen(false)}>
         <GameCard def={blueprint} kins={world.kins} />
       </Modal>}
     </g>
@@ -178,13 +180,19 @@ export function BuildingLayer({ world, spots, onSetupTile, onSetupSide, pickable
         return (
           <g key={building.id} transform={`translate(${x} ${y})`}>
             <InspectableBuilding world={world} building={building} disabled={selecting}>
-            <BuildingShape def={def} side={building.side} reach={reach} color={color} icon={iconOf(def, world, building)} />
-            {building.dedication && <g className="kin-dedication">
-              <title>{`Dedicated to ${building.dedication}`}</title>
-              <circle cx={0} cy={-12} r={5} fill="#8a4fb3" stroke="none" />
-              <text x={0} y={-12} textAnchor="middle" dominantBaseline="central">{DEDICATION_ICON[building.dedication] ?? "?"}</text>
-            </g>}
+            <BuildingShape def={def} side={building.side} reach={reach} color={color} icon={iconOf(def, world, building)}
+              title={building.def === "worksite" && building.owner && world.kinPicks[building.owner] === "deepones" ? "Shrine" : undefined} />
             </InspectableBuilding>
+          </g>
+        );
+      })}
+      {ordered.filter(building => building.dedication && buildingById(building.def)).map(building => {
+        const [x, y] = tileCenter(building.tile);
+        return (
+          <g key={`dedication-${building.id}`} className="kin-dedication" transform={`translate(${x} ${y})`}>
+            <title>{`Dedicated to ${building.dedication}`}</title>
+            <circle cx={0} cy={-12} r={5} fill="#8a4fb3" stroke="none" />
+            <text x={0} y={-12} textAnchor="middle" dominantBaseline="central">{DEDICATION_ICON[building.dedication!] ?? "?"}</text>
           </g>
         );
       })}
