@@ -15,6 +15,8 @@ import { LobbyPage } from "./pages/LobbyPage";
 import { ProfilePage } from "./pages/ProfilePage";
 import { StatsPage } from "./pages/StatsPage";
 import { gameFaviconUrl } from "./gameFavicon";
+import { RulebookView } from "./games/kin/Rulebook";
+import { RULEBOOK_EVENT, type RulebookJump } from "./games/kin/Cards";
 import type { User } from "./types";
 
 const readHash = () => window.location.hash.replace(/^#/, "") || "/";
@@ -24,11 +26,20 @@ export default function App() {
   const [loading, setLoading] = useState(true);
   const [route, setRoute] = useState(readHash());
   const [menuOpen, setMenuOpen] = useState(false);
-  const [modal, setModal] = useState<"stats" | "history" | "chat" | "admin" | "profile" | "wordFeedback" | null>(null);
+  const [modal, setModal] = useState<"stats" | "history" | "chat" | "admin" | "profile" | "wordFeedback" | "rulebook" | null>(null);
   const [hasHistory, setHasHistory] = useState(false);
   const [lobbyGame, setLobbyGame] = useState<string | null>(null);
   const [statsGame, setStatsGame] = useState<string | null>(null);
   const closeModal = useCallback(() => setModal(null), []);
+  const [rulebookJump, setRulebookJump] = useState<RulebookJump | undefined>();
+  useEffect(() => {
+    const onJump = (event: Event) => {
+      setRulebookJump({ ...(event as CustomEvent<RulebookJump>).detail, n: Date.now() });
+      setModal("rulebook");
+    };
+    window.addEventListener(RULEBOOK_EVENT, onJump);
+    return () => window.removeEventListener(RULEBOOK_EVENT, onJump);
+  }, []);
   const updateLobbyGame = useCallback((game: string | null) => setLobbyGame(game), []);
 
   useEffect(() => {
@@ -61,7 +72,7 @@ export default function App() {
   const lobbyMatch = route.match(/^\/lobby\/([A-Za-z0-9_-]+)$/);
   const inGame = !!lobbyMatch;
   const onProfile = route === "/profile";
-  const openModal = (event: React.MouseEvent, name: "stats" | "history" | "chat" | "admin" | "profile" | "wordFeedback") => {
+  const openModal = (event: React.MouseEvent, name: "stats" | "history" | "chat" | "admin" | "profile" | "wordFeedback" | "rulebook") => {
     event.preventDefault();
     if (name === "stats") setStatsGame(inGame ? lobbyGame : null);
     setModal(name);
@@ -80,13 +91,14 @@ export default function App() {
           {hasHistory && <a href="#/history" onClick={event => openModal(event, "history")}>History</a>}
           {!user.isDisplay && <a href="#/chat" onClick={event => openModal(event, "chat")}>Chat</a>}
           {!user.isDisplay && inGame && lobbyGame === "thirtyone" && <a href="#/word-feedback" onClick={event => openModal(event, "wordFeedback")}>Words</a>}
+          {inGame && lobbyGame === "kin" && <a href="#/rulebook" onClick={event => openModal(event, "rulebook")}>Rulebook</a>}
           {user.isAdmin && <a href="#/admin" onClick={event => openModal(event, "admin")}>Admin</a>}
         </nav>
         <div className="who">
           {user.isDisplay
             ? <span className="pill">display</span>
             : <a className={`profile-link ${onProfile ? "active" : ""}`} href="#/profile" title="Edit profile" onClick={event => openModal(event, "profile")}><Avatar avatar={user.avatar ?? defaultAvatar(user.id)} size={34} />{user.username}</a>}
-          <button onClick={() => void logout()}>Sign out</button>
+          {inGame ? <a className="button" href="#/">Leave lobby</a> : <button onClick={() => void logout()}>Sign out</button>}
         </div>
         </div>
       </header>
@@ -99,6 +111,7 @@ export default function App() {
       {modal === "stats" && !user.isDisplay && <Modal title="Statistics" onClose={closeModal} gameTheme={statsGame}><StatsPage userId={user.id} defaultGame={inGame ? lobbyGame : null} onGameChange={setStatsGame} /></Modal>}
       {modal === "admin" && user.isAdmin && <Modal title="Admin" onClose={closeModal}><AdminPage /></Modal>}
       {modal === "wordFeedback" && !user.isDisplay && inGame && lobbyGame === "thirtyone" && <Modal title="31 Seconds word feedback" onClose={closeModal} gameTheme="thirtyone"><WordFeedbackModal /></Modal>}
+      {modal === "rulebook" && inGame && lobbyGame === "kin" && <Modal title="❖ Kin Rulebook" onClose={closeModal} wide themeGame="kin" className="rulebook-modal"><RulebookView jump={rulebookJump} /></Modal>}
       {modal === "profile" && !user.isDisplay && <Modal title="Your profile" onClose={closeModal}><ProfilePage user={user} onSaved={setUser} /></Modal>}
     </div>
   );

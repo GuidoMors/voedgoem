@@ -100,7 +100,7 @@ export function StatsPage({ userId, defaultGame, onGameChange }: { userId: strin
       <h1>Statistics</h1>
       <div className="row stats-tabs" role="tablist">
         {games.map(item => (
-          <button key={item.id} role="tab" aria-selected={item.id === game} className={`stats-tab ${item.id === game ? "active" : ""}`} onClick={() => setGame(item.id)}>{item.name}</button>
+          <button key={item.id} data-tab-game={item.id} role="tab" aria-selected={item.id === game} className={`stats-tab ${item.id === game ? "active" : ""}`} onClick={() => setGame(item.id)}>{item.name}</button>
         ))}
       </div>
       {error && <p className="error">{error}</p>}

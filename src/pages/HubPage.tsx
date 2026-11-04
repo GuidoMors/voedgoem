@@ -83,17 +83,15 @@ export function HubPage({ user }: { user: User }) {
           <ul className="lobby-list">
             {lobbies.map(lobby => (
               <li key={lobby.id} className="hub-lobby" data-game={lobby.game}>
-                <div>
+                <div className="hub-lobby-bar">
                   <span className="pill game-pill" title={games.find(game => game.id === lobby.game)?.description}>
                     {gameFaviconUrl(lobby.game) && <img className="game-favicon" src={gameFaviconUrl(lobby.game)} alt="" aria-hidden="true" />}
                     {gameName(lobby.game)}
                   </span> <strong>{lobby.name}</strong><span className="lobby-player-count">({lobby.playerCount}/{lobby.maxPlayers})</span>{lobby.isPasswordProtected && <span className="pill" aria-label="Password protected">🔒 Password</span>}
                   <span className="muted lobby-hosted-by">hosted by {lobby.hostName}</span>
                 </div>
-                <div className="row">
-                  <a className="button primary hub-join" href={`#/lobby/${lobby.id}`}>{user.isDisplay ? "Show" : "Join"}</a>
-                  {(user.isAdmin || lobby.hostId === user.id) && <button className="danger" onClick={() => void close(lobby)}>Close</button>}
-                </div>
+                <a className="button primary hub-join" href={`#/lobby/${lobby.id}`}>{user.isDisplay ? "Show" : "Join"}</a>
+                {(user.isAdmin || lobby.hostId === user.id) && <button className="danger" onClick={() => void close(lobby)}>Close</button>}
               </li>
             ))}
           </ul>
@@ -102,3 +100,4 @@ export function HubPage({ user }: { user: User }) {
     </div>
   );
 }
+

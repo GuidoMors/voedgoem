@@ -215,7 +215,7 @@ export function AdminPage() {
           <p className="muted small">Display accounts can't join games. They show a lobby on a big screen, with a QR code people can scan to log in on their phone.</p>
           <form className="row create-lobby" onSubmit={createDisplay}>
             <input value={display.username} onChange={event => setDisplay({ ...display, username: event.target.value })} placeholder="Username" maxLength={20} required />
-            <input type="password" value={display.password} onChange={event => setDisplay({ ...display, password: event.target.value })} placeholder="Password (8+ characters)" minLength={8} required />
+            <input type="password" value={display.password} onChange={event => setDisplay({ ...display, password: event.target.value })} placeholder="Password (3+ characters)" minLength={3} required />
             <button className="primary">Create display</button>
           </form>
           {displayMessage && <p className="muted small">{displayMessage}</p>}

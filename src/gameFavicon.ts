@@ -2,7 +2,10 @@ const GAME_FAVICONS: Record<string, string> = {
   tetris: "tetrys.ico",
   codenames: "woerdgoem.ico",
   thirtyone: "31seconds.ico",
-  dworf: "dworf.ico"
+  dworf: "dworf.ico",
+  blokus: "blokus.ico",
+  werewolves: "werewolves.ico",
+  kin: "kin.ico"
 };
 
 export function gameFaviconUrl(game: string): string | undefined {

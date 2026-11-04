@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-import { lobbySocketUrl } from "./api";
+import { api, ApiError, lobbySocketUrl } from "./api";
 import type { Avatar } from "./avatar/model";
 import type { LobbySnapshot } from "./types";
 import type { ChatMessage } from "./components/ChatPanel";
@@ -20,7 +20,25 @@ export function useLobbyConnection(lobbyId: string) {
     let disposed = false;
     let retry: number | undefined;
 
-    const connect = () => {
+    setSnapshot(null);
+    setStatus("connecting");
+    setNotice(null);
+    setPasswordRequired(false);
+    setAvatars({});
+    setChatMessages([]);
+
+    const connect = async () => {
+      try {
+        await api(`/api/lobbies/${encodeURIComponent(lobbyId)}`);
+      } catch (cause) {
+        if (disposed) return;
+        const terminal = cause instanceof ApiError && [400, 401, 403, 404].includes(cause.status);
+        setNotice(cause instanceof Error ? cause.message : "Could not connect to the lobby.");
+        setStatus(terminal ? "closed" : "reconnecting");
+        if (!terminal) retry = window.setTimeout(connect, 1500);
+        return;
+      }
+      if (disposed) return;
       const ws = new WebSocket(lobbySocketUrl(lobbyId));
       socket.current = ws;
       ws.onopen = () => setStatus("open");
@@ -62,6 +80,7 @@ export function useLobbyConnection(lobbyId: string) {
     return () => {
       disposed = true;
       window.clearTimeout(retry);
+      window.clearTimeout(noticeTimer.current);
       socket.current?.close();
     };
   }, [lobbyId]);

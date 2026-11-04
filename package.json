@@ -4,6 +4,7 @@
   "private": true,
   "type": "module",
   "scripts": {
+    "test": "node --import ../voedgoem-server/node_modules/tsx/dist/loader.mjs --test src/games/kin/rulebook.test.ts",
     "dev": "vite --host 0.0.0.0",
     "build": "tsc -b && vite build",
     "preview": "vite preview"
