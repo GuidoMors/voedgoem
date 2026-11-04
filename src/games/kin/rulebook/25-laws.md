@@ -3,40 +3,40 @@ Law cards are enacted in the [[Council]] [[event]]. They remain active until the
 
 
 ## General Blockade | 𝌭
-> You may not Move.
+> You may not [[Move]].
 
 ## Block Inquiry | 𝌭
-> You may not Research.
+> You may not [[Research]].
 
 ## Enforce Copyright | 𝌭
-> You may not Publicize.
+> You may not [[Publicize]].
 
 ## Blockade Trade | 𝌭
-> You may not Barter.
+> You may not [[Barter]].
 
 ## Enforce Treaties | 𝌭
-> You may not Dissolve.
+> You may not [[Dissolve]].
 
 ## Zone Districts | 𝌭
-> You may not Build.
+> You may not [[Build]].
 
 ## Disarmements | 𝌭
-> You may not Deploy or Recruit.
+> You may not [[Deploy]] or [[Recruit]].
 
 ## Cultural Sites | 𝌭
-> You may not Demolish.
+> You may not [[Demolish]].
 
 ## Cargo Enforcement | 𝌭
-> You may not Reclaim.
+> You may not [[Reclaim]].
 
 ## Peace Resolution | 𝌭
-> You may not Battle.
+> You may not [[Battle]].
 
 ## Quarantine | 𝌭
-> You may not Reinforce.
+> You may not [[Reinforce]].
 
 ## Stockpiles | 𝌭
-> You may not Harvest.
+> You may not [[Harvest]].
 
 ## Naval Blockade | 𝌭
-> You may not Embark.
+> You may not [[Embark]].

@@ -1,21 +1,63 @@
-import { useEffect, useRef, useState, type ReactNode } from "react";
+import { useEffect, useLayoutEffect, useRef, useState, type ReactNode } from "react";
 
 const MIN_ZOOM = 0.25;
 const MAX_ZOOM = 4;
 const DRAG_THRESHOLD = 4;
 const INTERACTIVE = "button, input, select, textarea, a, label, [role='button']";
 
-interface View { x: number; y: number; k: number }
-const HOME: View = { x: 0, y: 0, k: 1 };
+export interface PlaneView { x: number; y: number; k: number }
+const HOME: PlaneView = { x: 0, y: 0, k: 0.75 };
 const clamp = (value: number) => Math.min(MAX_ZOOM, Math.max(MIN_ZOOM, value));
 
 // An endless plane: drag anywhere that is not a control to pan, use the wheel or the buttons to zoom. Clicks on its contents still work.
-export function Plane({ children }: { children: ReactNode }) {
+export function Plane({ children, focusKey, initialView, onViewChange }: {
+  children: ReactNode;
+  focusKey?: string;
+  initialView?: PlaneView;
+  onViewChange?: (view: PlaneView) => void;
+}) {
   const viewport = useRef<HTMLDivElement>(null);
-  const [view, setView] = useState<View>(HOME);
+  const content = useRef<HTMLDivElement>(null);
+  const [view, setView] = useState<PlaneView>(initialView ?? HOME);
   const [dragging, setDragging] = useState(false);
   const drag = useRef<{ id: number; startX: number; startY: number; x: number; y: number; moved: boolean } | null>(null);
   const suppressClick = useRef(false);
+
+  const homeView = (): PlaneView => {
+    const element = viewport.current;
+    if (!element || !content.current) return HOME;
+    const bounds = element.getBoundingClientRect();
+    const game = element.closest(".kin-main");
+    const left = game?.querySelector(".kin-main-left:not(.collapsed)")?.getBoundingClientRect();
+    const right = game?.querySelector(".kin-main-right:not(.collapsed)")?.getBoundingClientRect();
+    const center = (Math.max(bounds.left, left?.right ?? bounds.left) + Math.min(bounds.right, right?.left ?? bounds.right)) / 2;
+    return { x: center - bounds.left - content.current.scrollWidth * HOME.k / 2, y: 0, k: HOME.k };
+  };
+
+  useLayoutEffect(() => {
+    if (!initialView) setView(homeView());
+  }, []);
+
+  useEffect(() => { onViewChange?.(view); }, [view, onViewChange]);
+
+  useEffect(() => {
+    if (focusKey === undefined) return;
+    const frame = requestAnimationFrame(() => {
+      const element = viewport.current;
+      const target = element?.querySelector(".kc.selectable, .kin-army-pickable, .kin-spot, .kin-spot-line");
+      if (!element || !target) return;
+      const bounds = element.getBoundingClientRect();
+      const game = element.closest(".kin-main");
+      const left = game?.querySelector(".kin-main-left:not(.collapsed)")?.getBoundingClientRect();
+      const right = game?.querySelector(".kin-main-right:not(.collapsed)")?.getBoundingClientRect();
+      const bottom = game?.querySelector(".kin-main-bottom:not(.collapsed)")?.getBoundingClientRect();
+      const x = (Math.max(bounds.left, left?.right ?? bounds.left) + Math.min(bounds.right, right?.left ?? bounds.right)) / 2;
+      const y = (bounds.top + Math.min(bounds.bottom, bottom?.top ?? bounds.bottom)) / 2;
+      const rect = target.getBoundingClientRect();
+      setView(current => ({ ...current, x: current.x + x - (rect.left + rect.right) / 2, y: current.y + y - (rect.top + rect.bottom) / 2 }));
+    });
+    return () => cancelAnimationFrame(frame);
+  }, [focusKey]);
 
   const zoomAt = (px: number, py: number, factor: number) => setView(current => {
     const k = clamp(current.k * factor);
@@ -77,7 +119,7 @@ export function Plane({ children }: { children: ReactNode }) {
           if (suppressClick.current) { event.stopPropagation(); event.preventDefault(); }
         }}
       >
-        <div className="kin-plane-content" style={{ transform: `translate(${view.x}px, ${view.y}px) scale(${view.k})` }}>
+        <div ref={content} className="kin-plane-content" style={{ transform: `translate(${view.x}px, ${view.y}px) scale(${view.k})` }}>
           {children}
         </div>
       </div>
@@ -85,7 +127,7 @@ export function Plane({ children }: { children: ReactNode }) {
         <button type="button" onClick={() => zoomCenter(1 / 1.25)} aria-label="Zoom out">−</button>
         <span className="small">{Math.round(view.k * 100)}%</span>
         <button type="button" onClick={() => zoomCenter(1.25)} aria-label="Zoom in">+</button>
-        <button type="button" onClick={() => setView(HOME)}>Reset</button>
+        <button type="button" onClick={() => setView(homeView())}>Reset</button>
       </div>
     </div>
   );

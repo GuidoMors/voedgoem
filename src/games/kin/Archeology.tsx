@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { NumberInput } from "./NumberInput";
 import type { KinFound } from "./types";
 
 const BASIC = ["gold", "lumber", "stone", "food"];
@@ -14,10 +15,10 @@ export function ReclaimPanel({ treasure, relic, onConfirm, onCancel }: { treasur
       <p className="small">You gain {relic} relic{relic === 1 ? "" : "s"} and {needed} basic resources of your choice.</p>
       <div className="kin-payment-row">
         {BASIC.map(resource => (
-          <label key={resource} className="small">
+          <span key={resource} className="small">
             {resource}{" "}
-            <input type="number" min={0} max={needed} value={basic[resource] ?? 0} onChange={event => setBasic({ ...basic, [resource]: Math.max(0, Math.floor(Number(event.target.value) || 0)) })} />
-          </label>
+            <NumberInput aria-label={`Reclaim ${resource}`} min={0} max={needed} value={basic[resource] ?? 0} onValueChange={value => setBasic({ ...basic, [resource]: Math.max(0, Math.floor(Number(value) || 0)) })} />
+          </span>
         ))}
         <span className={`small ${total === needed ? "" : "kin-bad"}`}>{total} / {needed}</span>
       </div>

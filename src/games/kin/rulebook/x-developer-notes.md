@@ -1,3 +1,8 @@
+This is how to deploy shit to the rulebook and the game:
+node scripts/gen-cards.mjs (also does technologies, treaties, etc)
+node scripts/gen-buildings.mjs
+node scripts/gen-characters.mjs
+
 Here is the template for what a character should look like:
 
 # Name | title | archetype | x power

@@ -1,4 +1,6 @@
 import { useState } from "react";
+import { RuleText } from "./Cards";
+import { NumberInput } from "./NumberInput";
 import type { KinMoveSource } from "./types";
 
 const BASIC = ["gold", "lumber", "stone", "food"];
@@ -32,7 +34,7 @@ export function PaymentPanel({ title, power, picked, sources, basic = 0, fixed =
   const basicOk = basic === basicTotal && BASIC.every(resource => (paid[resource] ?? 0) <= spare(resource));
   const ready = total >= power && !overpaid && basicOk;
   return (
-    <section className="kin-payment">
+    <section className="kin-payment kin-build-payment" aria-label={title}>
       <h3>{title}</h3>
       <p>Build power: <strong>{total}</strong> / {power}{overpaid ? " (more cards than needed)" : ""}</p>
       <div className="kin-payment-cards">
@@ -48,7 +50,11 @@ export function PaymentPanel({ title, power, picked, sources, basic = 0, fixed =
         <div className="kin-payment-basic">
           <p>Pay {basic} basic resources: <strong>{basicTotal}</strong> / {basic}</p>
           {BASIC.map(resource => (
-            <label key={resource}>{resource} <input type="number" min={0} max={Math.max(0, spare(resource))} value={paid[resource] ?? 0} onChange={event => setPaid(current => ({ ...current, [resource]: Math.max(0, Number(event.target.value) || 0) }))} /></label>
+            <div className="kin-payment-resource" key={resource}>
+              <RuleText text={`[[${resource}]]`} />
+              <span className="kin-payment-available" aria-label={`(${resource})`}>{Math.max(0, spare(resource))} available</span>
+              <NumberInput aria-label={`Pay ${resource}`} min={0} max={Math.max(0, spare(resource))} value={paid[resource] ?? 0} onValueChange={value => setPaid(current => ({ ...current, [resource]: Math.max(0, Number(value) || 0) }))} />
+            </div>
           ))}
         </div>
       )}

@@ -16,6 +16,7 @@ import { ProfilePage } from "./pages/ProfilePage";
 import { StatsPage } from "./pages/StatsPage";
 import { gameFaviconUrl } from "./gameFavicon";
 import { RulebookView } from "./games/kin/Rulebook";
+import { RULEBOOK_EVENT, type RulebookJump } from "./games/kin/Cards";
 import type { User } from "./types";
 
 const readHash = () => window.location.hash.replace(/^#/, "") || "/";
@@ -30,6 +31,15 @@ export default function App() {
   const [lobbyGame, setLobbyGame] = useState<string | null>(null);
   const [statsGame, setStatsGame] = useState<string | null>(null);
   const closeModal = useCallback(() => setModal(null), []);
+  const [rulebookJump, setRulebookJump] = useState<RulebookJump | undefined>();
+  useEffect(() => {
+    const onJump = (event: Event) => {
+      setRulebookJump({ ...(event as CustomEvent<RulebookJump>).detail, n: Date.now() });
+      setModal("rulebook");
+    };
+    window.addEventListener(RULEBOOK_EVENT, onJump);
+    return () => window.removeEventListener(RULEBOOK_EVENT, onJump);
+  }, []);
   const updateLobbyGame = useCallback((game: string | null) => setLobbyGame(game), []);
 
   useEffect(() => {
@@ -101,7 +111,7 @@ export default function App() {
       {modal === "stats" && !user.isDisplay && <Modal title="Statistics" onClose={closeModal} gameTheme={statsGame}><StatsPage userId={user.id} defaultGame={inGame ? lobbyGame : null} onGameChange={setStatsGame} /></Modal>}
       {modal === "admin" && user.isAdmin && <Modal title="Admin" onClose={closeModal}><AdminPage /></Modal>}
       {modal === "wordFeedback" && !user.isDisplay && inGame && lobbyGame === "thirtyone" && <Modal title="31 Seconds word feedback" onClose={closeModal} gameTheme="thirtyone"><WordFeedbackModal /></Modal>}
-      {modal === "rulebook" && inGame && lobbyGame === "kin" && <Modal title="❖ Kin Rulebook" onClose={closeModal} wide themeGame="kin" className="rulebook-modal"><RulebookView /></Modal>}
+      {modal === "rulebook" && inGame && lobbyGame === "kin" && <Modal title="❖ Kin Rulebook" onClose={closeModal} wide themeGame="kin" className="rulebook-modal"><RulebookView jump={rulebookJump} /></Modal>}
       {modal === "profile" && !user.isDisplay && <Modal title="Your profile" onClose={closeModal}><ProfilePage user={user} onSaved={setUser} /></Modal>}
     </div>
   );

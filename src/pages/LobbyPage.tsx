@@ -32,8 +32,10 @@ function getTurnBotId(snapshot: LobbySnapshot): string | null {
       return null;
     case "werewolves":
       return null;
-    case "kin":
-      return null;
+    case "kin": {
+      const turn = snapshot.world?.play?.turn ?? snapshot.world?.turn;
+      return turn && botIds.has(turn) ? turn : null;
+    }
   }
 }
 
@@ -57,7 +59,10 @@ export function LobbyPage({ lobbyId, user, onGameChange, chatOpen, onChatClose }
   }, [gameId, onGameChange]);
 
   const sendAsBot = useCallback<Send>(message => {
-    if (controlling && !user.isDisplay) send({ type: "bot:act", botId: controlling, message });
+    if (controlling && !user.isDisplay) {
+      if (message.type === "bot:forcePass") send({ ...message, botId: controlling });
+      else send({ type: "bot:act", botId: controlling, message });
+    }
   }, [controlling, send, user.isDisplay]);
 
   if (status === "closed") {
@@ -81,7 +86,7 @@ export function LobbyPage({ lobbyId, user, onGameChange, chatOpen, onChatClose }
       </div>
     );
   }
-  if (!snapshot) return <div className="page"><p className="muted">Connecting to lobby…</p></div>;
+  if (!snapshot) return <div className="page"><p className="muted">{status === "reconnecting" ? "Reconnecting to lobby…" : "Connecting to lobby…"}</p>{notice && <p className="error">{notice}</p>}<a className="button" href="#/">Back to hub</a></div>;
 
   const bot = snapshot.bots.find(item => item.id === controlling);
   const botView = bot && snapshot.botViews?.[bot.id];
@@ -89,38 +94,14 @@ export function LobbyPage({ lobbyId, user, onGameChange, chatOpen, onChatClose }
   const view = acting ? ({ ...snapshot, ...botView } as LobbySnapshot) : snapshot;
   const turnBotId = getTurnBotId(snapshot);
 
-  return (
-    <AvatarsContext.Provider value={avatars}>
-    <div className="page">
-      <div className="row between">
-        <h1>{snapshot.name}</h1>
-        <div className="row lobby-head-right">
-          <span className="host-tag">Hosted by {snapshot.host.name}{status === "reconnecting" && " · reconnecting…"}</span>
-        </div>
-      </div>
-      {notice && <p className="error">{notice}</p>}
-
-      {acting && <p className="cn-status">Controlling <strong>{bot.username}</strong>. Everything you do is done as this bot.</p>}
-
-      <GameLobby
-        key={acting ? bot.id : "me"}
-        snapshot={view}
-        userId={acting ? bot.id : user.id}
-        isHost={acting ? false : snapshot.host.id === user.id}
-        isAdmin={!acting && user.isAdmin}
-        isDisplay={user.isDisplay}
-        send={user.isDisplay ? noop : acting ? sendAsBot : send}
-      />
-
-      {chatOpen && !user.isDisplay && <Modal title="Chat" onClose={onChatClose} wide themeGame={gameId} className="chat-modal"><ChatPanel messages={chatMessages} status={status === "open" ? undefined : status === "connecting" ? "Connecting…" : "Reconnecting…"} error={notice} onSend={text => send({ type: "chat:send", text })} /></Modal>}
-
-      {user.isAdmin && (
+  const botControls = user.isAdmin && (
         <section className="card bot-panel">
           <div className="row between">
             <h2>Test bots</h2>
             <span className="row">
               <button disabled={!turnBotId || controlling === turnBotId} onClick={() => turnBotId && setControlling(turnBotId)}>Control bot whose turn it is</button>
-              <button disabled={snapshot.bots.length === 0} onClick={() => send({ type: "bot:join" })}>Bots join game</button>
+              <button className={snapshot.autoBots ? "primary" : ""} disabled={snapshot.bots.length === 0} onClick={() => send({ type: "bot:auto", enabled: !snapshot.autoBots })}>{snapshot.autoBots ? "Autopilot on" : "Autopilot off"}</button>
+              <button disabled={snapshot.bots.length === 0 || snapshot.phase !== "lobby"} onClick={() => send({ type: "bot:join" })}>Bots join game</button>
               <button onClick={() => send({ type: "bot:add" })}>Add bot</button>
             </span>
           </div>
@@ -134,6 +115,10 @@ export function LobbyPage({ lobbyId, user, onGameChange, chatOpen, onChatClose }
                 <li key={item.id} className="row between">
                   <Person id={item.id} name={item.username} />
                   <span className="row">
+                    {snapshot.game === "kin" && <>
+                      <span className="small">{item.forcePass !== false ? "Force pass enabled" : "Normal play"}</span>
+                      <button aria-pressed={item.forcePass !== false} title="Enabling passes this bot's current turn; Autopilot handles its later turns." onClick={() => send({ type: "bot:forcePass", botId: item.id, enabled: item.forcePass === false })}>{item.forcePass !== false ? "Disable force pass" : "Enable force pass"}</button>
+                    </>}
                     <button className={controlling === item.id ? "primary" : ""} disabled={controlling === item.id} onClick={() => setControlling(item.id)}>{controlling === item.id ? "Playing" : "Control"}</button>
                     <button className="danger" onClick={() => { if (controlling === item.id) setControlling(null); send({ type: "bot:remove", botId: item.id }); }}>Remove</button>
                   </span>
@@ -142,7 +127,38 @@ export function LobbyPage({ lobbyId, user, onGameChange, chatOpen, onChatClose }
             </ul>
           )}
         </section>
-      )}
+      );
+
+  return (
+    <AvatarsContext.Provider value={avatars}>
+    <div className="page">
+          <div className="row between">
+            <h1>{snapshot.name}</h1>
+            <div className="row lobby-head-right">
+              <span className="host-tag">Hosted by {snapshot.host.name}{status === "reconnecting" && " · reconnecting…"}</span>
+            </div>
+          </div>
+          {notice && <p className="error">{notice}</p>}
+          {acting && <p className="cn-status">Controlling <strong>{bot.username}</strong>. Everything you do is done as this bot.</p>}
+          <GameLobby
+            key={acting ? bot.id : "me"}
+            snapshot={view}
+            userId={acting ? bot.id : user.id}
+            isHost={acting ? false : snapshot.host.id === user.id}
+            isAdmin={!acting && user.isAdmin}
+            isDisplay={user.isDisplay}
+            send={user.isDisplay ? noop : acting ? sendAsBot : send}
+            hostControls={snapshot.game === "kin" && !user.isDisplay && (snapshot.host.id === user.id || user.isAdmin) ? <>
+              <section className="card host-controls-panel">
+                <h2>Host controls &amp; rules</h2>
+                <button disabled={snapshot.host.id !== user.id} onClick={() => window.confirm("Return to the lobby and discard this game?") && send({ type: "abort" })}>Back to lobby</button>
+                {snapshot.host.id !== user.id && <p className="muted small">Only the host can return the game to the lobby.</p>}
+              </section>
+              {botControls}
+            </> : undefined}
+          />
+          {chatOpen && !user.isDisplay && <Modal title="Chat" onClose={onChatClose} wide themeGame={gameId} className="chat-modal"><ChatPanel messages={chatMessages} status={status === "open" ? undefined : status === "connecting" ? "Connecting…" : "Reconnecting…"} error={notice} onSend={text => send({ type: "chat:send", text })} /></Modal>}
+          {!(snapshot.game === "kin" && snapshot.world?.step === "done") && botControls}
     </div>
     </AvatarsContext.Provider>
   );

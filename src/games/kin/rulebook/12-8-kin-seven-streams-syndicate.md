@@ -10,7 +10,7 @@ Their society revolves around trade, economic deals, and business. Always busine
 - Place your starting buildings: 1 village next to a river, 1 worksite.
 - Place your starting army: Strength 1 on the village.
 - Claim the Faction Effects cards and the Faction Building Bluprint.
-- Claim the following technologies: Trade Diplomacy, Harbor Construction.
+- Claim the following technologies: Trade Diplomacy, Harbor Construction, River Movement
 
 # Faction building Blueprint
 
@@ -24,36 +24,37 @@ Their society revolves around trade, economic deals, and business. Always busine
 
 # Faction Effects
 
-## Tradespeopple | ◫ | core
-> Short description: Gain 1 [[gold]] when you receive a [[Trade Treaty]] from another player.
-> Condition: You receive a Trade Treaty from another player in this barter.
-> Trigger: Barter, when it resolves.
-> Effect: Gain 1 gold.
+## Tradespeopple | effect card | core
+> Gain 1 [[gold]] when you receive a [[Trade Treaty]] from another player.
+// Condition: You receive a Trade Treaty from another player in this barter.
+// Trigger: Barter, when it resolves.
+// Effect: Gain 1 gold.
 
-## Tradegoods | ◫
-> Short description: Tradegoods are a [[bartering goods]] only you generate. When you [[Barter]] them to another player, assign them a basic resource type. The receiver gets that resource instead. Your [[Harbor]]s [[produce]] 1 Tradegoods, and each [[Trade Treaty]] you hold from another player produces 1 Tradegoods.
-> 1 - Trigger: Barter, when selecting to add Tradegoods to a barter offer.
-> 1 - Effect: Add a window next to the Tradegoods quantity where you can select which resource the Tradegoods turns into upon a successful barter. The selected resource type determines what resource the receiver gains upon successfully completing the barter.
-> 2 - Condition: You own a harbor.
-> 2 - Trigger: Seasons Change, before effects.
-> 2 - Effect: Each harbor you own produces 1 Tradegoods.
-> 3 - Condition: You hold a trade treaty from another player.
-> 3 - Trigger: Seasons Change, before effects.
-> 3 - Effect: Each trade treaty you hold from another player produces 1 Tradegoods.
+## Tradegoods | effect card
+> Tradegoods are a [[bartering goods]] only you generate. When you [[Barter]] them to another player, assign them a basic resource type. The receiver gets that resource instead. Your [[Harbor]]s [[produce]] 1 Tradegoods, and each [[Trade Treaty]] you hold from another player produces 1 Tradegoods.
+// 1 - Trigger: Barter, when selecting to add Tradegoods to a barter offer.
+// 1 - Effect: Add a window next to the Tradegoods quantity where you can select which resource the Tradegoods turns into upon a successful barter. The selected resource type determines what resource the receiver gains upon successfully completing the barter.
+// Tradegoods can only be contributed from the Syndicate's side. Another player composing an offer with the Syndicate may request its Tradegoods and choose which basic resource they receive upon acceptance.
+// 2 - Condition: You own a harbor.
+// 2 - Trigger: Seasons Change, before effects.
+// 2 - Effect: Each harbor you own produces 1 Tradegoods.
+// 3 - Condition: You hold a trade treaty from another player.
+// 3 - Trigger: Seasons Change, before effects.
+// 3 - Effect: Each trade treaty you hold from another player produces 1 Tradegoods.
 
 ## Ruthless Capitalists | action card
-> Short description: Pay 3 [[Tradegoods]] to exchange [[trade treaty|trade treaties]] with a player you are connected to and do not already have a Trade Treaty with.
-> Phase: Discovery
-> Condition: You are connected to a played of whom you do not hold a trade treaty, and who does not hold a trade treaty of yours. You have 3 tradegoods.
-> On trigger: Select an untapped Discovery Character/Activation Card. Select a player of which you don't hold a trade treaty of, and whom don't hold a trade treaty of yours.
-> Payment: Tapping the selected character/activation card. Pay 3 Tradegoods.
-> Effect: You and the selected player each gain a [[Trade Treaty]] from the other.
+> Pay 3 [[Tradegoods]] to exchange [[trade treaty|trade treaties]] with a player you are connected to and do not already have a Trade Treaty with.
+// Phase: Discovery
+// Condition: You are connected to a played of whom you do not hold a trade treaty, and who does not hold a trade treaty of yours. You have 3 tradegoods.
+// On trigger: Select an untapped Discovery Character/Activation Card. Select a player of which you don't hold a trade treaty of, and whom don't hold a trade treaty of yours.
+// Payment: Tapping the selected character/activation card. Pay 3 Tradegoods.
+// Effect: You and the selected player each gain a [[Trade Treaty]] from the other.
 
-## River Roamers | ◫
-> Short description: You can [[Build]] a [[village]] on an tile connected by [[river]] to another village you own, without needing an army there or an adjacent building.
-> Condition: You are building a village
-> Trigger: Build, when checking the eligible tiles to build on
-> Effect: Add all tiles to the build location options which are adjacent to rivers which connect through river tiles to a village you own.
+## River Roamers | effect card
+> You can [[Build]] a [[village]] on an tile connected by [[river]] to another village you own, without needing an army there or an adjacent building.
+// Condition: You are building a village
+// Trigger: Build, when checking the eligible tiles to build on
+// Effect: Add all tiles to the build location options which are adjacent to rivers which connect through river tiles to a village you own.
 
 
 # Characters

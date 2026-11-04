@@ -23,40 +23,40 @@ Their unshaken faith in their prophet has led them to pacifism and diplomacy, an
 
 # Faction Effects
 
-## Plaintsriders | ◫ | core
-> Short description: Moving from [[plains]] to plains costs ½.
-> Condition: Army is standing on plains.
-> Trigger: Move, when calculating tile speed cost.
-> Effect: The tile speed cost for moving to plains is set to ½.
+## Plaintsriders | effect card | core
+> Moving from [[plains]] to plains costs ½.
+// Condition: Army is standing on plains.
+// Trigger: Move, when calculating tile speed cost.
+// Effect: The tile speed cost for moving to plains is set to ½.
 
-## Virtue | ◫
-> Short description: [[Virtue]] equals the number of your treaties other players hold. It cannot be spent or bartered. Your characters use it for their abilities.
-> Trigger: Barter, when it resolves
-> Effect: Set your virtue to the number of your treaties held by other players.
-> Extra rules: Virtue is not a bartering good.
+## Virtue | effect card
+> [[Virtue]] equals the number of your treaties other players hold. It cannot be spent or bartered. Your characters use it for their abilities.
+// Trigger: Barter, when it resolves
+// Effect: Set your virtue to the number of your treaties held by other players.
+// Extra rules: Virtue is not a bartering good.
 
-## Diplomats | ◫
-> Short description: When a player accepts a [[treaty]] from you, they receive a gift:
-> - 1 [[gear]] for a Peace Treaty, 
-> - 1 [[mana]] for an Access Treaty, 
-> - 1 [[gold]] for a Trade Treaty.
-> Condition: The barter included a peace treaty, access treaty, trade treaty from you.
-> Trigger: Barter, when it resolves.
-> Effect: The player who accepted the treaty gains 1 gear for a Peace Treaty, and/or 1 mana for an Access Treaty, and/or 1 gold for a Trade Treaty.
+## Diplomats | effect card
+> When a player accepts a [[treaty]] from you, they receive a gift:
+// - 1 [[gear]] for a Peace Treaty, 
+// - 1 [[mana]] for an Access Treaty, 
+// - 1 [[gold]] for a Trade Treaty.
+// Condition: The barter included a peace treaty, access treaty, trade treaty from you.
+// Trigger: Barter, when it resolves.
+// Effect: The player who accepted the treaty gains 1 gear for a Peace Treaty, and/or 1 mana for an Access Treaty, and/or 1 gold for a Trade Treaty.
 
-## Open Markets | ◫
-> Short description: You can [[Build]] [[markets]] without an adjacent [[river]].
-> Trigger: Build, when checking the Building Conditions for which building blueprints are allowed for that tile.
-> Effect: A market does not require an adjacent river to be built.
+## Open Markets | effect card
+> You can [[Build]] [[markets]] without an adjacent [[river]].
+// Trigger: Build, when checking the Building Conditions for which building blueprints are allowed for that tile.
+// Effect: A market does not require an adjacent river to be built.
 
-## The White Prophet | ◫
-> Short description: You must draft Lumon as the first character in the character draft. Lumon cannot be used as a [[general]] or held [[hostage]] by other players.
-> 1 - Condition: You are drafting characters.
-> 1 - Trigger: Character draft, when you draft your first character.
-> 1 - Effect: You must draft Lumon as your first character.
-> 2 - Condition: Lumon is in your court.
-> 2 - Trigger: Whenever a player attempts to use Lumon as a general or take Lumon hostage.
-> 2 - Effect: Lumon cannot be used as a general or taken hostage by another player.
+## The White Prophet | effect card
+> You must draft Lumon as the first character in the character draft. Lumon cannot be used as a [[general]], held [[hostage]] by other players, or traded through [[Barter]].
+// 1 - Condition: You are drafting characters.
+// 1 - Trigger: Character draft, when you draft your first character.
+// 1 - Effect: You must draft Lumon as your first character.
+// 2 - Condition: Lumon is in your court.
+// 2 - Trigger: Whenever a player attempts to use Lumon as a general or take Lumon hostage.
+// 2 - Effect: Lumon cannot be used as a general or taken hostage by another player.
 
 
 # Characters

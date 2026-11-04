@@ -1,16 +1,29 @@
 import { useState } from "react";
+import { NumberInput } from "./NumberInput";
 import { CHARACTERS } from "./characters.data";
-import type { KinAbilityOption } from "./types";
+import { CharacterCard } from "./CharacterCard";
+import type { KinAbilityOption, KinInfo } from "./types";
 
 const characterName = (id: string) => CHARACTERS.find(def => def.id === id)?.name ?? id;
 
 const RESOURCES = ["gold", "lumber", "stone", "food"];
 
+function CharacterChoice({ label, ids = [], value, onChange, kins }: { label: string; ids?: string[]; value: string; onChange: (id: string) => void; kins: KinInfo[] }) {
+  return <section className="kin-character-choice" aria-label={label}>
+    <h4>{label}</h4>
+    <div className="kin-character-choices">{ids.map(id => {
+      const def = CHARACTERS.find(character => character.id === id);
+      return def ? <CharacterCard key={id} def={def} kins={kins} state="claimed" selectable selected={value === id} onPick={() => onChange(id)} />
+        : <button key={id} type="button" aria-pressed={value === id} onClick={() => onChange(id)}>{characterName(id)}</button>;
+    })}</div>
+  </section>;
+}
+
 // Abilities that need no choice are sent straight away when the ruletext is clicked.
 export const DIRECT_ABILITIES = ["torke", "steen", "eyir", "prishna", "jaggengrog", "koroko", "carvano"];
 
 // The choices for a tap ability of a neutral character in the player's own court. Using it taps the character and ends the turn.
-export function AbilityForm({ option: raw, send }: { option: KinAbilityOption; send: (action: Record<string, unknown>) => void }) {
+export function AbilityForm({ option: raw, send, kins }: { option: KinAbilityOption; send: (action: Record<string, unknown>) => void; kins: KinInfo[] }) {
   // Birchawe: the form of the borrowed ability is shown instead of his own.
   const option = { ...raw, character: raw.ability ?? raw.character };
   const [resource, setResource] = useState("gold");
@@ -64,23 +77,14 @@ export function AbilityForm({ option: raw, send }: { option: KinAbilityOption; s
       )}
       {option.character === "ethereal" && (
         <>
-          <select value={take} onChange={event => setTake(event.target.value)} aria-label="Character to claim from the deck">
-            <option value="">Claim from the deck…</option>
-            {option.take?.map(id => <option key={id} value={id}>{characterName(id)}</option>)}
-          </select>
-          <select value={give} onChange={event => setGive(event.target.value)} aria-label="Character to put into the deck">
-            <option value="">Put back from your court…</option>
-            {option.give?.map(id => <option key={id} value={id}>{characterName(id)}</option>)}
-          </select>
+          <CharacterChoice label="Character to claim from the deck" ids={option.take} value={take} onChange={setTake} kins={kins} />
+          <CharacterChoice label="Character to put into the deck" ids={option.give} value={give} onChange={setGive} kins={kins} />
           <button type="button" disabled={!take || !give} onClick={() => fire({ take, give })}>Foresight</button>
         </>
       )}
       {option.character === "beiliu" && (
         <>
-          <select value={target} onChange={event => setTarget(event.target.value)} aria-label="Hostage to convert">
-            <option value="">Hostage…</option>
-            {option.hostages?.map(id => <option key={id} value={id}>{characterName(id)}</option>)}
-          </select>
+          <CharacterChoice label="Hostage to convert" ids={option.hostages} value={target} onChange={setTarget} kins={kins} />
           <button type="button" disabled={!target} onClick={() => fire({ hostage: target })}>Convert (4 influence)</button>
         </>
       )}
@@ -94,7 +98,7 @@ export function AbilityForm({ option: raw, send }: { option: KinAbilityOption; s
             <option value="">Treaty…</option>
             {option.players?.find(entry => entry.player === target)?.types.map(type => <option key={type} value={type}>{type}</option>)}
           </select>
-          {treaty === "peace" && <input type="number" min={1} max={10} value={duration} onChange={event => setDuration(event.target.value)} aria-label="Rounds" />}
+          {treaty === "peace" && <NumberInput min={1} max={10} value={duration} onValueChange={setDuration} aria-label="Rounds" />}
           <button type="button" disabled={!target || !treaty} onClick={() => fire({ player: target, treaty, ...(treaty === "peace" ? { duration: Number(duration) } : {}) })}>The White Wave (4 mana)</button>
         </>
       )}
@@ -178,7 +182,7 @@ export function AbilityForm({ option: raw, send }: { option: KinAbilityOption; s
           <select value={resource} onChange={event => setResource(event.target.value)} aria-label="Resource to gain">
             {["gold", "stone", "food"].map(res => <option key={res} value={res}>{res}</option>)}
           </select>
-          <input type="number" min={1} max={option.lumber ?? 1} value={duration} onChange={event => setDuration(event.target.value)} aria-label="Lumber to convert" />
+          <NumberInput min={1} max={option.lumber ?? 1} value={duration} onValueChange={setDuration} aria-label="Lumber to convert" />
           <button type="button" onClick={() => fire({ to: resource, amount: Number(duration) })}>Overgrowth (2 mana)</button>
         </>
       )}
@@ -193,10 +197,7 @@ export function AbilityForm({ option: raw, send }: { option: KinAbilityOption; s
       )}
       {option.character === "birchawe" && (
         <>
-          <select value={target} onChange={event => setTarget(event.target.value)} aria-label="Character to borrow from">
-            <option value="">Character…</option>
-            {option.borrow?.map(id => <option key={id} value={id}>{characterName(id)}</option>)}
-          </select>
+          <CharacterChoice label="Character to borrow from" ids={option.borrow} value={target} onChange={setTarget} kins={kins} />
           <button type="button" disabled={!target} onClick={() => fire({ target })}>Nature’s Splendour (2 mana)</button>
         </>
       )}
@@ -211,7 +212,7 @@ export function AbilityForm({ option: raw, send }: { option: KinAbilityOption; s
       )}
       {option.character === "uhzrun" && (
         <>
-          <input type="number" min={1} max={option.refine ?? 1} value={duration} onChange={event => setDuration(event.target.value)} aria-label="Stone to turn into gold" />
+          <NumberInput min={1} max={option.refine ?? 1} value={duration} onValueChange={setDuration} aria-label="Stone to turn into gold" />
           <button type="button" onClick={() => fire({ amount: Number(duration) })}>Refine stone into gold</button>
         </>
       )}

@@ -10,6 +10,7 @@ The apelike Kin of the Hanshu rigorously follow their ancient traditions of mart
 ## Starting setup
 
 - Place your starting buildings: 1 village, 1 other village at a distance of 3 tiles from the other village, and 3 roads connecting them (placed automatically).
+- Both starting villages may be placed on [[plains]], [[snow]], or [[farmland]].
 - Place your starting army: Strength 1 on the village.
 - Claim the Faction Effects cards and the Faction Building Bluprint.
 - Claim the following technologies: Election Research.
@@ -26,43 +27,43 @@ The apelike Kin of the Hanshu rigorously follow their ancient traditions of mart
 
 # Faction Effects
 
-## Imperial Roads | ◫ | core
-> Short description: [[Building]] a [[Road]] [[untap]]s the [[character]] used to build it.
-> Condition: You completed a Build action, the character was used to perform that action, and the building built was a Road.
-> Trigger: Build, after the action resolves fully.
-> Effect: Untap the character used to perform the Build action.
+## Imperial Roads | effect card | core
+> [[Building]] a [[Road]] [[untap]]s the [[character]] used to build it.
+// Condition: You completed a Build action, the character was used to perform that action, and the building built was a Road.
+// Trigger: Build, after the action resolves fully.
+// Effect: Untap the character used to perform the Build action.
 
-## Expansionists | ◫
-> Short description: You may [[Build]] a [[village]] on [[farmland]]. A village or [[city]] built on farmland [[produce]]s 1 [[food]].
-> 1 - Condition: You are building a village on farmland.
-> 1 - Trigger: Build, when checking the build condition.
-> 1 - Effect: Farmland is an allowed tile for building a village.
-> 2 - Condition: A village or city is on farmland.
-> 2 - Trigger: Seasons Change, before effects
-> 2 - Effect: The village or city produces 1 food.
+## Expansionists | effect card
+> You may [[Build]] a [[village]] on [[farmland]]. A village or [[city]] built on farmland [[produce]]s 1 [[food]].
+// 1 - Condition: You are building a village on farmland.
+// 1 - Trigger: Build, when checking the build condition.
+// 1 - Effect: Farmland is an allowed tile for building a village.
+// 2 - Condition: A village or city is on farmland.
+// 2 - Trigger: Seasons Change, before effects
+// 2 - Effect: The village or city produces 1 food.
 
-## Rice Fields | ◫
-> Short description: [[Worksite]]s built adjacent to [[plains]] are Rice Fields 🌾 that [[produce]] 1 [[food]].
-> 1 - Condition: You are building a Worksite.
-> 1 - Trigger: Build, when checking the Building Conditions.
-> 1 - Effect: Plains is an allowed tile for the Building Conditions of the Worksite.
-> 2 - Condition: A Worksite is adjacent to plains.
-> 2 - Trigger: Seasons Change, before effects.
-> 2 - Effect: The Worksite is a Rice Field 🌾 that produces 1 food.
+## Rice Fields | effect card
+> [[Worksite]]s built adjacent to [[plains]] are Rice Fields 🌾 that [[produce]] 1 [[food]].
+// 1 - Condition: You are building a Worksite.
+// 1 - Trigger: Build, when checking the Building Conditions.
+// 1 - Effect: Plains is an allowed tile for the Building Conditions of the Worksite.
+// 2 - Condition: A Worksite is adjacent to plains.
+// 2 - Trigger: Seasons Change, before effects.
+// 2 - Effect: The Worksite is a Rice Field 🌾 that produces 1 food.
 
-## Influential | ◫
-> Short description: [[Authority]] is a resource only the Hanshu use. You gain 1 authority when the law you voted for is enacted. You gain 1 authority when a law is [[Revoked]] by another player. You may revoke a law card for 1 authority.
-> 1 - Condition: The law you voted on is enacted in the Council event.
-> 1 - Trigger: Council, after the law is enacted.
-> 1 - Effect: Gain 1 influence.
-> 2 - Condition: Another player revokes a law.
-> 2 - Trigger: Revoke, after the law is revoked.
-> 2 - Effect: Gain 1 influence.
-> 3 - Condition: You have at least 1 influence and want to revoke a law.
-> 3 - Trigger: Revoke, before the Payment step.
-> 3 - Payment: Pay 1 influence.
-> 3 - Effect: Revoke the selected law without having to tap any sources for build power.
-> Extra Rules: Influence cannot be bartered.
+## Influential | effect card
+> [[Authority]] is a resource only the Hanshu use. You gain 1 authority when the law you voted for is enacted. You gain 1 authority when a law is [[Revoked]] by another player. You may revoke a law card for 1 authority.
+// 1 - Condition: The law you voted on is enacted in the Council event.
+// 1 - Trigger: Council, after the law is enacted.
+// 1 - Effect: Gain 1 influence.
+// 2 - Condition: Another player revokes a law.
+// 2 - Trigger: Revoke, after the law is revoked.
+// 2 - Effect: Gain 1 influence.
+// 3 - Condition: You have at least 1 influence and want to revoke a law.
+// 3 - Trigger: Revoke, before the Payment step.
+// 3 - Payment: Pay 1 influence.
+// 3 - Effect: Revoke the selected law without having to tap any sources for build power.
+// Extra Rules: Influence cannot be bartered.
 
 
 # Characters

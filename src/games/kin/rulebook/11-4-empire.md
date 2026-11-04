@@ -39,13 +39,13 @@ Cards (owned by the leader): Neutral City Blueprint
 
 ## Surpress | action card
 > Short description: Spend 1 [[Authority]] to increase the strength of an [[army]] on a [[Barracks]] or a building on which you can [[Recruit]].
-> Phase: Universal
+> Phase: Control
 > Condition: You have at least 1 Authority. There is an army on a Barracks or a building on which you can Recruit.
 > On trigger: Select a untapped Character/Activation Card (of any archetype). Select an army on a Barracks or a building on which you can Recruit.
 > Payment: Tapping the selected character/activation card. Spend 1 Authority.
 > Effect: Increase the strength of the selected army by 1.
 
-## Demagogue | ◫
+## Demagogue | effect card
 > Short description: When you destroy a [[neutral village]] or [[neutral city]] through [[Battle]], gain 3 [[Authority]].
 > Condition: a neutral village or city is destroyed by you in this Battle
 > Trigger: Battle, when it has fully resolved

@@ -37,6 +37,8 @@ interface BoardProps {
   world: KinWorld;
   // Called with a tile index when a tile is clicked; only set while tiles can be placed.
   onTile?: (index: number) => void;
+  // Ocean tiles this returns false for are shown as blocked and cannot be clicked.
+  tileAllowed?: (index: number) => boolean;
   onVertex?: (vertex: string) => void;
   // Starting setup: tile and worksite side choices.
   onSetupTile?: (index: number) => void;
@@ -49,7 +51,7 @@ interface BoardProps {
   spots?: Spot[];
 }
 
-export function WorldBoard({ world, onTile, onVertex, onSetupTile, onSetupSide, pickableArmies, onArmy, movingArmy, moveTargets, onMoveTile, spots }: BoardProps) {
+export function WorldBoard({ world, onTile, tileAllowed, onVertex, onSetupTile, onSetupSide, pickableArmies, onArmy, movingArmy, moveTargets, onMoveTile, spots }: BoardProps) {
   const polygons = useMemo(() => Array.from({ length: ROWS * COLS }, (_, index) => cornersOf(index).map(point)), []);
   const minX = -HALF_W - 4;
   const minY = -2 * HALF_H - 4;
@@ -60,11 +62,13 @@ export function WorldBoard({ world, onTile, onVertex, onSetupTile, onSetupSide, 
       <g>
         {polygons.map((corners, index) => {
           const terrain = world.board[index];
-          const clickable = !!onTile && terrain === "ocean";
+          const placeable = !!onTile && terrain === "ocean";
+          const blocked = placeable && !!tileAllowed && !tileAllowed(index);
+          const clickable = placeable && !blocked;
           return (
             <polygon
               key={index}
-              className={`kin-tile ${clickable ? "clickable" : ""}`}
+              className={`kin-tile ${clickable ? "clickable" : ""} ${blocked ? "blocked" : ""}`}
               points={corners.map(([x, y]) => `${x},${y}`).join(" ")}
               fill={TERRAIN_COLORS[terrain]}
               onClick={clickable ? () => onTile(index) : undefined}

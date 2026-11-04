@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, type ReactNode } from "react";
 import { Person } from "../../avatar/Avatar";
 import { HostControlsTab } from "../../components/HostControlsTab";
 import { KickButton } from "../../components/KickButton";
@@ -7,7 +7,7 @@ import { TERRAIN_NAMES, WorldBoard } from "./Board";
 import { ArkBoard, BuildingGallery } from "./Buildings";
 import { CardGallery, CourtCards } from "./Cards";
 import { MainGame } from "./MainGame";
-import { KinCard } from "./KinCard";
+import { KinCard, kinColor } from "./KinCard";
 import { CharacterCard } from "./CharacterCard";
 import { CHARACTERS } from "./characters.data";
 import type { KinMode, KinSnapshot, KinWorld } from "./types";
@@ -103,16 +103,14 @@ const LAST_TYPES = ["plains", "snow", "desert"] as const;
 
 const CHARACTER_PROMPTS = [
   "claim a character of your own Kin.",
+  "claim a second character of your own Kin.",
   "claim a Discovery character.",
   "claim an Expansion character.",
   "claim a Control character."
 ];
 
-// Characters that can be claimed come first, then the ones that cannot (grey), then the claimed ones.
-function orderCharacters(world: KinWorld) {
-  const rank = (id: string) => world.charClaims[id] ? 2 : world.charEligible.includes(id) ? 0 : 1;
-  return CHARACTERS.filter(def => world.charPool.includes(def.id)).sort((a, b) => rank(a.id) - rank(b.id));
-}
+// Mirrors the server's climateOfRow: snow in the top 2 and bottom 2 rows, desert in the middle 2, plains elsewhere.
+const rowClimate = (row: number) => row < 2 || row >= 12 ? "snow" : row === 6 || row === 7 ? "desert" : "plains";
 
 function setupPrompt(world: KinWorld) {
   switch (world.setup?.task) {
@@ -133,20 +131,11 @@ function stepTitle(world: KinWorld) {
   return "5. Characters";
 }
 
-function Started(props: GameLobbyProps<KinSnapshot>) {
-  const { snapshot, userId, isHost, send } = props;
+function Started(props: GameLobbyProps<KinSnapshot> & { hostControls?: ReactNode }) {
+  const { snapshot, userId, isHost, send, hostControls } = props;
   if (snapshot.world?.step === "done") {
     return (
-      <>
-        <MainGame snapshot={snapshot} userId={userId} isHost={isHost} send={send} />
-        {isHost && (
-          <HostControlsTab>
-            <div className="host-actions">
-              <button onClick={() => window.confirm("Return to the lobby and discard this game?") && send({ type: "abort" })}>Back to lobby</button>
-            </div>
-          </HostControlsTab>
-        )}
-      </>
+      <MainGame snapshot={snapshot} userId={userId} isHost={isHost} send={send} hostControls={hostControls} />
     );
   }
   return <SetupScreen {...props} />;
@@ -167,6 +156,16 @@ function SetupScreen({ snapshot, userId, isHost, send }: GameLobbyProps<KinSnaps
   const lastPickable = lastPile ? LAST_TYPES.filter(type => lastPile[type] > 0) : [];
   const lastChosen = lastPile && lastPile[lastPick] > 0 ? lastPick : lastPickable[0];
   const lastLeft = lastPile ? LAST_TYPES.reduce((sum, type) => sum + lastPile[type], 0) : 0;
+  const draftCharacters = CHARACTERS.filter(def => world?.charPool.includes(def.id));
+  const draftRows = world ? [
+    { id: "eligible", title: "Draftable now", characters: draftCharacters.filter(def => !world.charClaims[def.id] && world.charEligible.includes(def.id)) },
+    { id: "ineligible", title: "Undraftable", characters: draftCharacters.filter(def => !world.charClaims[def.id] && !world.charEligible.includes(def.id)) },
+    ...snapshot.order.map(id => ({
+      id,
+      title: `${names.get(id)?.username ?? "Player"}'s drafted characters`,
+      characters: draftCharacters.filter(def => world.charClaims[def.id] === id)
+    }))
+  ] : [];
   return (
     <>
       <div className="kin-setup">
@@ -229,18 +228,25 @@ function SetupScreen({ snapshot, userId, isHost, send }: GameLobbyProps<KinSnaps
                 </div>
               )}
               {(world.step === "characters" || world.step === "done") && (
-                <div className="char-cards">
-                  {orderCharacters(world).map(def => {
+                <div className="kin-draft-rows">
+                  {draftRows.map(row => <section key={row.id} className="kin-draft-row" aria-label={row.title}>
+                    <h3>{row.title} <span className="pill">{row.characters.length}</span></h3>
+                    <div className="char-cards">
+                  {row.characters.map(def => {
                     const ownerId = world.charClaims[def.id];
                     const state = ownerId ? "claimed" : world.charEligible.includes(def.id) ? "eligible" : "ineligible";
                     return <CharacterCard key={def.id} def={def} kins={world.kins} state={state} owner={ownerId && (names.get(ownerId)?.username ?? "?")} onPick={myTurn ? () => send({ type: "pickCharacter", character: def.id }) : undefined} />;
                   })}
+                    </div>
+                    {row.characters.length === 0 && <p className="muted small">No characters.</p>}
+                  </section>)}
                 </div>
               )}
               {world.step !== "characters" && <WorldBoard
                 world={world}
                 onTile={world.step === "tiles" && myTurn && chosen ? index => send({ type: "placeTile", tile: index, terrain: chosen })
                   : world.step === "lastTiles" && myTurn && lastChosen ? index => send({ type: "placeLastTile", tile: index, terrain: lastChosen }) : undefined}
+                tileAllowed={world.step === "lastTiles" && lastChosen ? index => rowClimate(Math.floor(index / 20)) === lastChosen : undefined}
                 onVertex={world.step === "rivers" && myTurn ? vertex => send({ type: world.freeEnd ? "riverExtend" : "riverStart", vertex }) : undefined}
                 onSetupTile={world.step === "setup" && myTurn ? tile => send({ type: "setupPlace", tile, ...(world.setup?.dedicate ? { dedication } : {}) }) : undefined}
                 onSetupSide={world.step === "setup" && myTurn ? side => send({ type: "setupPlace", side }) : undefined}
@@ -272,16 +278,18 @@ function SetupScreen({ snapshot, userId, isHost, send }: GameLobbyProps<KinSnaps
           <ol className="kin-seats">
             {snapshot.order.map((id, index) => {
               const seat = names.get(id);
+              const kin = world?.kins.find(entry => entry.id === world.kinPicks[id]);
+              const dark = kin && ["brown", "dark red", "black", "blue", "dark green", "purple"].includes(kin.color);
               return seat && (
-                <li key={id} className={`taken ${world?.turn === id ? "on-turn" : ""}`}>
+                <li key={id} className={`taken ${world?.turn === id ? "on-turn" : ""}`} style={{ background: kin ? kinColor(kin) : undefined, color: dark ? "#fffaf0" : "#2a1f14" }}>
                   <span className="kin-seat-number">{index + 1}</span>
+                  <div className="kin-setup-player-info">
                   <Person id={seat.id} name={seat.username} />
-                  <span className="kin-seat-pill-container">
-                  {world?.turn === id && <span className="pill">turn</span>}
-                  {world?.kinPicks[id] && <span className="pill">{world.kins.find(k => k.id === world.kinPicks[id])?.name}</span>}
-                  {!seat.connected && <span className="pill">offline</span>}
-                  {seat.id === userId && <span className="pill">You</span>}
+                  {kin && <span className="kin-setup-player-kin">{kin.name}</span>}
+                  <span className="kin-setup-player-status">
+                    {[world?.turn === id && "Turn", !seat.connected && "Offline", seat.id === userId && "You"].filter(Boolean).join(" · ")}
                   </span>
+                  </div>
                 </li>
               );
             })}
@@ -300,6 +308,6 @@ function SetupScreen({ snapshot, userId, isHost, send }: GameLobbyProps<KinSnaps
     </>
   );
 }
-export function KinLobby(props: GameLobbyProps<KinSnapshot>) {
+export function KinLobby(props: GameLobbyProps<KinSnapshot> & { hostControls?: ReactNode }) {
   return props.snapshot.phase === "lobby" ? <Waiting {...props} /> : <Started {...props} />;
 }

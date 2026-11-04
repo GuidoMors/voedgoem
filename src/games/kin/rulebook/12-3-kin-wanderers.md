@@ -24,37 +24,38 @@ The most adventurous of these critters were the foxes of the poles, who with the
 
 # Faction Effects
 
-## Arctic | ◫ | Core
-> Short description: Your [[army|armies]] are immune to the [[Attrition]] event.
-> Trigger: Attrition, before effects.
-> Effect: Your armies are unaffected by the Attrition event.
+## Arctic | effect card | core
+> Your [[army|armies]] are immune to the [[Attrition]] event.
+// Trigger: Attrition, before effects.
+// Effect: Your armies are unaffected by the Attrition event.
 
-## Snow Strider | ◫
-> Short description: Moving from [[snow]] to snow costs ½. When you [[Move]] an [[army]], the top and bottom tiles of the same column count as adjacent.
-> 1 - Condition: You are moving from a snow tile to another snow tile.
-> 1 - Trigger: Move, when calculating tile speed cost.
-> 1 - Effect: The tile speed cost for moving from snow to snow is reduced to ½.
-> 2 - Trigger: Move, when checking tile adjacency.
-> 2 - Effect: For you, the top tile and the bottom tile of the same column count as adjacent.
+## Snow Strider | effect card
+> Moving from [[snow]] to snow costs ½. When you [[Move]] an [[army]], the top and bottom tiles of the same column count as adjacent.
+// 1 - Condition: You are moving from a snow tile to another snow tile.
+// 1 - Trigger: Move, when calculating tile speed cost.
+// 1 - Effect: The tile speed cost for moving from snow to snow is reduced to ½.
+// 2 - Trigger: Move, when checking tile adjacency.
+// 2 - Effect: For you, the top tile and the bottom tile of the same column count as adjacent.
 
 ## Nomads | action card
-> Short description: Move a [[village]] you own to an adjacent [[snow]] tile. (all [[slice buildings]] inside the village move with it)
-> Phase: Discovery
-> Condition: You own a village adjacent to a snow tile.
-> On trigger: Select a untapped Discovery Character/Activation Card. Select a village adjacent to a snow. select a snow tile adjacent to the village.
-Payment: Tapping the selected character/activation cards.
-Effect: Move the selected village and any slice buildings on the same tile to the selected snow tile.
-> Extra Rules: Buildings whose conditions are no longer met stop producing until those conditions are met again, like worksites not adjacent to farmland, forest, or mountains, or markets not adjacent to rivers.
+> Move a [[village]] you own to an adjacent [[snow]] tile.
+// Phase: Discovery
+// Condition: You own a village adjacent to a snow tile.
+// On trigger: Select a untapped Discovery Character/Activation Card. Select a village adjacent to a snow. select a snow tile adjacent to the village.
+// Payment: Tapping the selected character/activation cards.
+// Effect: Move the selected village and any slice buildings on the same tile to the selected snow tile.
+// Extra Rules: Buildings whose conditions are no longer met stop producing until those conditions are met again, like worksites not adjacent to farmland, forest, or mountains, or markets not adjacent to rivers.
 
-## Relic Seekers | ◫
-> Short description: When you [[Explore]] a [[ruins]], you always find a [[relic]]. When you attack, if your [[ambush]] total is equal to or higher than the number of relics the other player has, you may steal 1 relic from them instead of taking a general hostage.
-> 1 - Condition: You Explore a ruins.
-> 1 - Trigger: Explore, when determining the ruin's contents.
-> 1 - Effect: You find a relic block, instead of randomly determined relic block, warp or treasure block.
-> 2 - Condition: You are attacking, your ambush total is equal to or higher than the number of relics the other player has, and they have at least 1 relic.
-> 2 - Trigger: Battle, before the ambush step.
-> 2 - On Trigger: Choose whether to steal 1 relic from the other player instead of taking a general hostage.
-> 2 - Effect: If you choose to steal a relic, take 1 relic from the other player instead of taking a general hostage.
+## Relic Seekers | effect card
+> When you [[Explore]] a [[ruins]], you always find a [[relic]]. 
+> When you attack, if your [[ambush]] total is equal to or higher than the number of [[relic]] the other player has, you may steal 1 [[relic]] from them instead of taking a general [[hostage]].
+// 1 - Condition: You Explore a ruins.
+// 1 - Trigger: Explore, when determining the ruin's contents.
+// 1 - Effect: You find a relic block, instead of randomly determined relic block, warp or treasure block.
+// 2 - Condition: You are attacking, your ambush total is equal to or higher than the number of relics the other player has, and they have at least 1 relic.
+// 2 - Trigger: Battle, before the ambush step.
+// 2 - On Trigger: Choose whether to steal 1 relic from the other player instead of taking a general hostage.
+// 2 - Effect: If you choose to steal a relic, take 1 relic from the other player instead of taking a general hostage.
 
 
 # Characters

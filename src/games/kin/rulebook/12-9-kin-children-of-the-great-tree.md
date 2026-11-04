@@ -24,28 +24,28 @@ But as time passed, some of the lesser creatures of the world strayed away from 
 
 # Faction Effects
 
-## Rootwalkers | ◫ | core faction ability
-> Short description: Moving from [[forest]] to forest costs ½.
-> Condition: Army is standing on forest.
-> Trigger: Move, when calculating tile speed cost.
-> Effect: The tile speed cost for moving to forest is set to ½.
+## Rootwalkers | effect card | core faction ability
+> Moving from [[forest]] to forest costs ½.
+// Condition: Army is standing on forest.
+// Trigger: Move, when calculating tile speed cost.
+// Effect: The tile speed cost for moving to forest is set to ½.
 
-## Woodkin | ◫
-> Short description: You can [[Build]] [[villages]] on [[forest]]s as if they were [[plains]].
-> Condition: You are building a village
-> Trigger: Build, when checking the Building Conditions.
-> Effect: Add forest to the allowed tiles for this Building selection.
+## Woodkin | effect card
+> You can [[Build]] [[villages]] on [[forest]]s as if they were [[plains]].
+// Condition: You are building a village
+// Trigger: Build, when checking the Building Conditions.
+// Effect: Add forest to the allowed tiles for this Building selection.
 
-## Seedling Villages | ◫
-> Short description: [[Build]]ing a [[village]] on a [[forest]] has no resource cost if the village is attached to [[The Great Tree]].
-> Condition: You are building a village on a forest tile, and the village is attached to the Great Tree.
-> Trigger: Build, when determining the resource cost.
-> Effect: The resource cost for building the village is 0.
+## Seedling Villages | effect card
+> [[Build]]ing a [[village]] on a [[forest]] has no resource cost if the village is attached to [[The Great Tree]].
+// Condition: You are building a village on a forest tile, and the village is attached to the Great Tree.
+// Trigger: Build, when determining the resource cost.
+// Effect: The resource cost for building the village is 0.
 
-## Mana Affluent | ◫
-> Short description: When someone [[Explore]]s a [[warp]], gain 1 [[mana]].
-> Trigger: Explore, when a warp is discovered.
-> Effect: Gain 1 mana.
+## Mana Affluent | effect card
+> When someone [[Explore]]s a [[warp]], gain 1 [[mana]].
+// Trigger: Explore, when a warp is discovered.
+// Effect: Gain 1 mana.
 
 # Characters
 

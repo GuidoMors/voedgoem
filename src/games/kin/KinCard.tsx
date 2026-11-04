@@ -3,7 +3,7 @@ import { normalize } from "./rulebookParser";
 import type { KinInfo } from "./types";
 
 const COLORS: Record<string, string> = {
-  pink: "#e58bb8", brown: "#8b5a2b", "light blue": "#7ec8e8", yellow: "#e8c547", "dark red": "#8e1b1b",
+  pink: "rgb(227 169 198)", brown: "#8b5a2b", "light blue": "#7ec8e8", yellow: "#e8c547", "dark red": "#8e1b1b",
   grey: "#8a8f98", black: "#2b2b2b", blue: "#2f5fc4", "dark green": "#2e6b3a", purple: "#7a4fb0"
 };
 

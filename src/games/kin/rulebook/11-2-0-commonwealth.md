@@ -21,7 +21,7 @@ Cards (owned by the leader): Cautious Schemer
 > If the Commonwealth has fewer members than the Opposition, no donation takes place. Instead, move the Commonwealth marker 1 step left, stopping at step 1.
 > This card taps.
 
-## Cautious Schemer | ◫
+## Cautious Schemer | effect card
 > Short description: When an event is resolved in [[natural turn]] order, such as the [[Commonwealth Donation]] or [[Council]] event, you may choose to take your turn last.
 > Trigger: event is triggered that uses turn taking in natural order (Commonwealth Donation, Council, Taxation)
 > On Trigger: decline or accept

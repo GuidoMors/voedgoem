@@ -11,7 +11,7 @@ These cards are shuffled into the [[tactics deck]] upon someone researching the 
 > Extra rules: this does not count towards breaking any treaties.
 
 ## Alchemical Plague | 🕀
-> Short description: Taps a character in a court, any court.
+> Short description: [[Tap]]s a character in a [[court]], any court.
 > Condition: discovery, expansion, or control phase
 > Trigger: click the activate button on the card.
 > On trigger: select any character
@@ -33,7 +33,7 @@ These cards are shuffled into the [[tactics deck]] upon someone researching the 
 > Effect: this behaves as an universal activation card of power 2 with the effect that when used as an activation card it goes to the tactics deck discard pile.
 
 ## Shoulders of Giants | 🕀
-> Short description: [[Publicize]] a technology.
+> Short description: [[Publicize]] a [[technology]].
 > Condition: discovery, expansion, or control phase
 > Trigger: click the activate button on the card.
 > On trigger: select a technology in a court.
@@ -54,9 +54,9 @@ These cards are shuffled into the [[tactics deck]] upon someone researching the 
 [[Secret tactics card]]s are shuffled into the [[tactics deck]] upon someone researching the [[Subterfuge Science]] [[Technology]]. When a secret tactics card is won in a bid, it is discarded into the tactics discard pile. That player then draws a random subterfuge card. 
 Subterfuge cards are cards you hold unreaveled in your [[court]]. Only you know what it is. Its effect activate under the condition printed on the card as if an [[ability]]. When a subterfuge card is played it is put in the discard pile of the subterfuge cards.
 
-## Technological Reconnaissance | ☽
+## Reconnaissance | ☽
 > Short description: When a succesful [[Barter]] offer includes: an [[Access Treaty]] or [[Promise Treaty]]
-Then: [[Publicize]] all their technologies. You gain all their [[Tactics Card]]s
+> Then: play this to [[Publicize]] all their technologies. You gain all their [[Tactics Card]]s
 > Condition: A barter this player is involved in includes an access treaty or promise treaty as a bartering good.
 > Trigger: Barter, after succesful activation
 > Payment: this card goes to the tactics deck discard pile.
@@ -64,7 +64,7 @@ Then: [[Publicize]] all their technologies. You gain all their [[Tactics Card]]s
 
 ## Bank Heist | ☽
 > Short description: When a succesful [[Barter]] offer includes: [[gold]]
-Then: take all the [[gold]] they have in their bank.
+> Then: play this to take all the [[gold]] they have in their bank.
 > Condition: A barter this player is involved in includes gold as a bartering good.
 > Trigger: Barter, after succesful activation
 > Payment: this card goes to the tactics deck discard pile.
@@ -72,7 +72,7 @@ Then: take all the [[gold]] they have in their bank.
 
 ## Feigned Allegiance | ☽
 > Short description: When a succesful [[Barter]] offer includes: a [[Faction Treaty]]
-Then: dissolve the given Faction Treaty, gain their [[Faction Treaty]]
+> Then: play this to dissolve the given Faction Treaty, gain their [[Faction Treaty]]
 > Condition: A barter this player is involved in includes a faction treaty as a bartering good. this player does not yet have a Faction Treaty from the receiver of this Barter.
 > Trigger: Barter, after succesful activation
 > Payment: this card goes to the tactics deck discard pile.
@@ -80,20 +80,22 @@ Then: dissolve the given Faction Treaty, gain their [[Faction Treaty]]
 
 ## Trojan Trade | ☽
 > Short description: When a succesful [[Barter]] offer includes: you receiving nothing
-Then: [[tap]] all characters in their [[court]]
+> Then: play this to [[tap]] all characters in their [[court]]
 > Condition: A barter this player is involved in has them receiving nothing at all, but giving something.
 > Trigger: Barter, after succesful activation
 > Payment: this card goes to the tactics deck discard pile.
 > Effect: Tap all characters of the player involved in the Barter that is not this player.
 
 ## Counterattack | ☽
-> Short description: When you are attacked in [[Battle]], remove 3 [[strength]] from the attacking [[army]].
+> Short description: When you are attacked in [[Battle]] 
+> Then: play this to remove 3 [[strength]] from the attacking [[army]]
 > Trigger: Battle, before the effect step
 > Payment: this card goes to the tactics deck discard pile.
 > Effect: Reduce the strength of the attacking army by up to 3. If this reduces the attacking armies strength to 0 or less, skip the effects of the battle.
 
 ## Retaliation | ☽
-> Short description: When someone plays a [[subterfuge card]] or [[tactics card]] against you, the effects happen to them instead of you.
+> Short description: When someone plays a [[subterfuge card]] or [[tactics card]] against you
+> Then: play this to the effects happen to them instead of you
 > Trigger: Subterfuge card being triggered, before the effect step OR tactics card being triggered, before the effect step
 > Payment: this card goes to the tactics deck discard pile.
 > Effect: If a target must be chosen, this player chooses targets instead. Otherwise the target is not this player, but the player whose subterfuge or tactics card trigger Retaliation.

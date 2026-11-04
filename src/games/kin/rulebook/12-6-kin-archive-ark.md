@@ -25,36 +25,36 @@ In recent years, their power has evolved beyond mere intelligence, allowing them
 
 # Faction Effects
 
-## Technomancers | ◫ | core
-> Short description: When someone [[Publicize]]s one of your [[technology|technologies]], gain 1 [[gear]].
-> Trigger: Another player Publicize, when it resolves.
-> Effect: Gain 1 gear.
+## Technomancers | effect card | core
+> When someone [[Publicize]]s one of your [[technology|technologies]], gain 1 [[gear]].
+// Trigger: Another player Publicize, when it resolves.
+// Effect: Gain 1 gear.
 
 ## Calculators | event card
-> Short description: Secretly predict an action another player will make with a [[character]] this round. If it turns out to be true, gain 1 [[gear]] for each technology in your court. (can only trigger once per round)
-> Effect: The Archive Ark gets a popup where they choose a player, an action card, and a character in their court. When this action card is taken by that player, and it is activated by that player, and this is the first time this happens this round, the Archive Ark gains 1 gear for each technology in their court. This card taps.
+> Secretly predict an action another player will make with a [[character]] this round. If it turns out to be true, gain 1 [[gear]] for each technology that only you know. (can only trigger once per round)
+// Effect: The Archive Ark gets a popup where they choose a player, an action card, and a character in their court. When this action card is taken by that player, and it is activated by that player, and this is the first time this happens this round, the Archive Ark gains 1 gear for each technology in their court. This card taps.
 
 ## Drifting Citadel | action card
-> Short description: [[Move]] the [[Ark]] 1 [[unbuilt]] tile of any tile type.
-> Phase: Discovery
-> Condition: The Ark has an adjacent unbuilt tile.
-> On trigger: Select a untapped Discovery Character/Activation Card. Select an unbuilt tile adjacent to the Ark.
-> Effect: Move the Ark to the selected tile.
-> Extra Rules: Character power does not change the distance the Ark moves.
+> [[Move]] the [[Ark]] 1 [[unbuilt]] tile of any tile type.
+// Phase: Discovery
+// Condition: The Ark has an adjacent unbuilt tile.
+// On trigger: Select a untapped Discovery Character/Activation Card. Select an unbuilt tile adjacent to the Ark.
+// Effect: Move the Ark to the selected tile.
+// Extra Rules: Character power does not change the distance the Ark moves.
 
-## The Eternal Ark | ◫
-> Short description: The Archive Ark has its own board: the ark board, which contains 2 tiles where [[slice buildings]] can be built regardless of their Building Conditions. For the Worksite on the ark board don't produce normally, but can be build there. You cannot Deploy armies on the ark board.
-> 1 - Trigger: Seasons Change
-> 1 - Effect: worksites on the ark board don't produce.
-> 2 - Trigger: The Eternal Ark is destroyed.
-> 2 - Effect: Destroy all buildings inside the Ark. Remove the ark board from play.
-> 3 - Trigger: Build, when choosing which tiles are allowed as an option for a slice building
-> 3 - Effect: add all edges on the ark board to the allowed edges.
+## The Eternal Ark | effect card
+> The Archive Ark has its own board: the ark board, which contains 2 tiles considered [[tile buildings]]. Each supports up to 6 [[slice buildings]], one per edge, regardless of their Building Conditions. [[Worksite]]s on the ark board do not produce normally, but can be built there. You cannot Deploy armies on the ark board.
+// 1 - Trigger: Seasons Change
+// 1 - Effect: worksites on the ark board don't produce.
+// 2 - Trigger: The Eternal Ark is destroyed.
+// 2 - Effect: Destroy all buildings inside the Ark. Remove the ark board from play.
+// 3 - Trigger: Build, when choosing which tiles are allowed as an option for a slice building
+// 3 - Effect: add all edges on the ark board to the allowed edges.
 
 ## Mass Harvest | event card
-> Short description: Gain a basic resource of the tile type the Ark is standing on for each Worksite.
-> Condition: The Ark building is on the Board. The Ark Building is on a farmland, forest, or mountain. There are workites on the arkboard.
-> Effect: If The Ark if on farmland, gain 1 food for each worksite on the ark board. If The Ark is on a forest, gain 1 lumber for each worksite on the ark board. If The Ark is on a mountain, gain 1 stone for each worksite on the ark board. This card taps.
+> Gain a [[basic resource]] of the tile type the [[Ark]] is standing on for each [[Worksite]] on the ark board.
+// Condition: The Ark building is on the Board. The Ark Building is on a farmland, forest, or mountain. There are workites on the arkboard.
+// Effect: If The Ark if on farmland, gain 1 food for each worksite on the ark board. If The Ark is on a forest, gain 1 lumber for each worksite on the ark board. If The Ark is on a mountain, gain 1 stone for each worksite on the ark board. This card taps.
 
 # Characters
 

@@ -10,7 +10,8 @@ export interface BaseSnapshot {
   maxPlayers: number;
   spectators: { id: string; username: string }[];
   phase: Phase;
-  bots: { id: string; username: string }[];
+  bots: { id: string; username: string; forcePass?: boolean }[];
+  autoBots?: boolean;
   // Only sent to admins: each bot's own view of the game, so they can play as the bot.
   botViews?: Record<string, Record<string, unknown>>;
 }

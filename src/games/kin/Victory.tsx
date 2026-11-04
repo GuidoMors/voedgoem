@@ -15,37 +15,46 @@ export function VictoryPanel({ victory, names }: { victory: KinVictory; names: R
   const held = (player: string) => Object.values(victory.leaders).filter(leader => leader === player).length;
   const { result } = victory;
   return (
-    <>
+    <section className="kin-victory" aria-label="Victory conditions">
+      <header className="kin-victory-heading">
+        <h2>New Dawn</h2>
+        <p>Lead in <strong>{victory.needed} of {AREAS.length} areas</strong> to win.</p>
+      </header>
       {result && (
         <div className="kin-victory-banner" role="status">
           <h2>{names[result.winner] ?? "?"} wins the game</h2>
           <p>{result.reason} The New Dawn was won in round {result.round}.</p>
         </div>
       )}
-      <details className="kin-templates kin-victory" open={!!result}>
-        <summary>New Dawn standings (need {victory.needed} of 6 areas)</summary>
         <table className="kin-victory-table">
           <thead>
             <tr>
-              <th>Area</th>
-              {players.map(player => <th key={player}>{names[player] ?? "?"}</th>)}
+              <th scope="col">Area</th>
+              {players.map(player => <th scope="col" key={player}>{names[player] ?? "?"}</th>)}
             </tr>
           </thead>
           <tbody>
-            {AREAS.map(area => (
+            {AREAS.map(area => {
+              const highest = Math.max(...players.map(player => victory.standings[player][area.id]));
+              const tied = players.filter(player => victory.standings[player][area.id] === highest);
+              return (
               <tr key={area.id}>
-                <th>{area.name}</th>
-                {players.map(player => <td key={player} className={victory.leaders[area.id] === player ? "most" : ""}>{victory.standings[player][area.id]}</td>)}
+                <th scope="row">{area.name}</th>
+                {players.map(player => {
+                  const sharedFirst = tied.length > 1 && tied.includes(player);
+                  const leader = victory.leaders[area.id] === player;
+                  return <td key={player} className={sharedFirst ? "tied" : leader ? "most" : ""} title={sharedFirst ? "Tied for first place" : leader ? "Sole leader" : undefined}>{victory.standings[player][area.id]}</td>;
+                })}
               </tr>
-            ))}
-            <tr>
-              <th>Areas held</th>
-              {players.map(player => <td key={player}><strong>{held(player)}</strong></td>)}
-            </tr>
+            );})}
           </tbody>
+          <tfoot>
+            <tr>
+              <th scope="row">Areas led</th>
+              {players.map(player => <td key={player}><strong>{held(player)} / {victory.needed}</strong></td>)}
+            </tr>
+          </tfoot>
         </table>
-        <p className="muted small">Ties do not count, and the check happens at the end of every Control phase.</p>
-      </details>
-    </>
+    </section>
   );
 }

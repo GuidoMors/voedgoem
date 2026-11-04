@@ -1,9 +1,7 @@
 # Glossary
 
-Format: `## keyword | icon | color class (optional)`. A color class makes the icon show inside text. Use `plain` for an icon with no color.
-
 ## kin | ❖
-The faction a player leads. Each Kin has [[faction effect]]s, faction building, and characters.
+The faction a player leads. Each Kin has [[faction effect]]s, faction building, and characters. See a list of the kin under [[natural order]].
 ## tap | ↷ | plain
 Turn a card sideways. A tapped card cannot be tapped again until [[untap]]ped. [[Character]]s, [[relic]]s, [[treaty|treaties]] and [[event card]]s can be tapped.
 ## untap | ↶ | plain
@@ -27,7 +25,7 @@ The tile types are [[snow]], [[plains]], [[desert]], [[farmland]], [[mountain]],
 ## claim
 When it says to claim something, put it in your [[court]]. You own it. It enters [[untap]]ped.
 ## phase | ◐
-One of four steps of a round: [[Event]], [[Discovery]], [[Expansion]], [[Control]]. They are tracked on the [[phase board]] by the [[phase marker]].
+One of four steps of a round: [[Event]], [[Discovery]], [[Expansion]], [[Control]]. They are tracked on the [[phase board]] by the [[phase marker]] in the top right.
 ## phase marker | ★
 White star token showing the current [[phase]] on the [[phase board]].
 ## round | ⟳
@@ -72,7 +70,7 @@ A locked character in an [[court]]. It cannot [[activate]] its [[ability]] or be
 A locked card cannot be [[activate]]d or [[tap]]ped.
 ## unlocked
 Cards are unlocked by default. It means that they can be [[activate]]d at tapped.
-## basic resource
+## basic resource | ⠶ | basic
 [[Gold]], [[lumber]], [[stone]] or [[food]].
 ## special resource
 [[Gear]], [[mana]], and [[relic]].
@@ -85,12 +83,27 @@ A [[basic resource]] kept in your [[court]]. Associated with [[mountains]].
 ## food | ❀ | food
 A [[basic resource]] kept in your [[court]]. Associated with [[farmland]].
 ## gear | ⚙ | gear
-A [[special resource]] kept in your [[court]]. Paid for technologies.
+A [[special resource]] kept in your [[court]]. Paid for [[technology|technologies]].
 ## mana | ✦ | mana
-A [[special resource]] kept in your [[court]]. Paid for magical abilities.
+A [[special resource]] kept in your [[court]]. Paid for magical [[ability|abilities]].
 ## relic | 𐚬 | rel
+During your turn in any phase, click the relic icon in your court to tap a chosen number of untapped relics and gain that many of one chosen basic resource. This does not end your turn. Relics untap at [[Seasons Change]]. Only untapped relics can be bartered. Relic counts show (tapped/total).
 A [[special resource]] kept in your [[court]]. You can tap it to gain a [[basic resource]] of your choice. It can be tapped in any [[phase]]. It is special in that it does not end your turn when you tap it.
-## ruins
+## mountain | ⬢ | tile-mountain
+A tile type placed on the world board. It is associated with [[stone]]. It is a resource tile type, together with [[forest]] and [[farmland]].
+## forest | ⬢ | tile-forest
+A tile type placed on the world board. It is associated with [[lumber]]. It is a resource tile type, together with [[mountain]] and [[farmland]].
+## farmland | ⬢ | tile-farmland
+A tile type placed on the world board. It is associated with [[lumber]]. It is a resource tile type, together with [[mountain]] and [[forest]].
+## plains | ⬢ | tile-plains
+A tile type placed on the world board. It's climate is the tiles that are not in the middle, top, or bottom 2 rows. It is a common tile type, together with [[snow]] and [[desert]].
+## snow | ⬢ | tile-snow
+A tile type placed on the world board. It's climate is the top and bottom two rows. It is a common tile type, together with [[plains]] and [[desert]].
+## desert | ⬢ | tile-desert
+A tile type placed on the world board. It's climate is in the middle two rows. It is a common tile type, together with [[plains]] and [[snow]].
+## ocean | ⬢ | tile-ocean
+The tile type that all tiles on the world board start as.
+## ruins | ♜
 A block on a tile which an [[army]] can [[Explore]]. Ruins cannot be [[Move]]d. A tile with ruins on it is not considered unbuilt. No tile building or center building can be [[Build]] on it.
 ## relic block
 A [[ruins]] result. A block on a tile which can be collected using [[Reclaim]] to gain 1 [[relic]]. Using the [[Move]] action [[army|armies]] can take relic blocks to new tiles. Any building can be built on a tile with a relic block.
@@ -100,7 +113,7 @@ A [[ruins]] result. A block on a tile which can be collected using [[Reclaim]] t
 A card given to another player in [[Barter]]. Breaking a treaty means violating it with consequences. [[Dissolve]] means ending it voluntarily.
 ## population | ⓟ
 Provided by buildings. [[Village]] adds 1. A [[city]] adds 2. [[Faction building]] may also increase it.
-## ocean
+## ocean | ⬢ | tile-ocean
 Empty tiles. Impassable unless [[Embark]]ed.
 ## army limit | ≐
 The limit of armies you may own at a time. Default is 1. [[Barracks]] adds 1.[[Faction building]] may also increase it.
@@ -133,11 +146,11 @@ A [[status]] of an army where they are not allowed to be Move, Reinforce, Harves
 A [[status]] of an army where they are not allowed to Move, Reinforce, Harvest or Battle for the rest of the round in which it is applied. At the next [[Seasons Change]], it becomes [[exhausted]] for the following round. Exhausted armies can still be attacked, and then function as normal.
 ## warp | ⌘ | purple
 A [[ruins]] result. The explorer gains 2 mana.
-## virtue | ✜ | teal
+## virtue | ✜ | yellow
 [[Kin]]-specific counter of [[Pride of Lumon]]: it is equal to the number of its [[treaty|treaties]] other players hold. Cannot be spent or [[Barter]]ed.
-## influence | ⍟ | red
+## influence | ⍟ | brown
 [[Kin]]-specific resource of [[Dynasty of Hanshu]]. Cannot be [[Barter]]ed.
-## tradegoods | 🗃︎ | brown
+## tradegoods | 🗃︎ | blue
 [[Kin]]-specific resource of [[Seven Streams Syndicate]]. When [[Barter]]ed, it is assigned one basic resource type and the receiver gets that resource.
 ## technology
 A card. You can research it for a cost in [[gear]]s. When you research it from the research track of the [[technology board]], put it in your [[court]]. When you [[Publicize]] it from another player's court, put it on the public track of the technology board.

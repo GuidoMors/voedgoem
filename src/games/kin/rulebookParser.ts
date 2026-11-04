@@ -1,5 +1,5 @@
 export type Block =
-  | { t: "h"; level: number; text: string; id: string }
+  | { t: "h"; level: number; text: string; id: string; notes?: string[] }
   | { t: "p"; text: string }
   | { t: "ul" | "ol"; items: string[] }
   | { t: "quote"; lines: string[] }
@@ -16,6 +16,7 @@ export interface Target {
   doc: string;
   id: string;
   icon?: string;
+  building?: boolean;
   color?: string;
 }
 
@@ -31,7 +32,22 @@ export function parseDoc(file: string, text: string): Doc {
   const slug = file.replace(/\.md$/, "");
   const blocks: Block[] = [];
   const used = new Set<string>();
-  const lines = text.replace(/\r/g, "").split("\n");
+  // "//" starts a comment that runs to the end of the line (not when part of a URL such as https://).
+  // Whole-line comments directly below a heading (or below its quote lines) are kept as that heading's notes.
+  const lines: string[] = [];
+  const notes = new Map<number, string[]>();
+  let owner = -1;
+  for (const raw of text.replace(/\r/g, "").split("\n")) {
+    const whole = /^\s*\/\/\s?(.*)$/.exec(raw);
+    if (whole) {
+      if (owner >= 0 && whole[1].trim()) notes.set(owner, [...(notes.get(owner) ?? []), whole[1].trim()]);
+      continue;
+    }
+    const line = raw.replace(/(^|[^:])\/\/.*$/, "$1").trimEnd();
+    if (/^#{1,6}\s/.test(line)) owner = lines.length;
+    else if (!line.startsWith(">")) owner = -1;
+    lines.push(line);
+  }
   let i = 0;
   while (i < lines.length) {
     const line = lines[i];
@@ -41,7 +57,7 @@ export function parseDoc(file: string, text: string): Doc {
       let id = `${slug}--${slugify(headKey(h[2])) || "section"}`;
       for (let n = 2; used.has(id); n++) id = `${slug}--${slugify(headKey(h[2])) || "section"}-${n}`;
       used.add(id);
-      blocks.push({ t: "h", level: h[1].length, text: h[2].trim(), id });
+      blocks.push({ t: "h", level: h[1].length, text: h[2].trim(), id, notes: notes.get(i) });
       i++;
     } else if (line.startsWith(">")) {
       const q: string[] = [];
@@ -102,7 +118,7 @@ const ALIASES: Record<string, string> = {
   plains: "tile type", farmland: "tile type", river: "4. rivers",
   building: "tile building", "path building": "edge building",
   "armies can be moved onto this tile": "tile building",
-  authority: "dynasty of hanshu", vassal: "vassal treaty", dedication: "treaty",
+  authority: "influence", vassal: "vassal treaty", dedication: "treaty",
   universal: "archetype", resource: "basic resource", distance: "tile distance",
   "law card": "law deck", "natural turn": "natural order", "of power": "power",
   "treaties held": "treaty", revoked: "revoke", "unblocked hit": "unblocked hits",
@@ -124,7 +140,9 @@ export function buildRulebook(files: Record<string, string>): Rulebook {
       if (b.t !== "h") continue;
       const key = headKey(b.text);
       const g = glossary.get(normalize(key));
-      const target = { doc: d.slug, id: b.id, icon: g?.icon, color: g?.color };
+      const [, kind, shape, icons] = b.text.split("|").map(part => part.trim());
+      const buildingIcon = kind === "building blueprint" ? (icons?.split(",").map(icon => icon.trim()).filter(Boolean).join(" ") || shape) : undefined;
+      const target = { doc: d.slug, id: b.id, icon: buildingIcon ?? g?.icon, building: kind === "building blueprint", color: g?.color };
       add(key, target, d.file === "glossary.md");
       const colon = key.indexOf(":");
       if (colon > 0) add(key.slice(0, colon), target, false);

@@ -27,31 +27,33 @@ Their giant underground fortresses of golden halls and diamond thrones are unmat
 
 # Faction Effects
 
-## Craftdwarves | action card | core 
-> Short description: You may [[claim]] the top card of the [[tactics deck]] for 5 [[gold]].
-> Phase: Expansion
-> Condition: You have at least 5 gold. The tactics deck is not empty.
-> On trigger: Select an untapped Expansion Character/Activation Card.
-> Payment: Tapping the selected character/activation cards. Pay 5 gold.
-> Effect: Take the top card of the tactics deck.
+## Master Smiths | effect card | core 
+> Your [[Smith]]s reduce build power cost by 2 instead of 1 on that tile.
+// Conditions: There are Smiths on the selected tile of the Build action
+// Trigger: Build, when calculating the build power cost.
+// Effect: Each Smith reduces the build power cost by 2 instead of 1 on that tile.
 
-## Finders Keepers | ◫
-> Short description: During the [[Tacticians]] event, you bid first for a regular [[tactics card]], before everyone else. Then bidding continues in [[natural order]].
-> Condition: The Tacticians event is resolving, and the drawn card is a regular tactics card.
-> Trigger: Tacticians, when determining the bidding order.
-> Effect: You bid first. After your bid, bidding continues in natural order.
-> Extra Rules: This ability does not work if the drawn card is a secret tactics card.
+## Craftdwarves | action card 
+> You may [[claim]] the top card of the [[tactics deck]] for 5 [[gold]].
+// Phase: Expansion
+// Condition: You have at least 5 gold. The tactics deck is not empty.
+// On trigger: Select an untapped Expansion Character/Activation Card.
+// Payment: Tapping the selected character/activation cards. Pay 5 gold.
+// Effect: Take the top card of the tactics deck.
 
-## Mountain Folk | ◫
-> Short description: You may [[Build]] on [[mountains]] as if they were [[plains]].
-> Trigger: Build, when checking the Building Conditions for which building blueprints are allowed for that tile.
-> Effect: Mountains are treated as plains for the purpose of determining which building blueprints are allowed.
+## Finders Keepers | effect card
+> During the [[Tacticians]] event, you bid first for a regular [[tactics card]], before everyone else. Then bidding continues in [[natural order]].
+// Condition: The Tacticians event is resolving, and the drawn card is a regular tactics card.
+// Trigger: Tacticians, when determining the bidding order.
+// Effect: You bid first. After your bid, bidding continues in natural order.
+// Extra Rules: This ability does not work if the drawn card is a secret tactics card.
 
-## Master Smiths | ◫
-> Short description: Your [[Smith]]s reduce build power cost by 2 instead of 1 on that tile.
-> Conditions: There are Smiths on the selected tile of the Build action
-> Trigger: Build, when calculating the build power cost.
-> Effect: Each Smith reduces the build power cost by 2 instead of 1 on that tile.
+## Mountain Folk | effect card
+> You may [[Build]] on [[mountains]] as if they were [[plains]].
+// Trigger: Build, when checking the Building Conditions for which building blueprints are allowed for that tile.
+// Effect: Mountains are treated as plains for the purpose of determining which building blueprints are allowed.
+
+
 
 # Characters
 

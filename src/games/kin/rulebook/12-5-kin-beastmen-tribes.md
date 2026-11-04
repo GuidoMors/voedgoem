@@ -27,26 +27,26 @@ Their evolution has left them with little brains but lots of brawn. They have no
 
 # Faction Effects
 
-## Honorless | ◫ | core
-> Short description: Recruiting [[army]] strength costs 1 [[food]] instead of 2.
-> Trigger: Recruit, when calculating the cost.
-> Effect: set the cost for the recruit to 1 food instead of 2 food.
+## Honorless | effect card | core
+> Recruiting [[army]] strength costs 1 [[food]] instead of 2.
+// Trigger: Recruit, when calculating the cost.
+// Effect: set the cost for the recruit to 1 food instead of 2 food.
 
-## Salvage | ◫
-> Short description: When you [[Demolish]], you gain back the resources spent on the building.
-> Trigger: Demolish, when it resolves.
-> Effect: Gain the resources of the resource cost of the building type of the demolished building.
+## Salvage | effect card
+> When you [[Demolish]], you gain back the resources spent on the building.
+// Trigger: Demolish, when it resolves.
+// Effect: Gain the resources of the resource cost of the building type of the demolished building.
 
-## Desert Dwellers | ◫
-> Short description: You may [[Build]] on [[desert]] tiles as if they were [[plains]].
-> Trigger: Build, when checking the Building Conditions for which building blueprints are allowed for that tile.
-> Effect: Desert tiles are treated as plains for the purpose of determining which building blueprints are allowed.
+## Desert Dwellers | effect card
+> You may [[Build]] on [[desert]] tiles as if they were [[plains]].
+// Trigger: Build, when checking the Building Conditions for which building blueprints are allowed for that tile.
+// Effect: Desert tiles are treated as plains for the purpose of determining which building blueprints are allowed.
 
-## Great Feasts | ◫
-> Short description: When an [[army]] in a [[Battle]] is [[disband]]ed because of you, gain 1 [[food]], even if the disbanded army is your own.
-> Condition: An army in a Battle is disbanded.
-> Trigger: Battle, when the action has fully resolved.
-> Effect: Gain 1 food.
+## Great Feasts | effect card
+> When an [[army]] in a [[Battle]] is [[disband]]ed because of you, gain 1 [[food]], even if the disbanded army is your own.
+// Condition: An army in a Battle is disbanded.
+// Trigger: Battle, when the action has fully resolved.
+// Effect: Gain 1 food.
 
 
 # Characters

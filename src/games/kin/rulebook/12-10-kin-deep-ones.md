@@ -23,32 +23,32 @@ From the deep depths of the ocean, their sorcerers commune. Their rites and prop
 
 # Faction Effects
 
-## Veil of the Deep | ◫ | core
-> Short description: [[Subterfuge card]]s cannot be played against you.
-> Trigger: when deciding whether a subterfuge card can trigger against this player or not
-> Effect: the subterfuge card cannot trigger
+## Veil of the Deep | effect card | core
+> [[Subterfuge card]]s cannot be played against you.
+// Trigger: when deciding whether a subterfuge card can trigger against this player or not
+// Effect: the subterfuge card cannot trigger
 
 ## Chosen Thrall | event card
-> Short description: Secretly choose a [[character]] from another player's court. If that character is ever used as a [[general]] in combat against you, or used to [[Move]] an [[army]] adjacent to one of your armies, put it in your [[court]]. Then discard this card.
-> Effect: The first time this is activated Deep Ones get a pop-up. There they select a character from another player's court in a dropdown. If that selected character is used as a general in combat against the Deep Ones, or if the Move action card is ever used to move an army adjacent to an army the Deep Ones own and the selected character was tapped to activate the Move, then the selected character is put into the court of the Deep Ones. The Move or Battle action card is immediately cancelled. No Battle or Move further takes place. This is still the end of that player's round. Then discard this card.
-> Extra rules: when it is put into your court, it is not a hostage. They own the character fully and can use its ability and tap it to active cards. When this card is discard, it is gone from play. It cannot be found in any board or any discard pile. It cannot be recovered or ever activated again.
+> Secretly choose a [[character]] from another player's court. If that character is ever used as a [[general]] in combat against you, or used to [[Move]] an [[army]] adjacent to one of your armies, put it in your [[court]]. Then discard this card.
+// Effect: The first time this is activated Deep Ones get a pop-up. There they select a character from another player's court in a dropdown. If that selected character is used as a general in combat against the Deep Ones, or if the Move action card is ever used to move an army adjacent to an army the Deep Ones own and the selected character was tapped to activate the Move, then the selected character is put into the court of the Deep Ones. The Move or Battle action card is immediately cancelled. No Battle or Move further takes place. This is still the end of that player's round. Then discard this card.
+// Extra rules: when it is put into your court, it is not a hostage. They own the character fully and can use its ability and tap it to active cards. When this card is discard, it is gone from play. It cannot be found in any board or any discard pile. It cannot be recovered or ever activated again.
 
-## Underwater Cult | ◫
-> Short description: You can only [[Build]] [[villages]] on [[ocean]]s. Villages on ocean tiles must be dedicated to a [[resource]]. [[Worksite]]s on ocean tiles can be built in your villages and cities regardless of what tile is adjacent. Those Worksites [[produce]] the dedicated resource of their tile building, instead of what they would usually produce.
-> 1 - Trigger: Build, when checking the Building Conditions.
-> 1 - Effect: Ocean is the only allowed tile for building the village.
-> 2 - Condition: You are building a village on an ocean tile.
-> 2 - Trigger: Build, when determining the dedication of the village.
-> 2 - On trigger: get a pop-up where a choice has to be made between gold, lumber, stone, or food. A choice MUST be made. this cannot be declined.
-> 2 - Effect: the chosen resource becomes the dedicated resource of that village. Show an icon on the village to indicate what it is dediated to.
-> 3 - Condition: a worksite is chosen for the Build action card
-> 3 - Trigger: Build, when checking the Building Conditions for which building blueprints are allowed for that tile.
-> 3 - Effect: Worksites can be built in villages and cities regardless of the adjacent tile.
-> 4 - Condition: A Worksite is on an ocean tile in one of your tile buildings.
-> 4 - Trigger: Seasons Change, before effects.
-> 4 - Effect: The Worksite produces 1 resource of the type that the tile building, it is on is dedicated to.
+## Underwater Cult | effect card
+> You can only [[Build]] [[villages]] on [[ocean]]s. Villages on ocean tiles must be dedicated to a [[resource]]. [[Worksite]]s on ocean tiles can be built in your villages and cities regardless of what tile is adjacent. Those Worksites [[produce]] the dedicated resource of their tile building, instead of what they would usually produce.
+// 1 - Trigger: Build, when checking the Building Conditions.
+// 1 - Effect: Ocean is the only allowed tile for building the village.
+// 2 - Condition: You are building a village on an ocean tile.
+// 2 - Trigger: Build, when determining the dedication of the village.
+// 2 - On trigger: get a pop-up where a choice has to be made between gold, lumber, stone, or food. A choice MUST be made. this cannot be declined.
+// 2 - Effect: the chosen resource becomes the dedicated resource of that village. Show an icon on the village to indicate what it is dediated to.
+// 3 - Condition: a worksite is chosen for the Build action card
+// 3 - Trigger: Build, when checking the Building Conditions for which building blueprints are allowed for that tile.
+// 3 - Effect: Worksites can be built in villages and cities regardless of the adjacent tile.
+// 4 - Condition: A Worksite is on an ocean tile in one of your tile buildings.
+// 4 - Trigger: Seasons Change, before effects.
+// 4 - Effect: The Worksite produces 1 resource of the type that the tile building, it is on is dedicated to.
 
-## Benthic Walkers | ◫
+## Benthic Walkers | effect card
 > Short description: [[ocean]]s do not block you. Oceans have a tile speed cost for you of ½. You cannot [[Embark]], and your [[army|armies]] cannot be [[embarked]].
 > 1 - Trigger: Move, when checking which tiles are allowed to be moved to.
 > 1 - Effect: Oceans do not block you, and they have a tile speed cost of ½.

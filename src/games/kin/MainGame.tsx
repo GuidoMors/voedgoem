@@ -1,7 +1,9 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState, type ReactNode } from "react";
 import { Person } from "../../avatar/Avatar";
+import { Modal } from "../../components/Modal";
+import { NumberInput } from "./NumberInput";
 import { WorldBoard } from "./Board";
-import { Plane } from "./Plane";
+import { Plane, type PlaneView } from "./Plane";
 import { ArkBoard, type Spot } from "./Buildings";
 import { BUILDINGS } from "./buildings.data";
 import { AttackPanel, BattleReport, DefendPanel, ReactionPanel } from "./Battle";
@@ -11,7 +13,8 @@ import { FoundBanner, ReclaimPanel } from "./Archeology";
 import { CouncilBanner, CouncilPanel, QuantumPanel } from "./Council";
 import { AuctionPanel, AuctionResultBanner, NoticeBanner, TacticsPanel } from "./Tactics";
 import { PaymentPanel } from "./Expansion";
-import { cardDef, CourtCards, ItemCard, type CardPick } from "./Cards";
+import { cardDef, CourtCards, GameCard, ItemCard, RESOURCE_COLORS, TECHNOLOGY_COLORS, technologyCategory, type CardPick } from "./Cards";
+import { CARDS } from "./cards.data";
 import { CharacterCard } from "./CharacterCard";
 import { CHARACTERS } from "./characters.data";
 import { kinColor } from "./KinCard";
@@ -19,18 +22,20 @@ import { BarterComposer, BarterOfferBanner, VerdictBanner } from "./Treaties";
 import type { KinItem, KinPlaceOption, KinSnapshot, KinWorld } from "./types";
 
 // Resource symbols from the glossary.
-export const RESOURCE_SYMBOLS: { id: string; symbol: string; name: string }[] = [
-  { id: "gold", symbol: "⏺", name: "Gold" },
-  { id: "lumber", symbol: "█", name: "Lumber" },
-  { id: "stone", symbol: "▲", name: "Stone" },
-  { id: "food", symbol: "❀", name: "Food" },
-  { id: "gear", symbol: "⚙", name: "Gear" },
-  { id: "mana", symbol: "✦", name: "Mana" },
-  { id: "relic", symbol: "𐚬", name: "Relic" },
-  { id: "tradegood", symbol: "⚖", name: "Tradegoods" },
-  { id: "influence", symbol: "♛", name: "Influence" },
-  { id: "virtue", symbol: "☯", name: "Virtue" }
+export const RESOURCE_SYMBOLS: { id: string; symbol: string; name: string; color: string; kin?: string }[] = [
+  { id: "gold", symbol: "⏺", name: "Gold", color: RESOURCE_COLORS.gold },
+  { id: "lumber", symbol: "█", name: "Lumber", color: RESOURCE_COLORS.lum },
+  { id: "stone", symbol: "▲", name: "Stone", color: RESOURCE_COLORS.stone },
+  { id: "food", symbol: "❀", name: "Food", color: RESOURCE_COLORS.food },
+  { id: "gear", symbol: "⚙", name: "Gear", color: RESOURCE_COLORS.gear },
+  { id: "mana", symbol: "✦", name: "Mana", color: RESOURCE_COLORS.mana },
+  { id: "relic", symbol: "𐚬", name: "Relic", color: RESOURCE_COLORS.rel },
+  { id: "tradegood", symbol: "⚖", name: "Tradegoods", color: RESOURCE_COLORS.blue, kin: "syndicate" },
+  { id: "influence", symbol: "♛", name: "Influence", color: RESOURCE_COLORS.brown, kin: "hanshu" },
+  { id: "virtue", symbol: "☯", name: "Virtue", color: RESOURCE_COLORS.yellow, kin: "lumon" }
 ];
+
+const resourcesForKin = (kin?: string) => RESOURCE_SYMBOLS.filter(resource => !resource.kin || resource.kin === kin);
 
 const PHASES = [
   { id: "event", name: "Event", color: "#8a4fb3" },
@@ -41,68 +46,89 @@ const PHASES = [
 
 const BOARDS = [
   { id: "world", name: "World board", icon: "⬢" },
+  { id: "phase", name: "Phase board", icon: "★" },
   { id: "building", name: "Building board", icon: "⌂" },
-  { id: "technology", name: "Technology board", icon: "⚙" },
-  { id: "phase", name: "Phase board", icon: "★" }
+  { id: "technology", name: "Technology board", icon: "⚙" }
 ] as const;
 
 const COURT_TABS = [
   { id: "characters", name: "Characters" },
-  { id: "technologies", name: "Technologies" },
-  { id: "buildings", name: "Buildings" },
-  { id: "actions", name: "Action cards, faction & chapter effects" },
-  { id: "treaties", name: "Treaties & bans" },
-  { id: "tactics", name: "Tactics & subterfuge" }
+  { id: "effects", name: "Effects" },
+  { id: "treaties", name: "Treaties" },
+  { id: "tactics", name: "Tactics" },
+  { id: "resources", name: "Resources" }
 ] as const;
 
 type BoardId = (typeof BOARDS)[number]["id"];
-type CourtTab = (typeof COURT_TABS)[number]["id"];
+type CourtTab = (typeof COURT_TABS)[number]["id"] | "host";
 
 // The Discovery action cards that can be activated so far.
 type ActionId = "move" | "nomads" | "drifting-citadel" | "research" | "publicize" | "barter" | "dissolve" | "build" | "deploy" | "demolish" | "reclaim" | "revoke" | "craftdwarves" | "recruit" | "reinforce" | "harvest" | "embark" | "battle" | "explore" | "ruthless-capitalists";
 const ACTIONS: ActionId[] = ["move", "nomads", "drifting-citadel", "research", "publicize", "barter", "dissolve", "build", "deploy", "demolish", "reclaim", "revoke", "craftdwarves", "recruit", "reinforce", "harvest", "embark", "battle", "explore", "ruthless-capitalists"];
 
-function BoardCards({ world, zone, pick }: { world: KinWorld; zone: string; pick?: CardPick }) {
-  const items = world.items.filter(item => item.zone === zone);
+function BoardCards({ world, zone, pick, filter }: { world: KinWorld; zone: string; pick?: CardPick; filter?: (item: KinItem) => boolean }) {
+  const items = world.items.filter(item => item.zone === zone && (!filter || filter(item)));
   return <div className="kc-row">{items.map(item => <ItemCard key={item.id} item={item} kins={world.kins} kinPicks={world.kinPicks} pick={pick} />)}</div>;
 }
 
-function BuildingBoard({ world, pick }: { world: KinWorld; pick?: CardPick }) {
+function PlayerBoards({ world, players, kind, pick }: { world: KinWorld; players: KinSnapshot["seats"]; kind: "blueprint" | "technology"; pick?: CardPick }) {
+  return <div className="kin-player-boards">{players.map(player => {
+    const kin = world.kins.find(entry => entry.id === world.kinPicks[player.id]);
+    const dark = kin && ["brown", "dark red", "black", "blue", "dark green", "purple"].includes(kin.color);
+    return <section key={player.id} className="kin-player-board">
+    <h3 style={{ background: kin ? kinColor(kin) : undefined, color: dark ? "#fffaf0" : "#2a1f14" }}>{player.username} ({kin?.name ?? "No Kin"})</h3>
+    <BoardCards world={world} zone={`court:${player.id}`} pick={pick} filter={item => cardDef(item.def)?.kind === kind} />
+  </section>;
+  })}</div>;
+}
+
+function BuildingBoard({ world, players, pick }: { world: KinWorld; players: KinSnapshot["seats"]; pick?: CardPick }) {
+  const locked = new Set(world.items.filter(item => item.zone === "board:research")
+    .flatMap(item => cardDef(item.def)?.grants ?? []));
+  const known = new Set(world.items.filter(item => item.zone === "board:building" || item.zone.startsWith("court:")).map(item => item.def));
+  const blueprints = CARDS.filter(card => card.kind === "blueprint" && locked.has(card.id) && !known.has(card.id));
   return (
     <div className="kin-building-board">
-      <section><h3>Building board</h3><p className="muted small">Blueprints anyone can build.</p><BoardCards world={world} zone="board:building" pick={pick} /></section>
+      <section><h3>Public track</h3><p className="muted small">Blueprints anyone can build.</p><BoardCards world={world} zone="board:building" pick={pick} /></section>
+      <section className="kin-locked-blueprints">
+        <h3>Locked track</h3>
+        <p className="muted small">Research the required technology to unlock these blueprints.</p>
+        <div className="kc-row">{blueprints.map(def => <GameCard key={def.id} def={def} kins={world.kins} disabledReason={`Requires ${CARDS.filter(card => card.kind === "technology" && card.grants?.includes(def.id)).map(card => card.name).join(" or ")}`} />)}</div>
+        {blueprints.length === 0 && <p className="muted small">All technology blueprints have been unlocked.</p>}
+      </section>
+      <PlayerBoards world={world} players={players} kind="blueprint" pick={pick} />
     </div>
   );
 }
 
-function TechnologyBoard({ world, names, researchPick, publicizePick }: { world: KinWorld; names: Record<string, string>; researchPick?: CardPick; publicizePick?: CardPick }) {
-  const claimed = world.items.filter(item => item.zone.startsWith("court:") && cardDef(item.def)?.kind === "technology");
-  const owners = [...new Set(claimed.map(item => item.owner as string))];
+function TechnologyBoard({ world, players, researchPick, publicizePick }: { world: KinWorld; players: KinSnapshot["seats"]; researchPick?: CardPick; publicizePick?: CardPick }) {
+  const categories = Object.entries(TECHNOLOGY_COLORS);
+  const inCategory = (item: KinItem, category: string) => {
+    const def = cardDef(item.def);
+    return !!def && technologyCategory(def) === category;
+  };
   const cardsOf = (zone: string, pick?: CardPick, filter?: (item: KinItem) => boolean) => (
     <div className="kc-row">{world.items.filter(item => item.zone === zone && (!filter || filter(item))).map(item => <ItemCard key={item.id} item={item} kins={world.kins} kinPicks={world.kinPicks} pick={pick} />)}</div>
   );
   return (
     <div className="kin-tech-board">
-      <section><h3>Public track</h3><p className="muted small">Technologies that have been publicized appear here.</p>{cardsOf("board:public")}</section>
-      <section><h3>Research track</h3>{cardsOf("board:research", researchPick)}</section>
-      {publicizePick && (
-        <section>
-          <h3>Technologies in courts</h3>
-          <p className="muted small">Publicizing your own costs no gears; another player's costs its gear cost.</p>
-          {owners.map(owner => (
-            <div key={owner}>
-              <h4>{names[owner] ?? owner}</h4>
-              {cardsOf(`court:${owner}`, publicizePick, item => cardDef(item.def)?.kind === "technology")}
-            </div>
-          ))}
-        </section>
-      )}
+      {[{ zone: "board:public", title: "Public track", pick: undefined }, { zone: "board:research", title: "Research track", pick: researchPick }].map(track => <section key={track.zone} className="kin-tech-track">
+        <h3>{track.title}</h3>
+        {track.zone === "board:public" && <p className="muted small">Technologies that have been publicized appear here.</p>}
+        {categories.map(([category, color]) => <div key={category} className="kin-tech-category-row">
+          <h4 style={{ color }}>{category}</h4>
+          {cardsOf(track.zone, track.pick, item => inCategory(item, category))}
+        </div>)}
+      </section>)}
+      <PlayerBoards world={world} players={players} kind="technology" pick={publicizePick} />
     </div>
   );
 }
 
-function PhaseBoard({ world, pick, current }: { world: KinWorld; pick?: CardPick; current?: string }) {
+function PhaseBoard({ world, players, pick, current }: { world: KinWorld; players: KinSnapshot["seats"]; pick?: CardPick; current?: string }) {
   const onBoard = world.items.filter(item => item.zone === "board:phase");
+  const lockedEvents = CARDS.filter(def => def.kind === "event" && !world.items.some(item => item.def === def.id)
+    && world.items.some(item => item.zone === "board:research" && cardDef(item.def)?.grants?.includes(def.id)));
   const defOf = (item: KinItem) => cardDef(item.def);
   return (
     <div className="kin-phase-board">
@@ -117,34 +143,59 @@ function PhaseBoard({ world, pick, current }: { world: KinWorld; pick?: CardPick
                 const isEvent = def.kind === "event" || (def.kind === "faction" && def.form === "event");
                 return phase.id === "event" ? isEvent : !isEvent && def.phase === phase.id;
               }).map(item => <ItemCard key={item.id} item={item} kins={world.kins} kinPicks={world.kinPicks} pick={pick} />)}
+              {phase.id === "event" && lockedEvents.map(def => <GameCard key={def.id} def={def} kins={world.kins} disabledReason={`Requires ${CARDS.filter(card => card.kind === "technology" && card.grants?.includes(def.id)).map(card => card.name).join(" or ")}`} />)}
             </div>
           </section>
         ))}
       </div>
-      <section className="kin-laws"><h3>Active laws</h3>{world.law
-        ? <p><strong>{world.law.name}</strong> <span className="muted small">You may not use: {world.law.forbids.map(id => cardDef(id)?.name ?? id).join(", ")}</span></p>
-        : <p className="muted small">No laws are active.</p>}</section>
+      {world.law && <section className="kin-laws">
+        <h3>Active law</h3>
+        <p><strong>{world.law.name}</strong></p>
+        <p>You may not use: {world.law.forbids.map(id => cardDef(id)?.name ?? id).join(", ")}</p>
+      </section>}
+      {players.map(player => {
+        const kin = world.kins.find(entry => entry.id === world.kinPicks[player.id]);
+        const dark = kin && ["brown", "dark red", "black", "blue", "dark green", "purple"].includes(kin.color);
+        return <section key={player.id} className="kin-player-board">
+        <h3 style={{ background: kin ? kinColor(kin) : undefined, color: dark ? "#fffaf0" : "#2a1f14" }}>{player.username} ({kin?.name ?? "No Kin"})</h3>
+        <div className="kin-phase-tracks kin-player-phase-tracks">{PHASES.filter(phase => phase.id !== "event").map(phase => <section key={phase.id} className={`kin-phase-track ${current && phase.id !== current ? "inactive" : ""}`} style={{ ["--phase-color" as string]: phase.color }}>
+          <h3>{phase.name}</h3>
+          <BoardCards world={world} zone={`court:${player.id}`} pick={pick} filter={item => {
+            const def = cardDef(item.def);
+            return (def?.kind === "action" || (def?.kind === "faction" && def.form === "action")) && def.phase === phase.id;
+          }} />
+        </section>)}</div>
+      </section>;
+      })}
     </div>
   );
 }
 
-export function MainGame({ snapshot, userId, isHost, send }: { snapshot: KinSnapshot; userId: string; isHost: boolean; send: (action: Record<string, unknown>) => void }) {
+export function MainGame({ snapshot, userId, isHost, send, hostControls }: { snapshot: KinSnapshot; userId: string; isHost: boolean; send: (action: Record<string, unknown>) => void; hostControls?: ReactNode }) {
   const world = snapshot.world as KinWorld;
   const [board, setBoard] = useState<BoardId>("world");
-  const [collapsed, setCollapsed] = useState({ left: false, right: false, bottom: false });
-  const dockToggle = (side: "left" | "right" | "bottom", arrows: [string, string]) => (
-    <button type="button" className="kin-dock-toggle" aria-expanded={!collapsed[side]} aria-label={`${collapsed[side] ? "Show" : "Hide"} ${side} panel`} onClick={() => setCollapsed(current => ({ ...current, [side]: !current[side] }))}>
+  const boardViews = useRef<Partial<Record<BoardId, PlaneView>>>({});
+  const [boardOpen, setBoardOpen] = useState(0);
+  const [relicDialog, setRelicDialog] = useState(false);
+  const [relicAmount, setRelicAmount] = useState(1);
+  const [relicResource, setRelicResource] = useState("gold");
+  const [collapsed, setCollapsed] = useState({ left: false, right: false, bottom: true });
+  const dockToggle = (side: "left" | "right" | "bottom", arrows: [string, string], needed = false) => (
+    <button type="button" className={`kin-dock-toggle${needed ? " needed" : ""}`} aria-expanded={!collapsed[side]} aria-label={`${collapsed[side] ? "Show" : "Hide"} ${side} panel`} onClick={() => setCollapsed(current => ({ ...current, [side]: !current[side] }))}>
       {collapsed[side] ? arrows[1] : arrows[0]}
     </button>
   );
-  const [courtTab, setCourtTab] = useState<CourtTab>("characters");
+  const [preferredCourtTab, setCourtTab] = useState<CourtTab>("characters");
   const myId = snapshot.seats.some(seat => seat.id === userId) ? userId : snapshot.order[0];
   const [selectedId, setSelectedId] = useState(myId);
   const selected = snapshot.seats.find(seat => seat.id === selectedId) ?? snapshot.seats[0];
   const kinOf = (id: string) => world.kins.find(kin => kin.id === world.kinPicks[id]);
+  const selectedKin = selected ? kinOf(selected.id) : undefined;
   const courtCharacters = CHARACTERS.filter(def => world.charClaims[def.id] === selected?.id);
   const canCheat = snapshot.testing && isHost && selected?.id === userId;
   const turnName = snapshot.seats.find(seat => seat.id === world.turn)?.username;
+  const turnKin = world.turn ? kinOf(world.turn) : undefined;
+  const turnKinDark = turnKin && ["brown", "dark red", "black", "blue", "dark green", "purple"].includes(turnKin.color);
 
   const play = world.play;
   const myTurn = !!play && play.turn === userId && snapshot.seats.some(seat => seat.id === userId);
@@ -157,6 +208,7 @@ export function MainGame({ snapshot, userId, isHost, send }: { snapshot: KinSnap
   const [picked, setPicked] = useState<{ kind: "character" | "item" | "tactic"; id: string } | null>(null);
   // The action card that was clicked; its Discovery card (character or activation card) is chosen next, then the target of the action.
   const [action, setAction] = useState<ActionId | null>(null);
+  const [confirmedOptions, setConfirmedOptions] = useState<string | null>(null);
   // Build: the blueprint chosen, and the place or building chosen when more cards or resources still have to be paid.
   const [blueprint, setBlueprint] = useState<string | null>(null);
   const [target, setTarget] = useState<{ place?: KinPlaceOption; building?: string } | null>(null);
@@ -251,6 +303,26 @@ export function MainGame({ snapshot, userId, isHost, send }: { snapshot: KinSnap
   const sourceKey = (kind: string, id: string) => `${kind}:${id}`;
   const sourceKeys = new Set(sources.map(source => sourceKey(source.kind, source.id)));
   const viewingMyCourt = selected?.id === userId;
+  const courtItems = world.items.filter(item => item.zone === `court:${selected?.id}`);
+  const courtEffects = courtItems.filter(item => {
+    const def = cardDef(item.def);
+    return def?.kind === "faction" && def.form !== "action" && def.form !== "event";
+  });
+  const courtTabContents: Record<CourtTab, boolean> = {
+    characters: courtCharacters.length > 0 || courtItems.some(item => cardDef(item.def)?.kind === "activation")
+      || (viewingMyCourt && sourceKeys.has(sourceKey("tactic", "graphiscope"))),
+    effects: courtEffects.length > 0,
+    treaties: courtItems.some(item => {
+      const kind = cardDef(item.def)?.kind;
+      return kind === "treaty" || kind === "ban";
+    }),
+    tactics: !!selected && ((world.tactics?.hands[selected.id]?.length ?? 0) > 0
+      || (viewingMyCourt ? (world.subterfuge?.mine.length ?? 0) > 0 : (world.subterfuge?.counts[selected.id] ?? 0) > 0)),
+    resources: !!selected,
+    host: !!hostControls
+  };
+  const courtTab = courtTabContents[preferredCourtTab] ? preferredCourtTab
+    : COURT_TABS.find(tab => courtTabContents[tab.id])?.id ?? (courtTabContents.host ? "host" : null);
   const phaseIndex = PHASES.findIndex(phase => phase.id === play?.phase);
   const phase = PHASES[phaseIndex >= 0 ? phaseIndex : 0];
   // The board where the next choice is made comes to the front: the world for armies and tiles, the technology board for technologies.
@@ -259,21 +331,36 @@ export function MainGame({ snapshot, userId, isHost, send }: { snapshot: KinSnap
     : picked && action === "build" ? "building"
     : picked && (action === "research" || action === "publicize") ? "technology" : null;
   const eventsToDo = myTurn && play?.phase === "event" && (play.events?.length ?? 0) > 0;
+  const boardNeedsAttention = (id: BoardId) => focusBoard === id || ((actionCardIds.length > 0 || eventsAvailable) && id === "phase");
+  const focusCourt: CourtTab | null = (action && !picked) || openAbility ? "characters"
+    : picked && action === "dissolve" ? "treaties" : null;
   useEffect(() => { if (eventsToDo) setBoard("phase"); }, [eventsToDo]);
   useEffect(() => { if (focusBoard) setBoard(focusBoard); }, [focusBoard]);
   // Dissolve is decided in your own court, among the treaties others gave you.
   useEffect(() => { if (picked && action === "dissolve") { setSelectedId(userId); setCourtTab("treaties"); } }, [picked, action, userId]);
-  useEffect(() => { if (picked && action === "build" && !blueprint) { setSelectedId(userId); setCourtTab("buildings"); } }, [picked, action, blueprint, userId]);
-  useEffect(() => { if (!myTurn || !play?.options) { setPicked(null); setAction(null); setBlueprint(null); setTarget(null); setPair(null); setEmbarkArmy(null); setStrikeTile(null); setReclaimAt(null); } }, [myTurn, play?.options]);
+  const hasOptions = !!play?.options;
+  useEffect(() => { setPicked(null); setAction(null); setBlueprint(null); setTarget(null); setPair(null); setEmbarkArmy(null); setStrikeTile(null); setReclaimAt(null); }, [myTurn, play?.turn, play?.phase, snapshot.round, hasOptions]);
   // Choosing the card to tap happens in your own court.
-  useEffect(() => { if (action && !picked) { setSelectedId(userId); setCourtTab("characters"); } }, [action, picked, userId]);
+  useEffect(() => {
+    if ((action && !picked) || openAbility) {
+      setSelectedId(userId);
+      setCourtTab("characters");
+      setCollapsed(current => current.bottom ? { ...current, bottom: false } : current);
+    }
+  }, [action, picked, openAbility, userId]);
 
   const choose = (kind: "character" | "item" | "tactic", id: string) => setPicked({ kind, id });
-  const cancel = () => { setPicked(null); setAction(null); setBlueprint(null); setTarget(null); setPair(null); setEmbarkArmy(null); setStrikeTile(null); setReclaimAt(null); setPayGold(false); setPayMana(false); setPayInfluence(false); setObservatoryKins([]); };
+  const cancel = () => { setPicked(null); setAction(null); setBlueprint(null); setTarget(null); setPair(null); setEmbarkArmy(null); setStrikeTile(null); setReclaimAt(null); setPayGold(false); setPayMana(false); setPayInfluence(false); setObservatoryKins([]); setConfirmedOptions(null); };
+  const hasCult = world.items.some(item => item.def === "underwater-cult" && item.zone === `court:${userId}`);
+  const optionsKey = JSON.stringify([action, picked, blueprint]);
+  const needsOptions = picked && confirmedOptions !== optionsKey && (
+    (action === "build" && ((blueprint === "village" && hasCult) || blueprint === "guild-hall" || blueprint === "grand-observatory"))
+    || (action === "recruit" && (available?.yuguan || available?.goldRecruit || available?.manaRecruit))
+    || (action === "move" && picked.kind === "character" && picked.id === "loong" && available?.longReach)
+  );
   const pickedSource = picked ? available?.sources.find(source => source.kind === picked.kind && source.id === picked.id) : undefined;
   const placeOf = (place: KinPlaceOption) => ({ tile: place.tile, ...(place.side !== undefined ? { side: place.side } : {}), ...(place.to !== undefined ? { to: place.to } : {}) });
   // Send the Build or Demolish right away when the card that was tapped already pays everything; otherwise ask for the rest.
-  const hasCult = world.items.some(item => item.def === "underwater-cult" && item.zone === `court:${userId}`);
   const sendBuild = (place: KinPlaceOption, extra: { kind: string; id: string }[] = [], basic: Record<string, number> = {}) => {
     send({ type: "build", kind: picked!.kind, card: picked!.id, def: blueprint, place: placeOf(place), extra, basic, ...(blueprint === "guild-hall" ? { resource: guildResource } : {}), ...(blueprint === "grand-observatory" ? { kins: observatoryKins } : {}), ...(blueprint === "village" && hasCult ? { dedication } : {}) });
     cancel();
@@ -417,64 +504,75 @@ export function MainGame({ snapshot, userId, isHost, send }: { snapshot: KinSnap
     ...Object.fromEntries(world.kins.map(kin => [`kin:${kin.id}`, kin.name]))
   };
 
-  const actionName = action ? action[0].toUpperCase() + action.slice(1) : "";
-  const instruction = move
-    ? `Moving: ${Math.floor(move.speed / 2)}${move.speed % 2 ? "½" : ""} speed left. Click a highlighted tile.`
-    : picked ? (action === "move" ? "Select an army to move." : action === "research" ? "Select a technology on the research track." : action === "publicize" ? "Select a technology in a court to publicize."
-      : action === "barter" ? "Compose your offer."
-      : action === "build" ? (!blueprint ? "Select a building blueprint in your court or on the building board." : target ? "Pay for the building." : `Click a highlighted place to build the ${chosenBlueprint?.name ?? "building"}.`)
-      : action === "deploy" ? "Click a highlighted building to deploy an army on."
-      : action === "demolish" ? (target ? "Tap more Expansion cards to reach the build power." : "Click a highlighted building or wall to demolish.")
-      : action === "revoke" ? `Tap Expansion cards to reach 5 power and revoke ${world.law?.name ?? "the law"}.`
-      : action === "recruit" ? `Click an army on a Barracks to recruit (${available?.recruitCost ?? 2} food).`
-      : action === "harvest" ? "Click an army on farmland, a forest or a mountain to harvest."
-      : action === "battle" ? (strikeTile !== null ? "Choose your dice." : embarkArmy ? "Click a highlighted tile to attack." : "Click the army that attacks.")
-      : action === "embark" ? (embarkArmy ? "Click a highlighted ocean tile." : "Click an army on a Harbor to embark.")
-      : action === "explore" ? "Click one of your armies standing on ruins to explore them."
-      : action === "craftdwarves" ? "Confirm to pay 5 gold and claim the top card of the tactics deck."
-      : action === "nomads" ? "Click a highlighted snow tile to move your village there."
-      : action === "ruthless-capitalists" ? "Choose a player to exchange Trade Treaties with (3 tradegoods)."
-      : action === "drifting-citadel" ? "Click a highlighted unbuilt tile to drift the Ark there."
-      : action === "reclaim" ? (reclaimAt ? "Choose the basic resources for the treasure." : "Click a highlighted tile building to collect its treasure and relic blocks.")
-      : action === "reinforce" ? (pair ? (pair.second ? "Choose how the strength is divided." : "Click an adjacent army to exchange strength with.") : "Click the first army to reinforce.")
-      : "Select a treaty in your court to dissolve.")
-    : action ? `Select a ${PHASES.find(entry => entry.id === play?.phase)?.name ?? ""} character or activation card to tap for ${actionName}.`
-    : play?.battle ? (play.battle.defender === userId ? "You are being attacked: choose your general and dice." : `${names[play.battle.defender]} is answering ${names[play.battle.attacker]}'s attack.`)
-    : play?.auction ? (play.auction.active[0] === userId ? "Tactician auction: bid more gold or fold." : `${names[play.auction.active[0]] ?? "?"} is deciding on the Tactician auction.`)
-    : play?.quantum ? (play.quantum.player === userId ? "Quantum Collapse: choose your cards." : `${names[play.quantum.player] ?? "?"} is choosing with Quantum Collapse.`)
-    : play?.consent ? (play.consent.plea ? (play.consent.owner === userId ? "Merciful Plea: pay 2 gold or cancel your attack." : `${names[play.consent.owner] ?? "?"} is answering the Merciful Plea.`) : play.consent.counterfuge ? (play.consent.owner === userId ? "Counterfuge: discard the secret tactics card or keep it." : `${names[play.consent.owner] ?? "?"} is deciding on Counterfuge.`) : play.consent.owner === userId ? "Coppygen: agree or decline to trade data with the Ark." : `${names[play.consent.owner] ?? "?"} is answering Coppygen's request.`)
-    : play?.council ? (play.turn === userId ? "Council: vote for one of the three laws." : `${names[play.turn] ?? "?"} is voting in the council.`)
-    : play?.barter ? `${names[play.barter.from]}'s barter offer is waiting for an answer.`
-    : myTurn && play.phase === "event" ? (eventsAvailable ? "Seasons Change has happened. Click an event card on the phase board to activate it for free, or pass." : "Seasons Change has happened. No event card can be activated; pass.")
-    : myTurn && play.phase === "discovery" ? (actionCardIds.length > 0 ? "Click an action card (Move, Research, Publicize, Barter or Dissolve) to activate it, or pass." : "Nothing to activate; pass.")
-    : myTurn && play.phase === "expansion" ? (actionCardIds.length > 0 ? "Click an action card (Build, Deploy, Demolish, Reclaim, Revoke or Craftdwarves) to activate it, or pass." : "Nothing to activate; pass.")
-    : myTurn && play.phase === "control" ? (actionCardIds.length > 0 ? "Click an action card (Recruit, Reinforce, Harvest, Embark, Explore or Battle) to activate it, or pass." : "Nothing to activate; pass.")
-    : null;
+  const selectionMessages: Record<string, string> = {
+    activation: "Click a character or activation card in your court.",
+    army: "Click a highlighted army on the world board.",
+    tile: "Click a highlighted tile on the world board.",
+    building: "Click a highlighted building on the world board.",
+    blueprint: "Click a blueprint on the building board.",
+    technology: "Click a technology on the technology board.",
+    treaty: "Click a treaty in your court.",
+    dialog: "Complete the open action form."
+  };
+  const localStep = relicDialog || openAbility || calcOpen || deepOpen || needsOptions
+    || (picked && (action === "barter" || target || strikeTile !== null || reclaimAt || pair?.second || ["revoke", "craftdwarves", "ruthless-capitalists"].includes(action ?? "")
+      || (action === "explore" && ((world.tactics?.archeologist && confirmedOptions !== optionsKey && confirmedOptions !== `${optionsKey}:army`) || (available?.explore?.includes("ark") && confirmedOptions !== `${optionsKey}:army`)))))
+    ? "dialog"
+    : action && !picked ? "activation"
+    : !picked ? "default"
+    : action === "build" ? (blueprint ? "tile" : "blueprint")
+    : action === "research" || action === "publicize" ? "technology"
+    : action === "dissolve" ? "treaty"
+    : action === "deploy" || action === "demolish" || action === "reclaim" ? "building"
+    : embarkArmy || action === "nomads" || action === "drifting-citadel" ? "tile" : "army";
+  const pendingDecision = !!(play?.move || play?.battle || play?.reaction || play?.auction || play?.quantum || play?.consent || play?.council || play?.barter);
+  const sendStep = useRef(send);
+  sendStep.current = send;
+  const gameOver = !!snapshot.victory?.result;
+  useEffect(() => {
+    if (myTurn && !pendingDecision && !gameOver) sendStep.current({ type: "selectionStep", step: localStep, round: snapshot.round, phase: play?.phase });
+  }, [myTurn, pendingDecision, localStep, snapshot.round, play?.phase, play?.turn, gameOver]);
+  const step = myTurn ? localStep : play?.selectionStep;
+  const instruction = play?.reaction ? `${names[play.reaction.owner]}: answer the reaction prompt.`
+    : play?.consent ? `${names[play.consent.owner]}: answer the request prompt.`
+    : play?.battle ? `${names[play.battle.defender]}: choose a general and dice in the battle panel.`
+    : play?.auction ? `${names[play.auction.active[0]]}: bid or fold in the auction panel.`
+    : play?.quantum ? `${names[play.quantum.player]}: choose cards in the selection panel.`
+    : play?.council ? `${turnName}: choose a law in the council panel.`
+    : play?.barter ? `${names[play.barter.to]}: accept or decline the barter offer.`
+    : play?.move ? "Click a highlighted tile on the world board."
+    : step && selectionMessages[step] ? selectionMessages[step]
+    : play?.phase === "event" ? "Click an event card on the phase board."
+    : "Click an action card on the phase board.";
 
+  const controlledBot = snapshot.bots.find(bot => bot.id === userId);
+  const botForcePass = controlledBot && controlledBot.forcePass !== false;
   const topButton = move
     ? <button type="button" className="primary" onClick={() => send({ type: "moveStop" })}>{move.moved ? "Stop moving" : "Stop (card stays tapped)"}</button>
     : picked || action ? <button type="button" className="primary" onClick={cancel}>Decline</button>
-    : <button type="button" className="primary" disabled={!myTurn || !!play?.barter || !!play?.battle || !!play?.council || !!play?.auction || !!play?.quantum || !!play?.consent} title={myTurn ? "End your turn without activating a card" : "It is not your turn"} onClick={() => send({ type: "pass" })}>Pass</button>;
+    : controlledBot ? <button type="button" className="primary" aria-pressed={!!botForcePass} disabled={!play || (!botForcePass && myTurn && (!!play.move || !!play.barter || !!play.battle || !!play.council || !!play.auction || !!play.quantum || !!play.consent || !!play.reaction))} title={botForcePass ? "Turn off this bot's persistent force pass mode" : "Pass this turn and keep force pass enabled across phases"} onClick={() => send({ type: "bot:forcePass", enabled: !botForcePass })}>{botForcePass ? "Turn off force pass" : "Force pass"}</button>
+    : <button type="button" className="primary" disabled={!snapshot.seats.some(seat => seat.id === userId) || !play || play.autoEventPass || !!play.forcePass?.includes(userId) || (myTurn && (!!play.barter || !!play.battle || !!play.council || !!play.auction || !!play.quantum || !!play.consent))} title={play?.autoEventPass ? "Automatically passing because you have no playable event cards" : myTurn ? "End your turn without activating a card" : "Automatically pass all your turns until the next phase"} onClick={() => send({ type: myTurn ? "pass" : "forcePass" })}>{play?.autoEventPass ? "Auto pass" : myTurn ? "Pass" : play?.forcePass?.includes(userId) ? "Force pass enabled" : "Force pass"}</button>;
 
   return (
     <div className="kin-main">
       <header className="kin-main-top">
         <div className="kin-phase-summary">
-          <strong>Round {Math.max(snapshot.round, 1)}</strong>
-          <span className="kin-phase-chip" style={{ ["--phase-color" as string]: phase.color }}>★ {phase.name} phase</span>
-          <span className="muted small">{turnName ? `${turnName} is on turn` : "Waiting for the first round"}</span>
-          {instruction && <span className="kin-instruction">{instruction}</span>}
+          <span className="kin-round">Round {Math.max(snapshot.round, 1)}</span>
+          {turnName && <span className="kin-turn-pill" style={{ background: turnKin ? kinColor(turnKin) : "var(--kin-paper)", color: turnKinDark ? "#fffaf0" : "#2a1f14" }}>{turnName} ({turnKin?.name ?? "No Kin"})</span>}
         </div>
+        {!gameOver && <span className="kin-instruction" role="status">{instruction}</span>}
+        <div className="kin-phase-controls">
         <div className="kin-phase-dots" aria-label="Phases">
           {PHASES.map(entry => <span key={entry.id} className={`kin-phase-dot ${entry.id === phase.id ? "current" : ""}`} style={{ background: entry.color }} title={entry.name} />)}
         </div>
         {topButton}
+        </div>
       </header>
 
       <nav className={`kin-main-left ${collapsed.left ? "collapsed" : ""}`} aria-label="Boards">
-        {dockToggle("left", ["◀", "▶"])}
+        {dockToggle("left", ["◀", "▶"], !!focusBoard || actionCardIds.length > 0 || eventsAvailable)}
         {BOARDS.map(entry => (
-          <button key={entry.id} type="button" className={`kin-board-tab ${board === entry.id ? "selected" : ""} ${board !== entry.id && focusBoard === entry.id ? "needed" : ""} ${(actionCardIds.length > 0 || eventsAvailable) && entry.id === "phase" ? "needed" : ""}`} onClick={() => setBoard(entry.id)}>
+          <button key={entry.id} type="button" data-board={entry.id} aria-pressed={board === entry.id} className={`kin-board-tab ${board === entry.id ? "selected" : ""} ${boardNeedsAttention(entry.id) ? "needed" : ""}`} onClick={() => { setBoard(entry.id); setBoardOpen(current => current + 1); }}>
             <span className="kin-board-icon">{entry.icon}</span>
             <span>{entry.name}</span>
           </button>
@@ -489,19 +587,15 @@ export function MainGame({ snapshot, userId, isHost, send }: { snapshot: KinSnap
             const seat = snapshot.seats.find(entry => entry.id === id);
             if (!seat) return null;
             const kin = kinOf(id);
+            const dark = kin && ["brown", "dark red", "black", "blue", "dark green", "purple"].includes(kin.color);
             return (
               <li key={id}>
-                <button type="button" className={`kin-player ${selected?.id === id ? "selected" : ""} ${world.turn === id ? "on-turn" : ""}`} style={{ ["--kin-color" as string]: kin ? kinColor(kin) : "#888" }} onClick={() => setSelectedId(id)}>
+                <button type="button" aria-pressed={selected?.id === id} aria-current={world.turn === id ? "true" : undefined} className={`kin-player ${selected?.id === id ? "selected" : ""} ${world.turn === id ? "on-turn" : ""}`} style={{ ["--kin-color" as string]: kin ? kinColor(kin) : "#888", ["--kin-player-text" as string]: dark ? "#fffaf0" : "#2a1f14" }} onClick={() => setSelectedId(id)}>
                   <span className="kin-player-head">
                     <Person id={seat.id} name={seat.username} />
-                    {world.turn === id && <span className="pill">turn</span>}
-                    {seat.id === userId && <span className="pill">You</span>}
-                    {!seat.connected && <span className="pill">offline</span>}
                   </span>
-                  <span className="muted small">{kin?.name ?? "No Kin"} · {seat.characters} characters · ⓟ {seat.population} · ≐ {seat.armies}/{seat.armyLimit}</span>
-                  <span className="kin-player-resources">
-                    {RESOURCE_SYMBOLS.map(res => <span key={res.id} title={res.name}>{res.symbol} {seat.resources[res.id] ?? 0}</span>)}
-                  </span>
+                  <span className="small">{kin?.name ?? "No Kin"}</span>
+                  {(world.turn === id || seat.id === userId || !seat.connected) && <span className="small">{[world.turn === id ? "Turn" : "", seat.id === userId ? "You" : "", !seat.connected ? "Offline" : ""].filter(Boolean).join(" · ")}</span>}
                 </button>
               </li>
             );
@@ -509,24 +603,31 @@ export function MainGame({ snapshot, userId, isHost, send }: { snapshot: KinSnap
         </ol>
       </aside>
 
-      <main className="kin-main-middle">
-        <Plane key={board}>
-        {snapshot.victory && <VictoryPanel victory={snapshot.victory} names={names} />}
+      <main className="kin-main-middle" style={{ background: board === "world" ? "#004b50"
+        : board === "building" ? "var(--kin-paper)"
+        : board === "technology" ? "var(--kin-ink)"
+        : `color-mix(in srgb, ${phase.color} 15%, var(--kin-paper))` }}>
+        <Plane key={board} initialView={boardViews.current[board]} onViewChange={view => { boardViews.current[board] = view; }} focusKey={boardNeedsAttention(board) ? JSON.stringify([boardOpen, action, picked, blueprint, armyChoices, spots.map(spot => spot.key), move?.targets, actionCardIds, [...(eventPick?.ids ?? [])], available?.research, available?.publicize]) : undefined}>
         {play?.barter && <BarterOfferBanner world={world} offer={play.barter} userId={userId} names={names} send={send} />}
         {play && play.verdicts.length > 0 && <VerdictBanner world={world} verdicts={play.verdicts} userId={userId} names={names} send={send} />}
         {picked && action === "barter" && available ? (
-          <BarterComposer world={world} userId={userId} names={names} targets={available.barter?.targets ?? []} mintable={available.barter?.mintable ?? []} source={{ kind: picked.kind, id: picked.id }} send={send} onClose={cancel} />
+          <Modal title="Barter" onClose={cancel} wide className="kin-action-modal">
+          <BarterComposer world={world} players={snapshot.seats} userId={userId} names={names} targets={available.barter?.targets ?? []} mintable={available.barter?.mintable ?? []} source={{ kind: picked.kind, id: picked.id }} send={send} onClose={cancel} />
+          </Modal>
         ) : null}
         {play?.auction && <AuctionPanel auction={play.auction} world={world} names={names} userId={userId} gold={snapshot.you?.resources.gold ?? 0} send={send} />}
         {play?.auctionResult && play.auctionResult.id !== closedAuction && <AuctionResultBanner result={play.auctionResult} world={world} names={names} onClose={() => setClosedAuction(play.auctionResult!.id)} />}
         {play?.notice && play.notice.id !== closedNotice && <NoticeBanner text={play.notice.text} onClose={() => setClosedNotice(play.notice!.id)} />}
-        {picked && action === "explore" && world.tactics?.archeologist && (
+        {picked && action === "explore" && world.tactics?.archeologist && confirmedOptions !== optionsKey && confirmedOptions !== `${optionsKey}:army` && (
+          <Modal title="Explore options" onClose={cancel} className="kin-action-modal">
           <div className="kin-payment">
             <p className="small">Great Archeologist: choose what the ruins hold.</p>
             <div className="kin-payment-buttons">
               {["warp", "treasure", "relic"].map(choice => <button key={choice} type="button" className={exploreChoice === choice ? "primary" : ""} onClick={() => setExploreChoice(choice)}>{choice}</button>)}
             </div>
+            <button type="button" className="primary" onClick={() => setConfirmedOptions(optionsKey)}>Continue</button>
           </div>
+          </Modal>
         )}
         {play?.consent && (
           <div className="kin-payment">
@@ -550,6 +651,7 @@ export function MainGame({ snapshot, userId, isHost, send }: { snapshot: KinSnap
           </div>
         )}
         {calcOpen && myTurn && play?.calculators && (
+          <Modal title="Calculators" onClose={() => setCalcOpen(false)} className="kin-action-modal">
           <div className="kin-payment">
             <p className="small">Calculators: secretly predict an action another player will take with a character this round.</p>
             <div className="kin-payment-buttons">
@@ -569,8 +671,10 @@ export function MainGame({ snapshot, userId, isHost, send }: { snapshot: KinSnap
               <button type="button" onClick={() => setCalcOpen(false)}>Cancel</button>
             </div>
           </div>
+          </Modal>
         )}
         {deepOpen === "chosen-thrall" && myTurn && (
+          <Modal title="Chosen Thrall" onClose={() => setDeepOpen(null)} className="kin-action-modal">
           <div className="kin-payment">
             <p className="small">Chosen Thrall: secretly choose a character of another player. If they use it as general against you, or to Move next to your army, it joins your court.</p>
             <div className="kin-payment-buttons">
@@ -582,8 +686,10 @@ export function MainGame({ snapshot, userId, isHost, send }: { snapshot: KinSnap
               <button type="button" onClick={() => setDeepOpen(null)}>Cancel</button>
             </div>
           </div>
+          </Modal>
         )}
         {deepOpen === "whispered-gifts" && myTurn && play?.whisper && (
+          <Modal title="Whispered Gifts" onClose={() => setDeepOpen(null)} className="kin-action-modal">
           <div className="kin-payment">
             <p className="small">Whispered Gifts: give another player a subterfuge card of your choice from the deck.</p>
             <div className="kin-payment-buttons">
@@ -599,25 +705,30 @@ export function MainGame({ snapshot, userId, isHost, send }: { snapshot: KinSnap
               <button type="button" onClick={() => setDeepOpen(null)}>Cancel</button>
             </div>
           </div>
+          </Modal>
         )}
         {play?.thrall && <p className="small muted">Your secret Chosen Thrall: {CHARACTERS.find(def => def.id === play.thrall)?.name ?? play.thrall}.</p>}
         {(play?.predictions?.length ?? 0) > 0 && (
           <p className="small muted">Your secret predictions: {play!.predictions!.map(entry => `${names[entry.target] ?? entry.target} will ${cardDef(entry.action)?.name ?? entry.action} with ${CHARACTERS.find(def => def.id === entry.character)?.name ?? entry.character}`).join("; ")}.</p>
         )}
-        {picked && action === "explore" && available?.explore?.includes("ark") && (
+        {picked && action === "explore" && available?.explore?.includes("ark") && confirmedOptions !== `${optionsKey}:army` && (!world.tactics?.archeologist || confirmedOptions === optionsKey) && (
+          <Modal title="Explore with the Ark" onClose={cancel} className="kin-action-modal">
           <div className="kin-payment">
             <p className="small">Oxylium: the Ark can explore a ruins on an adjacent tile.</p>
             <div className="kin-payment-buttons">
               {(available.oxylium ?? []).map(tile => (
-                <button key={tile} type="button" className="primary" onClick={() => send({ type: "explore", kind: picked.kind, card: picked.id, army: "ark", tile, ...(world.tactics?.archeologist ? { choice: exploreChoice } : {}) })}>Explore tile {tile} with the Ark</button>
+                <button key={tile} type="button" className="primary" onClick={() => { send({ type: "explore", kind: picked.kind, card: picked.id, army: "ark", tile, ...(world.tactics?.archeologist ? { choice: exploreChoice } : {}) }); cancel(); }}>Explore tile {tile} with the Ark</button>
               ))}
             </div>
+            {available.explore.some(id => id !== "ark") && <button type="button" onClick={() => setConfirmedOptions(`${optionsKey}:army`)}>Choose an army instead</button>}
           </div>
+          </Modal>
         )}
         {play?.council && <CouncilPanel council={play.council} laws={world.lawList ?? []} names={names} userId={userId} onVote={(law, grand) => send({ type: "vote", law, ...(grand ? { grand: true } : {}) })} />}
         {play?.quantum && <QuantumPanel quantum={play.quantum} laws={world.lawList ?? []} subterfuge={world.subterfugeList ?? []} names={names} userId={userId} onChoose={cards => send({ type: "quantum", cards })} />}
         {play?.councilResult && play.councilResult.id !== closedCouncil && <CouncilBanner result={play.councilResult} laws={world.lawList ?? []} onClose={() => setClosedCouncil(play.councilResult!.id)} />}
         {picked && pickedSource && available && action === "revoke" && (
+          <Modal title="Revoke law" onClose={cancel} className="kin-action-modal">
           <PaymentPanel
             title={`Revoke ${world.law?.name ?? "the law"}`}
             power={5}
@@ -626,24 +737,30 @@ export function MainGame({ snapshot, userId, isHost, send }: { snapshot: KinSnap
             onCancel={cancel}
             onConfirm={extra => { send({ type: "revoke", kind: picked.kind, card: picked.id, extra }); cancel(); }}
           />
+          </Modal>
         )}
         {picked && action === "ruthless-capitalists" && (
+          <Modal title="Ruthless Capitalists" onClose={cancel} className="kin-action-modal">
           <div className="kin-payment">
             <p className="small">Ruthless Capitalists: pay 3 tradegoods; you and the chosen player each give the other a Trade Treaty.</p>
             <div className="kin-payment-buttons">
               {(available?.ruthless ?? []).map(other => <button key={other} type="button" className="primary" onClick={() => { send({ type: "ruthless", kind: picked.kind, card: picked.id, target: other }); cancel(); }}>{names[other] ?? other}</button>)}
             </div>
           </div>
+          </Modal>
         )}
         {picked && action === "craftdwarves" && (
+          <Modal title="Craftdwarves" onClose={cancel} className="kin-action-modal">
           <div className="kin-payment">
             <p className="small">Craftdwarves: pay 5 gold and claim the top card of the tactics deck.</p>
             <div className="kin-payment-buttons">
               <button type="button" className="primary" onClick={() => { send({ type: "craftdwarves", kind: picked.kind, card: picked.id }); cancel(); }}>Pay 5 gold</button>
             </div>
           </div>
+          </Modal>
         )}
         {picked && pickedSource && target && available && (
+          <Modal title={target.place ? `Build the ${chosenBlueprint?.name}` : "Demolish"} onClose={cancel} className="kin-action-modal">
           <PaymentPanel
             title={target.place ? `Build the ${chosenBlueprint?.name}` : "Demolish"}
             power={target.place ? target.place.power : demolishOptions.find(option => option.building === target.building)?.power ?? 0}
@@ -658,6 +775,7 @@ export function MainGame({ snapshot, userId, isHost, send }: { snapshot: KinSnap
               else { send({ type: "demolish", kind: picked.kind, card: picked.id, building: target.building, extra }); cancel(); }
             }}
           />
+          </Modal>
         )}
         {play?.battle?.defender === userId && myId === userId && !play.battle.round && (
           <DefendPanel
@@ -670,6 +788,7 @@ export function MainGame({ snapshot, userId, isHost, send }: { snapshot: KinSnap
         {play?.reaction && (
           <ReactionPanel key={`${play.reaction.kind}-${play.reaction.owner}-${play.reaction.title}`} reaction={play.reaction} round={play.battle?.round} userId={userId} names={names} onAnswer={choices => send({ type: "reactionRespond", choices })} />
         )}
+        {needsOptions && <Modal title="Action options" onClose={cancel} className="kin-action-modal">
         {picked && action === "build" && blueprint === "village" && hasCult && (
           <div className="kin-payment">
             <p className="small">Underwater Cult: dedicate the village to a resource.</p>
@@ -717,6 +836,8 @@ export function MainGame({ snapshot, userId, isHost, send }: { snapshot: KinSnap
                         <button type="button" className={payMana ? "primary" : ""} onClick={() => setPayMana(!payMana)}>{payMana ? `Paying ${available.recruitCost ?? 2} mana (Daegobark)` : `Pay ${available.recruitCost ?? 2} mana instead of food (Daegobark)`}</button>
                       </div>
                     )}
+        <button type="button" className="primary" onClick={() => setConfirmedOptions(optionsKey)}>Continue</button>
+        </Modal>}
                     {move && carryKinds.length > 0 && (
           <div className="kin-payment">
             <p className="small">The army brings these blocks along on the next step.</p>
@@ -727,17 +848,20 @@ export function MainGame({ snapshot, userId, isHost, send }: { snapshot: KinSnap
         )}
         {play?.found && play.found.id !== closedFound && <FoundBanner found={play.found} name={names[play.found.player] ?? "?"} onClose={() => setClosedFound(play.found!.id)} />}
         {picked && action === "reclaim" && reclaimAt && (
+          <Modal title="Reclaim" onClose={cancel} className="kin-action-modal">
           <ReclaimPanel
             treasure={available?.reclaim?.find(option => option.building === reclaimAt)?.treasure ?? 0}
             relic={available?.reclaim?.find(option => option.building === reclaimAt)?.relic ?? 0}
             onCancel={cancel}
             onConfirm={basic => { send({ type: "reclaim", kind: picked.kind, card: picked.id, building: reclaimAt, basic }); cancel(); }}
           />
+          </Modal>
         )}
         {play?.report && play.report.id !== closedReport && (
           <BattleReport report={play.report} names={names} characterNames={Object.fromEntries(CHARACTERS.map(def => [def.id, def.name]))} onClose={() => setClosedReport(play.report!.id)} />
         )}
         {picked && pickedSource && action === "battle" && embarkArmy && strikeTile !== null && (
+          <Modal title="Attack" onClose={cancel} className="kin-action-modal">
           <AttackPanel
             pool={pickedSource.power + (world.armies.find(army => army.id === embarkArmy)?.strength ?? 0)}
             kinds={available?.dice ?? ["strategic"]}
@@ -746,8 +870,10 @@ export function MainGame({ snapshot, userId, isHost, send }: { snapshot: KinSnap
             onCancel={cancel}
             onConfirm={(dice, smite, predict) => { send({ type: "battle", kind: picked.kind, card: picked.id, army: embarkArmy, tile: strikeTile, dice, ...(smite ? { smite: true } : {}), ...(predict !== undefined ? { predict }: {}) }); cancel(); }}
           />
+          </Modal>
         )}
         {picked && action === "reinforce" && pair?.second && (
+          <Modal title="Reinforce" onClose={cancel} className="kin-action-modal">
           <div className="kin-payment">
             <h3>Reinforce</h3>
             <p className="small">Choose the new strength of the first army; the second army gets the rest ({reinforceTotal} in total).</p>
@@ -762,9 +888,11 @@ export function MainGame({ snapshot, userId, isHost, send }: { snapshot: KinSnap
               <button type="button" onClick={() => setPair({ first: pair.first })}>Back</button>
             </div>
           </div>
+          </Modal>
         )}
-        {board === "world" && !(picked && action === "barter") && (
+        {board === "world" && (
           <div className="kin-board-stage">
+            {snapshot.victory && <VictoryPanel victory={snapshot.victory} names={names} />}
             <div className="kin-board-scroll">
               <WorldBoard
                 world={world}
@@ -776,24 +904,28 @@ export function MainGame({ snapshot, userId, isHost, send }: { snapshot: KinSnap
                 onMoveTile={move ? tile => { send({ type: "moveStep", tile, ...(carrying.length > 0 ? { blocks: carrying } : {}) }); setLeave([]); } : undefined}
               />
             </div>
-            <div className="kin-ark-overlay"><ArkBoard world={world} spots={spots} /></div>
           </div>
         )}
-        {board === "building" && !(picked && action === "barter") && <BuildingBoard world={world} pick={blueprintPick} />}
-        {board === "technology" && !(picked && action === "barter") && <TechnologyBoard world={world} names={names} researchPick={techAction("research", available?.research)} publicizePick={techAction("publicize", available?.publicize)} />}
-        {board === "phase" && !(picked && action === "barter") && <PhaseBoard world={world} pick={actionPick ?? eventPick} current={play?.phase} />}
+        {board === "world" && <ArkBoard world={world} spots={spots} />}
+        {board === "building" && <BuildingBoard world={world} players={snapshot.seats} pick={blueprintPick} />}
+        {board === "technology" && <TechnologyBoard world={world} players={snapshot.seats} researchPick={techAction("research", available?.research)} publicizePick={techAction("publicize", available?.publicize)} />}
+        {board === "phase" && <PhaseBoard world={world} players={snapshot.seats} pick={actionPick ?? eventPick} current={play?.phase} />}
         </Plane>
       </main>
 
-      <footer className={`kin-main-bottom ${collapsed.bottom ? "collapsed" : ""}`}>
-        {dockToggle("bottom", ["▼", "▲"])}
+      <footer className={`kin-main-bottom ${collapsed.bottom ? "collapsed" : ""}`} style={{ background: selectedKin ? `color-mix(in srgb, ${kinColor(selectedKin)} 25%, var(--kin-paper))` : undefined }}>
+        {dockToggle("bottom", ["▼", "▲"], viewingMyCourt && !!focusCourt)}
         <div className="kin-court-menu">
-          <label className="muted small" htmlFor="kin-court-tab">Court of {selected?.username}</label>
-          <select id="kin-court-tab" value={courtTab} onChange={event => setCourtTab(event.target.value as CourtTab)}>
-            {COURT_TABS.map(tab => <option key={tab.id} value={tab.id}>{tab.name}</option>)}
+          <label className="muted small" htmlFor="kin-court-tab">{selected?.username} ({selectedKin?.name ?? "No Kin"})</label>
+          <select id="kin-court-tab" className={viewingMyCourt && focusCourt ? "needed" : undefined} value={courtTab ?? ""} disabled={!courtTab} onChange={event => setCourtTab(event.target.value as CourtTab)}>
+            {!courtTab && <option value="">Empty court</option>}
+            {COURT_TABS.map(tab => <option key={tab.id} value={tab.id} className={viewingMyCourt && focusCourt === tab.id ? "needed" : undefined} disabled={!courtTabContents[tab.id]}>{tab.name}{viewingMyCourt && focusCourt === tab.id ? " - Choose here" : ""}</option>)}
+            {hostControls && <option value="host">Host controls</option>}
           </select>
         </div>
-        <div className="kin-court">
+        <div className={`kin-court ${courtTab === "host" ? "kin-court-host" : ""}`}>
+          {courtTab === "host" && hostControls}
+          {!courtTab && <p className="muted">No cards in this court.</p>}
           {courtTab === "characters" && courtCharacters.map(def => (
             <CharacterCard
               key={def.id}
@@ -811,28 +943,26 @@ export function MainGame({ snapshot, userId, isHost, send }: { snapshot: KinSnap
               })()}
             />
           ))}
-          {courtTab === "characters" && courtCharacters.length === 0 && <p className="muted">No characters in this court.</p>}
-          {courtTab === "characters" && viewingMyCourt && myTurn && openAbility && (play?.abilities ?? []).filter(option => option.character === openAbility && !option.reason).map(option => <AbilityForm key={option.character} option={option} send={action => { send(action); setOpenAbility(null); }} />)}
+          {courtTab === "characters" && viewingMyCourt && myTurn && openAbility && (play?.abilities ?? []).filter(option => option.character === openAbility && !option.reason).map(option => <AbilityForm key={option.character} option={option} kins={world.kins} send={action => { send(action); setOpenAbility(null); }} />)}
           {courtTab === "characters" && selected && <CourtCards world={world} player={selected.id} kinds={["activation"]} pick={itemPick} />}
-          {courtTab === "technologies" && selected && <CourtCards world={world} player={selected.id} kinds={["technology"]} />}
-          {courtTab === "buildings" && selected && <CourtCards world={world} player={selected.id} kinds={["blueprint"]} pick={viewingMyCourt ? blueprintPick : undefined} />}
-          {courtTab === "actions" && selected && <CourtCards world={world} player={selected.id} kinds={["action", "faction", "event"]} pick={viewingMyCourt ? actionPick : undefined} />}
+          {courtTab === "effects" && selected && <div className="kc-row">{courtEffects.map(item => <ItemCard key={item.id} item={item} kins={world.kins} kinPicks={world.kinPicks} />)}</div>}
           {courtTab === "treaties" && selected && <CourtCards world={world} player={selected.id} kinds={["treaty", "ban"]} pick={viewingMyCourt ? dissolvePick : undefined} />}
           {courtTab === "tactics" && selected && <TacticsPanel world={world} play={play} names={names} userId={userId} player={selected.id} myTurn={myTurn} graphiscopeSelected={picked?.kind === "tactic"} graphiscopeUsable={!!action && sourceKeys.has(sourceKey("tactic", "graphiscope"))} onGraphiscope={() => choose("tactic", "graphiscope")} send={send} />}
           {courtTab === "characters" && viewingMyCourt && sourceKeys.has(sourceKey("tactic", "graphiscope")) && (
             <button type="button" className={picked?.kind === "tactic" ? "primary" : ""} onClick={() => choose("tactic", "graphiscope")}>Use the Graphiscope (power 2)</button>
           )}
-        </div>
-        <div className="kin-resources" aria-label="Resources">
-          {RESOURCE_SYMBOLS.map(res => {
+        {courtTab === "resources" && <div className="kin-resources" aria-label="Resources">
+          {resourcesForKin(selected ? world.kinPicks[selected.id] : undefined).map(res => {
             const amount = selected?.resources[res.id] ?? 0;
             return (
-              <div key={res.id} className="kin-resource-row">
-                <span className="kin-resource-symbol" title={res.name}>{res.symbol}</span>
+              <div key={res.id} className={`kin-resource-row${res.id === "gear" || res.kin ? " kin-resource-group-start" : ""}`} style={{ color: res.color }}>
+                {res.id === "relic" && viewingMyCourt
+                  ? <button type="button" className="kin-resource-symbol kin-relic-use" aria-label="Tap relics" title={selected?.relicTapReason ?? "Tap relics to gain basic resources"} disabled={!!selected?.relicTapReason || !((selected?.resources.relic ?? 0) > (selected?.relicsTapped ?? 0))} onClick={() => { setRelicAmount(1); setRelicResource("gold"); setRelicDialog(true); }}>{res.symbol}</button>
+                  : <span className="kin-resource-symbol" title={res.name}>{res.symbol}</span>}
                 <span className="kin-resource-name">{res.name}</span>
                 <strong>{amount}</strong>
                 {/* Relics show tapped / total; the other resources show the production expected at the next Seasons Change. */}
-                <span className="muted small">{res.id === "relic" ? `0 / ${amount}` : `(+${selected?.production[res.id] ?? 0})`}</span>
+                <span className="muted small">{res.id === "relic" ? `(${selected?.relicsTapped ?? 0}/${amount})` : `(+${selected?.production[res.id] ?? 0})`}</span>
                 {canCheat && <button type="button" className="kin-cheat" title="Testing: give yourself 100" onClick={() => send({ type: "giveResource", resource: res.id })}>+100</button>}
               </div>
             );
@@ -844,8 +974,27 @@ export function MainGame({ snapshot, userId, isHost, send }: { snapshot: KinSnap
               ))}
             </div>
           )}
+        </div>}
         </div>
       </footer>
+      {relicDialog && <Modal title="Tap relics" className="kin-action-modal" wide onClose={() => setRelicDialog(false)}>
+        {(() => {
+          const own = snapshot.seats.find(seat => seat.id === userId);
+          const availableRelics = Math.max(0, (own?.resources.relic ?? 0) - (own?.relicsTapped ?? 0));
+          return <div className="kin-payment">
+            <p>{availableRelics} untapped relics available. Gain one chosen basic resource per relic tapped.</p>
+            <span>Relics to tap <NumberInput aria-label="Relics to tap" min={1} max={availableRelics} value={relicAmount} onValueChange={value => setRelicAmount(Number(value))} /></span>
+            <label>Basic resource <select aria-label="Relic resource" value={relicResource} onChange={event => setRelicResource(event.target.value)}>
+              {RESOURCE_SYMBOLS.filter(res => ["gold", "lumber", "stone", "food"].includes(res.id)).map(res => <option key={res.id} value={res.id}>{res.symbol} {res.name}</option>)}
+            </select></label>
+            {own?.relicTapReason && <p role="alert">{own.relicTapReason}</p>}
+            <div className="kin-barter-answer">
+              <button type="button" className="primary" disabled={!!own?.relicTapReason || !Number.isInteger(relicAmount) || relicAmount < 1 || relicAmount > availableRelics} onClick={() => { send({ type: "tapRelics", amount: relicAmount, resource: relicResource }); setRelicDialog(false); }}>OK</button>
+              <button type="button" onClick={() => setRelicDialog(false)}>Cancel</button>
+            </div>
+          </div>;
+        })()}
+      </Modal>}
     </div>
   );
 }

@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { NumberInput } from "./NumberInput";
 import type { KinAuction, KinAuctionResult, KinPlay, KinTacticCard, KinWorld } from "./types";
 
 type Send = (action: Record<string, unknown>) => void;
@@ -17,7 +18,7 @@ export function AuctionPanel({ auction, world, names, userId, gold, send }: { au
       </p>
       {mine ? (
         <div className="kin-payment-row">
-          <label className="small">Bid <input type="number" min={auction.bid + 1} max={gold} value={bid} onChange={event => setAmount(Math.floor(Number(event.target.value) || 0))} /></label>
+          <span className="small">Bid <NumberInput aria-label="Bid" min={auction.bid + 1} max={gold} value={bid} onValueChange={value => setAmount(Math.floor(Number(value) || 0))} /></span>
           <button type="button" className="primary" disabled={bid > gold} onClick={() => send({ type: "bid", amount: bid })}>Bid {bid}</button>
           <button type="button" onClick={() => send({ type: "fold" })}>Fold</button>
         </div>
@@ -82,7 +83,7 @@ export function TacticsPanel({ world, play, names, userId, player, myTurn, graph
             : owner !== userId ? undefined : option ? (option.playable ? undefined : "Not playable right now.") : myTurn ? "Not playable right now." : "You can play tactics cards on your own turn.";
           return (
             <article key={`${card}-${index}`} className={`kc kc-tactic ${graphiscope && graphiscopeUsable ? "selectable" : ""} ${graphiscopeSelected && graphiscope ? "chosen" : ""} ${reason ? "unavailable" : ""}`} aria-label={nameOf(world.tacticsList, card)} onClick={graphiscope && graphiscopeUsable ? onGraphiscope : undefined}>
-              <span className="kc-kind">Tactics card</span>
+              <span className="kc-kind">Tactics</span>
               <h4>{nameOf(world.tacticsList, card)}</h4>
               <p className="kc-text">{textOf(card)}</p>
               {option && !graphiscope && (

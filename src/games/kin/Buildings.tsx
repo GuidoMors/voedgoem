@@ -88,6 +88,7 @@ const DEDICATION_ICON: Record<string, string> = { gold: "🪙", lumber: "🪵", 
 function iconOf(def: BuildingDef, world: KinWorld, building: KinBuilding) {
   if (def.id !== "worksite" || building.tile < 0) return undefined;
   const next = sideNeighborOf(building.tile, building.side ?? 0);
+  if (next !== null && world.board[next] === "plains") return "🌾";
   return next === null ? undefined : def.icons[WORKSITE_ICON[world.board[next]] ?? 0];
 }
 
@@ -144,7 +145,11 @@ export function BuildingLayer({ world, spots, onSetupTile, onSetupSide, pickable
         return (
           <g key={building.id} transform={`translate(${x} ${y})`}>
             <BuildingShape def={def} side={building.side} reach={reach} color={color} icon={iconOf(def, world, building)} />
-            {building.dedication && <text x={0} y={22} textAnchor="middle" dominantBaseline="middle" className="kin-dedication">{DEDICATION_ICON[building.dedication] ?? "?"}<title>{`Dedicated to ${building.dedication}`}</title></text>}
+            {building.dedication && <g className="kin-dedication">
+              <title>{`Dedicated to ${building.dedication}`}</title>
+              <circle cx={0} cy={-12} r={5} fill="#8a4fb3" stroke="none" />
+              <text x={0} y={-12} textAnchor="middle" dominantBaseline="central">{DEDICATION_ICON[building.dedication] ?? "?"}</text>
+            </g>}
           </g>
         );
       })}
@@ -218,20 +223,26 @@ const ORDER: Record<string, number> = { cross: 0, edge: 1, tile: 2, slice: 3, ce
 export function ArkBoard({ world, spots }: { world: KinWorld; spots?: Spot[] }) {
   const mine = world.buildings.filter(b => b.tile < 0);
   const places = spots?.filter(spot => spot.tile < 0) ?? [];
-  if (mine.length === 0 && places.length === 0) return null;
+  const ark = world.buildings.find(building => building.def === "the-ark" && building.tile >= 0);
+  if (!ark && mine.length === 0 && places.length === 0) return null;
+  const kin = world.kins.find(entry => entry.id === "ark");
+  const color = kin ? kinColor(kin) : colorOf(world, ark?.owner ?? mine[0]?.owner ?? null);
+  const hex = points([0, 1, 2, 3, 4, 5].map(side => corner(side)));
   return (
-    <div className="kin-ark-board">
-      <strong>Ark board</strong>
-      <svg viewBox="-30 -30 60 60" width={90} height={90}>
-        {mine.map(building => {
-          const def = buildingById(building.def);
-          return def && <BuildingShape key={building.id} def={def} side={building.side} color={colorOf(world, building.owner)} />;
-        })}
-        {places.map(spot => {
-          const a = corner(spot.side ?? 0);
-          const b = corner((spot.side ?? 0) + 1);
-          return <polygon key={spot.key} className="kin-spot" points={points([a, b, scale(b, 0.5), scale(a, 0.5)])} onClick={spot.onClick}><title>{spot.title}</title></polygon>;
-        })}
+    <div className="kin-ark-board" style={{ borderColor: color, background: `color-mix(in srgb, ${color} 35%, #f1f2f4)` }}>
+      <svg viewBox="-26 -28 104 56" width={312} height={168} role="img" aria-label="Ark's two building tiles">
+        {[0, 1].map(tile => <g key={tile} transform={`translate(${tile * 52} 0)`}>
+          <polygon className="kin-ark-tile" points={hex} fill="#b9bdc4" stroke={color} strokeWidth={2} />
+          {mine.filter(building => (building.side ?? 0) % 2 === tile).map(building => {
+            const def = buildingById(building.def);
+            return def && <BuildingShape key={building.id} def={def} side={Math.floor((building.side ?? 0) / 2)} color={colorOf(world, building.owner)} />;
+          })}
+          {places.filter(spot => (spot.side ?? 0) % 2 === tile).map(spot => {
+            const side = Math.floor((spot.side ?? 0) / 2);
+            const a = corner(side), b = corner(side + 1);
+            return <polygon key={spot.key} className="kin-spot" points={points([a, b, scale(b, 0.5), scale(a, 0.5)])} onClick={spot.onClick}><title>{spot.title}</title></polygon>;
+          })}
+        </g>)}
       </svg>
     </div>
   );

@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { NumberInput } from "./NumberInput";
 import type { KinReaction, KinBattle, KinBattleReport, KinBattleSide, KinDiceChoice, KinDiceKind, KinMoveSource } from "./types";
 
 const DICE_NAMES: Record<KinDiceKind, string> = { strategic: "Strategic", aggressive: "Aggressive", ambush: "Ambush", defensive: "Defensive" };
@@ -9,10 +10,10 @@ function DiceChooser({ pool, kinds, value, onChange }: { pool: number; kinds: Ki
   return (
     <div className="kin-payment-row">
       {kinds.map(kind => (
-        <label key={kind} className="small">
+        <span key={kind} className="small">
           {DICE_NAMES[kind]}{" "}
-          <input type="number" min={0} max={pool} value={value[kind] ?? 0} onChange={event => onChange({ ...value, [kind]: Math.max(0, Math.floor(Number(event.target.value) || 0)) })} />
-        </label>
+          <NumberInput aria-label={`${DICE_NAMES[kind]} dice`} min={0} max={pool} value={value[kind] ?? 0} onValueChange={amount => onChange({ ...value, [kind]: Math.max(0, Math.floor(Number(amount) || 0)) })} />
+        </span>
       ))}
       <span className={`small ${total === pool ? "" : "kin-bad"}`}>{total} / {pool} dice</span>
     </div>
@@ -24,10 +25,10 @@ const startDice = (pool: number): KinDiceChoice => ({ strategic: pool });
 // Liangzhuge: an optional prediction of the hits against you; an exact guess blocks them all (1 influence).
 function PredictInput({ value, onChange }: { value: string; onChange: (value: string) => void }) {
   return (
-    <label className="small">
+    <span className="small">
       Liangzhuge: predicted hits against you (1 influence)
-      <input type="number" min={0} value={value} onChange={event => onChange(event.target.value)} placeholder="none" />
-    </label>
+      <NumberInput aria-label="Predicted hits against you" min={0} value={value} onValueChange={onChange} placeholder="none" />
+    </span>
   );
 }
 

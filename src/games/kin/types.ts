@@ -7,6 +7,8 @@ export interface KinSeat {
   username: string;
   connected: boolean;
   resources: Record<string, number>;
+  relicsTapped: number;
+  relicTapReason: string | null;
   // Number of characters in the court.
   characters: number;
   // Population from villages and cities, armies against the army limit, and what the buildings produce at Seasons Change.
@@ -127,7 +129,7 @@ export interface KinBarterOffer {
 }
 
 export interface KinBarterInfo {
-  targets: { player: string; connected: boolean }[];
+  targets: { player: string; connected: boolean; mintable: string[]; giveMintable: string[] }[];
   mintable: string[];
 }
 
@@ -244,9 +246,12 @@ export interface KinQuantum {
 }
 
 export interface KinPlay {
+  selectionStep?: string | null;
   phase: "event" | "discovery" | "expansion" | "control";
   turn: string;
   passes: number;
+  forcePass?: string[];
+  autoEventPass?: boolean;
   move: { player: string; army: string; source: { kind: "character" | "item"; id: string }; speed: number; moved: boolean; targets: { tile: number; cost: number }[] } | null;
   options: { sources: KinMoveSource[]; armies: string[]; research: KinTechOption[]; publicize: KinTechOption[]; dissolve: string[]; barter: KinBarterInfo | null; build?: KinBuildOption[]; observatory?: { id: string; name: string }[]; deploy?: string[]; demolish?: KinDemolishOption[]; recruit?: string[]; reinforce?: { army: string; partners: string[] }[];   harvest?: string[];   explore?: string[]; oxylium?: number[]; reclaim?: { building: string; tile: number; treasure: number; relic: number }[]; revoke?: boolean; craft?: boolean; embark?: { army: string; tiles: number[] }[]; battle?: { army: string; targets: number[] }[]; smite?: boolean; goldRecruit?: boolean; manaRecruit?: boolean; recruitCost?: number; yuguan?: boolean; predict?: boolean; longReach?: boolean; hunt?: { army: string; tiles: number[] }[]; nomads?: { village: string; tiles: number[] }[]; ruthless?: string[]; drift?: number[]; dice?: KinDiceKind[] } | null;
   consent?: { player: string; owner: string; building: string; counterfuge?: string; plea?: boolean } | null;

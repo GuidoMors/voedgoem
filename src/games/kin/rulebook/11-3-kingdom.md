@@ -17,7 +17,7 @@ Cards (owned by the leader): Righteous Ruler, Iron Grip
 > Short description: Every player pays 1 [[gold]] to the King.
 > Effect: In natural order each player automatically pays 1 gold to the King. If they don't have gold, nothing is paid.
 
-## Righteous Ruler | ◫
+## Righteous Ruler | effect card
 > Short description: In the [[Council]] event you choose which law is enacted. There is no vote. When you enact a [[law card]], you may choose to place it on the rebel track or kingdom track of the law board. You and your [[vassal]]s are immune to the effects of law cards on the rebel track. Law cards on the law board are not discarded during the [[Council]] event.
 > 1 - Trigger: Council Event, when the drawn laws are drawn
 > 1 - On trigger: select one of the laws. select the rebel track or kingdom track.
