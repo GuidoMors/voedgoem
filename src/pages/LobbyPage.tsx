@@ -32,6 +32,10 @@ function getTurnBotId(snapshot: LobbySnapshot): string | null {
       return null;
     case "werewolves":
       return null;
+    case "pass-time":
+      return snapshot.phase === "playing" && snapshot.gameStep === "cards" && botIds.has(snapshot.currentPlayerId ?? "")
+        ? snapshot.currentPlayerId
+        : null;
   }
 }
 

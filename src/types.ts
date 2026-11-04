@@ -5,6 +5,7 @@ import type { BlokusSnapshot } from "./games/blokus/types";
 import type { TetrisSnapshot } from "./games/tetris/types";
 import type { ThirtyOneSnapshot } from "./games/thirtyone/types";
 import type { WerewolvesSnapshot } from "./games/werewolves/types";
+import type { PassTimeSnapshot } from "./games/pass-time/types";
 
 export interface User {
   id: string;
@@ -45,4 +46,4 @@ export interface AdminUser {
 }
 
 // Add each game's snapshot type here; they are discriminated by `game`.
-export type LobbySnapshot = TetrisSnapshot | CodenamesSnapshot | ThirtyOneSnapshot | DworfSnapshot | BlokusSnapshot | WerewolvesSnapshot;
+export type LobbySnapshot = TetrisSnapshot | CodenamesSnapshot | ThirtyOneSnapshot | DworfSnapshot | BlokusSnapshot | WerewolvesSnapshot | PassTimeSnapshot;

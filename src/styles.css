@@ -4232,3 +4232,947 @@ html body .cn-card:disabled, html body .dworf-card:disabled, html body .dworf-ce
   border-radius: 8px;
   box-shadow: 0 2px 4px rgba(60,40,10,.2),inset 0 0 0 3px #fffdf5,inset 0 0 0 4px #e0d3b0;
 }
+
+body[data-game="pass-time"] {
+  --pt-ink: #2b2117;
+  --pt-muted: #74634a;
+  --pt-paper: #e9dcba;
+  --pt-parchment: #f5ebd0;
+  --pt-brass: #a77a31;
+  --pt-wood: #402b1b;
+  --themegreen: #a77a31;
+  --themesubgreen: #79551f;
+  --themeblack: #e1d0a8;
+  --themegrey: #d7c49d;
+  --themewhite: #f8f0dd;
+  --themelog: #f8f0dd;
+  --neon-rgb: 167, 122, 49;
+  --neon: #a77a31;
+  --neon-soft: #d9b866;
+  --muted: #74634a;
+  --accent: #79551f;
+  --font-big: Georgia, "Times New Roman", serif;
+  --font-small: Georgia, "Times New Roman", serif;
+  color: var(--pt-ink);
+  color-scheme: light;
+  background: radial-gradient(ellipse at 50% 0%, #f5ecd4 0, #e1d0a8 72%) fixed;
+  font-family: Georgia, "Times New Roman", serif;
+}
+html body[data-game="pass-time"] h1,
+html body[data-game="pass-time"] h2,
+html body[data-game="pass-time"] h3,
+html body[data-game="pass-time"] .brand,
+html body[data-game="pass-time"] .score {
+  color: #4a321d;
+  font-family: Georgia, "Times New Roman", serif;
+  text-shadow: none;
+}
+html body[data-game="pass-time"] .pt-header h2 {
+  color: #f8edcf;
+}
+html body[data-game="pass-time"] .muted {
+  color: #74634a;
+}
+html body[data-game="pass-time"] .success {
+  color: #53633a;
+  text-shadow: none;
+}
+html body[data-game="pass-time"] .error {
+  color: #8c2e20;
+  text-shadow: none;
+}
+html body[data-game="pass-time"] .page {
+  color: #2b2117;
+  font-family: Georgia, "Times New Roman", serif;
+}
+html body[data-game="pass-time"] .bot-panel,
+html body[data-game="pass-time"] .lobby-password-card {
+  border-color: #ad8a50;
+  background: linear-gradient(145deg, #f8f0db, #e6d6b2);
+  color: #2b2117;
+  box-shadow: inset 0 0 0 3px #f4e9cd, inset 0 0 0 4px #d5bd8d, 0 4px 12px #50351b24;
+}
+html body[data-game="pass-time"] .host-tag {
+  color: #74634a;
+}
+html body[data-game="pass-time"] button:not(.pt-segment),
+html body[data-game="pass-time"] .button {
+  border: 1px solid #8d672f !important;
+  border-radius: 6px !important;
+  background: linear-gradient(#f5e7c2, #dfc58b) !important;
+  color: #332416 !important;
+  box-shadow: inset 0 1px 0 #fff7df, 0 2px 3px #4c33141c !important;
+  font-family: Georgia, "Times New Roman", serif !important;
+  text-shadow: none !important;
+  transition: filter .15s, background .15s;
+}
+html body[data-game="pass-time"] button:not(.pt-segment):hover:not(:disabled),
+html body[data-game="pass-time"] .button:hover {
+  background: linear-gradient(#fff0cc, #e9cf95) !important;
+  color: #332416 !important;
+  text-shadow: none !important;
+}
+html body[data-game="pass-time"] button.primary:not(.pt-segment) {
+  border-color: #52351c !important;
+  background: linear-gradient(#71502b, #4a301b) !important;
+  color: #fff0cb !important;
+  box-shadow: inset 0 1px 0 #ad8950, 0 2px 4px #3823133d !important;
+}
+html body[data-game="pass-time"] button.primary:not(.pt-segment):hover:not(:disabled) {
+  background: linear-gradient(#866237, #5c3c20) !important;
+  color: #fff0cb !important;
+}
+html body[data-game="pass-time"] button.danger,
+html body[data-game="pass-time"] .danger {
+  border-color: #842e20 !important;
+  color: #842e20 !important;
+}
+html body[data-game="pass-time"] .topbar nav a.active {
+  background: #76552f;
+  color: #fff0cb;
+}
+html body[data-game="pass-time"] ::selection {
+  background: #a77a31;
+  color: #fff8e8;
+}
+body[data-game="pass-time"] .topbar {
+  background: linear-gradient(180deg, #55391f, #362416);
+  border-bottom: 4px solid #a77a31;
+  box-shadow: 0 5px 16px #28190e66;
+}
+body[data-game="pass-time"] .topbar,
+body[data-game="pass-time"] .topbar a,
+body[data-game="pass-time"] .topbar button {
+  color: #f5ebd0;
+}
+body[data-game="pass-time"] .pass-time-page {
+  width: min(1120px, 100%);
+  margin: 0 auto;
+  padding: 18px 0 36px;
+}
+.pass-time-game {
+  color: var(--pt-ink, #2b2117);
+  font-family: Georgia, "Times New Roman", serif;
+}
+.pt-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  margin-bottom: 18px;
+  padding: 24px 28px;
+  color: #f6ebce;
+  border: 2px solid #24170e;
+  border-radius: 12px;
+  background: linear-gradient(135deg, #4b321e, #2e2016);
+  box-shadow: inset 0 0 0 3px #75532d, inset 0 0 0 5px #3a2718, 0 8px 18px #3b291a33;
+}
+.pt-header h2 {
+  margin: 0 0 5px;
+  color: #f8edcf;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: clamp(24px, 4vw, 36px);
+  letter-spacing: .04em;
+}
+.pt-header p {
+  margin: 0;
+  color: #d7c49d;
+}
+.pt-header .pt-eyebrow {
+  margin-bottom: 5px;
+  color: #d9b866;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: .18em;
+  text-transform: uppercase;
+}
+.pt-clock-mark {
+  color: #dfbd69;
+  font-size: 54px;
+  text-shadow: 0 2px 0 #75552c;
+}
+.pt-phase-stamp {
+  padding: 9px 13px;
+  border: 1px solid #b89650;
+  border-radius: 5px;
+  color: #eddaaa;
+  font-size: 12px;
+  letter-spacing: .06em;
+  text-align: center;
+  text-transform: uppercase;
+}
+.pt-lobby-layout,
+.pt-play-layout {
+  display: grid;
+  grid-template-columns: minmax(230px, .75fr) minmax(0, 1.4fr);
+  gap: 18px;
+  align-items: start;
+}
+.pt-panel,
+.pt-table {
+  padding: 18px;
+  border: 1px solid #ad8a50;
+  border-radius: 10px;
+  background: linear-gradient(145deg, #f8f0db, #e6d6b2);
+  box-shadow: inset 0 0 0 3px #f4e9cd, inset 0 0 0 4px #d5bd8d, 0 4px 12px #50351b24;
+}
+.pt-panel h3,
+.pt-player-list h3 {
+  color: #4a321d;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 18px;
+}
+.pt-player-list h3 span {
+  float: right;
+  color: var(--pt-muted);
+  font-size: 13px;
+}
+.pt-player-list ol {
+  display: grid;
+  gap: 7px;
+  margin: 0 0 14px;
+  padding: 0;
+  list-style: none;
+}
+.pt-player-list li {
+  display: grid;
+  grid-template-columns: 26px minmax(0, 1fr) auto auto;
+  gap: 4px 8px;
+  align-items: center;
+  padding: 8px;
+  border: 1px solid #d2bd91;
+  border-radius: 6px;
+  background: #f8f0dd;
+}
+.pt-player-list li.is-current {
+  border-color: #9c6a22;
+  background: #f0dfb6;
+  box-shadow: inset 0 0 0 1px #d3ac5e;
+}
+.pt-player-list li.is-offline { opacity: .63; }
+.pt-player-list li > strong { min-width: 0; overflow-wrap: anywhere; }
+.pt-player-list li > small { grid-column: 2 / -1; color: var(--pt-muted); font-size: 11px; }
+.pt-seat-order {
+  display: grid;
+  width: 23px;
+  height: 23px;
+  place-items: center;
+  border: 1px solid #b08a4a;
+  border-radius: 50%;
+  background: #e2c98e;
+  font-size: 12px;
+}
+.pt-order-buttons { grid-column: 4; grid-row: 1 / span 2; display: flex; gap: 3px; }
+.pt-order-buttons button,
+.pt-remove-player {
+  padding: 3px 7px;
+  font-size: 11px;
+}
+.pt-remove-player {
+  grid-column: 3;
+  grid-row: 1;
+  display: grid;
+  width: 23px;
+  height: 23px;
+  place-items: center;
+  padding: 0;
+  border-radius: 50% !important;
+  font-family: Arial, sans-serif !important;
+  font-size: 16px;
+  line-height: 1;
+}
+.pass-time-game label.pt-field,
+.pt-editor-content > label {
+  display: grid;
+  gap: 6px;
+  margin: 10px 0;
+  color: #60482d;
+  font-size: 13px;
+  font-weight: 700;
+}
+body[data-game="pass-time"] input,
+body[data-game="pass-time"] select {
+  border-color: #b89a65;
+  border-radius: 5px;
+  background: #fff9e9;
+  color: #332416;
+}
+html body[data-game="pass-time"] select option,
+html body[data-game="pass-time"] select optgroup {
+  background-color: #fff9e9;
+  color: #332416;
+}
+body[data-game="pass-time"] button,
+body[data-game="pass-time"] .button {
+  border-color: #8d672f;
+  border-radius: 6px;
+  background: linear-gradient(#f5e7c2, #dfc58b);
+  color: #332416;
+  box-shadow: inset 0 1px 0 #fff7df, 0 2px 3px #4c33141c;
+  font-family: Georgia, "Times New Roman", serif;
+}
+body[data-game="pass-time"] button:hover:not(:disabled) {
+  background: linear-gradient(#fff0cc, #e9cf95);
+}
+body[data-game="pass-time"] button.primary {
+  border-color: #52351c;
+  background: linear-gradient(#71502b, #4a301b);
+  color: #fff0cb;
+  box-shadow: inset 0 1px 0 #ad8950, 0 2px 4px #3823133d;
+}
+body[data-game="pass-time"] button.primary:hover:not(:disabled) {
+  background: linear-gradient(#866237, #5c3c20);
+}
+body[data-game="pass-time"] .danger {
+  color: #8c2e20;
+}
+.pt-host-start,
+.pt-deliberation-controls {
+  display: grid;
+  gap: 10px;
+  margin-top: 16px;
+  padding-top: 12px;
+  border-top: 1px solid #cdb98d;
+}
+.pt-clock-shell {
+  width: 100%;
+  max-width: 720px;
+  margin: 16px auto;
+  padding: 12px;
+  border: 5px solid #49301b;
+  border-radius: 50%;
+  background: radial-gradient(circle, #70502d 0, #4b321e 68%, #332115 100%);
+  box-shadow: inset 0 0 0 3px #bd944c, inset 0 0 0 7px #3a2718, 0 7px 16px #402a1833;
+}
+.pt-clock {
+  position: relative;
+  display: block;
+  aspect-ratio: 1;
+  padding: 0;
+  border: 2px solid #c09a50;
+  border-radius: 50%;
+  overflow: hidden;
+  background: radial-gradient(circle, #9a7642, #634525 70%);
+}
+body[data-game="pass-time"] .pt-clock .pt-segment {
+  position: absolute;
+  inset: 0;
+  display: block;
+  min-width: 0;
+  overflow: hidden;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: linear-gradient(145deg, #f4e8c8, #ddc99b);
+  color: #352516;
+  box-shadow: none;
+  text-align: center;
+}
+html body[data-game="pass-time"] .pt-clock button.pt-segment {
+  position: absolute !important;
+  inset: 0 !important;
+  display: block !important;
+  width: 100% !important;
+  height: 100% !important;
+  min-width: 0 !important;
+  margin: 0 !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  background: linear-gradient(145deg, #f4e8c8, #ddc99b) !important;
+  color: #352516 !important;
+  box-shadow: none !important;
+  font-family: Georgia, "Times New Roman", serif !important;
+  text-shadow: none !important;
+}
+body[data-game="pass-time"] .pt-clock button.pt-segment {
+  cursor: pointer;
+}
+.pt-segment:hover:not(:disabled) { filter: brightness(1.08); }
+.pt-segment.is-locked { filter: saturate(.55) brightness(.93); }
+.pt-segment.is-selected {
+  filter: brightness(1.14) drop-shadow(0 0 3px #f4c559);
+}
+body[data-game="pass-time"] .pt-clock .pt-segment.is-nothing { background: repeating-linear-gradient(135deg, #d6c6a4 0 7px, #c8b58c 7px 14px) !important; }
+.pt-segment-content {
+  position: absolute;
+  display: flex;
+  width: 36%;
+  max-height: 48%;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  overflow: hidden;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+}
+.pt-segment-number {
+  color: #6a4b26;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+}
+.pt-rule-list { display: flex; flex-wrap: wrap; justify-content: center; gap: 4px; }
+.pt-rule-list > span,
+.pt-global-rules > span {
+  border: 1px solid #ab8a54;
+  border-radius: 4px;
+  background: #f6e8c3;
+  color: #442e18;
+  font-weight: 700;
+}
+.pt-rule-list > span {
+  padding: 7px 10px;
+  border-radius: 6px;
+  font-size: 15px;
+  line-height: 1.15;
+  pointer-events: auto;
+  cursor: help;
+}
+.pt-global-rules > span { padding: 2px 5px; font-size: 10px; }
+.pt-rule-list > span:focus-visible {
+  outline: 2px solid #70451f;
+  outline-offset: 2px;
+}
+.pt-rule-tooltip {
+  position: fixed;
+  z-index: 1000;
+  width: max-content;
+  max-width: min(260px, calc(100vw - 24px));
+  padding: 8px 10px;
+  border: 1px solid #8a642d;
+  border-radius: 5px;
+  background: #fff3d4;
+  color: #3e2a16;
+  box-shadow: 0 3px 10px #24170d55;
+  font-size: 12px;
+  line-height: 1.4;
+  pointer-events: none;
+  transform: translateX(-50%);
+}
+.pt-rule-list i { color: #847252; font-size: 10px; }
+.pt-board-cards {
+  position: absolute;
+  z-index: 2;
+  display: flex;
+  width: max-content;
+  align-items: center;
+  pointer-events: none;
+}
+.pt-board-card {
+  position: relative;
+  display: flex;
+  width: 54px;
+  height: 78px;
+  flex: 0 0 54px;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid #9a7a48;
+  border-radius: 4px;
+  background: linear-gradient(145deg, #fffdf4, #e7d8b7);
+  color: #3a2818;
+  box-shadow: 1px 2px 4px #39241266;
+  font-size: 16px;
+  font-weight: 700;
+}
+.pt-board-card + .pt-board-card { margin-left: -12px; }
+.pt-board-card.black {
+  border-color: #241a12;
+  background: linear-gradient(145deg, #53402d, #21170f);
+  color: #f8edcf;
+}
+.pt-board-card.is-face-down {
+  border-width: 3px;
+  box-shadow: inset 0 0 0 1px #e1c477, 1px 2px 4px #39241266;
+}
+.pt-board-card.is-face-down.black {
+  border-color: #21170f;
+  background: repeating-linear-gradient(45deg, #302116 0 4px, #57402b 4px 7px);
+  box-shadow: inset 0 0 0 1px #927344, 1px 2px 4px #39241266;
+}
+.pt-board-card.is-face-down.white {
+  border-color: #a88c58;
+  background: repeating-linear-gradient(45deg, #e6d3a9 0 4px, #fff8df 4px 7px);
+}
+.pt-global-rules {
+  display: flex;
+  max-width: 100%;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+}
+.pt-global-rules > span {
+  padding: 2px 4px;
+  border-color: #c49a4e;
+  background: linear-gradient(#f7edcf, #ddc99b);
+  color: #442e18;
+  font-size: clamp(7px, 1.1vw, 10px);
+  line-height: 1.1;
+  letter-spacing: 0;
+  pointer-events: auto;
+  cursor: help;
+}
+.pt-global-rules > span:focus-visible {
+  outline: 1px solid #f1d48b;
+  outline-offset: 1px;
+}
+.pt-clock-center {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  z-index: 4;
+  display: flex;
+  width: 36%;
+  aspect-ratio: 1;
+  padding: 6px;
+  box-sizing: border-box;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  border: 4px double #c49a4e;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 30%, #674724, #322015 76%);
+  color: #f1d48b;
+  font-size: clamp(10px, 2vw, 16px);
+  letter-spacing: .14em;
+  transform: translate(-50%, -50%);
+  box-shadow: 0 3px 8px #2b1c1177;
+}
+.pt-clock-center.has-global-rules {
+  gap: 4px;
+}
+.pt-clock-center strong { font-size: 1.05em; }
+.pt-clock-center span { font-size: .75em; }
+.pt-clock-hand {
+  position: absolute;
+  top: 1%;
+  left: calc(50% - 16px);
+  z-index: 3;
+  width: 32px;
+  height: 49%;
+  transform-origin: 50% 100%;
+  pointer-events: none;
+}
+.pt-clock-hand-tip,
+.pt-clock-hand-shaft,
+.pt-clock-hand-pivot {
+  position: absolute;
+  display: block;
+  background: linear-gradient(90deg, #75501e 0%, #f8df8e 34%, #c3943b 58%, #68451c 100%);
+  filter: drop-shadow(1px 1px 1px #21170d);
+}
+.pt-clock-hand-tip {
+  top: 0;
+  left: 3px;
+  width: 26px;
+  height: 35%;
+  clip-path: polygon(50% 0, 70% 17%, 91% 35%, 87% 53%, 72% 68%, 50% 82%, 28% 68%, 13% 53%, 9% 35%, 30% 17%);
+}
+.pt-clock-hand-shaft {
+  top: 24%;
+  left: 10px;
+  width: 12px;
+  height: 76%;
+  clip-path: polygon(50% 0, 82% 10%, 65% 82%, 100% 100%, 50% 89%, 0 100%, 35% 82%, 18% 10%);
+}
+.pt-clock-hand-pivot {
+  bottom: -3px;
+  left: 7px;
+  width: 18px;
+  height: 18px;
+  border: 3px double #f1d48b;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 30%, #e8c66c, #74501e 75%);
+}
+html body[data-game="pass-time"] .pt-clock button.pt-boundary-target {
+  position: absolute !important;
+  top: 1%;
+  left: calc(50% - 18px);
+  z-index: 3;
+  width: 36px;
+  height: 49%;
+  padding: 0 !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  cursor: crosshair;
+  transform-origin: 50% 100%;
+}
+html body[data-game="pass-time"] .pt-clock button.pt-boundary-target:hover:not(:disabled),
+html body[data-game="pass-time"] .pt-clock button.pt-boundary-target:focus-visible {
+  border: 0 !important;
+  background: transparent !important;
+  color: transparent !important;
+  box-shadow: none !important;
+  outline: 0;
+}
+.pt-boundary-target::before {
+  position: absolute;
+  inset: 0 auto 0 50%;
+  width: 4px;
+  background: linear-gradient(90deg, transparent, #dbad4c, transparent);
+  content: "";
+  opacity: 0;
+  transform: translateX(-50%);
+  transition: opacity .12s;
+}
+.pt-boundary-target:hover::before,
+.pt-boundary-target:focus-visible::before {
+  opacity: .8;
+}
+.pt-hand-instruction {
+  margin: 0;
+  color: #705839;
+  font-size: 12px;
+}
+.pt-clock-view { width: 100%; }
+.pt-base-rules {
+  width: fit-content;
+  max-width: 100%;
+  margin: 8px auto 16px;
+  padding: 0 12px;
+  border: 1px solid #a77a31;
+  border-radius: 6px 6px 3px 3px;
+  background: linear-gradient(#f7edcf, #e4d1a5);
+  color: #4a321d;
+  box-shadow: inset 0 1px 0 #fff8df, 0 2px 4px #402a1826;
+  font-size: 11px;
+}
+.pt-base-rules summary {
+  padding: 7px 4px;
+  color: #60431f;
+  cursor: pointer;
+  font-weight: 700;
+  text-align: center;
+}
+.pt-base-rules[open] { width: min(100%, 520px); }
+.pt-base-rules ul { margin: 0 0 9px; padding-left: 18px; }
+.pt-base-rules li { margin: 4px 0; }
+.pt-player-list + button { margin-right: 7px; }
+.pt-lobby-layout .pt-clock-shell { max-width: 580px; }
+.pt-style-note {
+  margin: 18px auto;
+  color: #725b36;
+  font-size: 13px;
+  font-style: italic;
+  text-align: center;
+}
+.pt-clock-editor {
+  margin-top: 18px;
+  border: 1px solid #a88954;
+  border-radius: 8px;
+  background: #eee0be;
+}
+.pt-clock-editor > summary {
+  padding: 12px 16px;
+  color: #4a321d;
+  cursor: pointer;
+  font-weight: 700;
+}
+.pt-editor-content { display: grid; gap: 10px; padding: 0 16px 16px; }
+.pt-editor-fields { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+.pt-editor-fields > label { display: grid; gap: 5px; color: #60482d; font-size: 12px; font-weight: 700; }
+.pt-editor-note { padding: 10px 0; color: var(--pt-muted); font-weight: 400; }
+.pt-editor-rule-list { padding: 8px 10px; border: 1px solid #d1bc8c; border-radius: 6px; background: #f7eed8; }
+.pt-editor-rule-list p { margin: 5px 0; }
+.pt-rule-chip { margin: 3px; padding: 3px 7px !important; font-size: 11px; }
+.pt-hints {
+  padding: 10px 14px;
+  border: 1px solid #b59457;
+  border-radius: 6px;
+  color: #e7d5a8;
+  white-space: nowrap;
+}
+.pt-hints strong { display: inline-block; margin-left: 6px; color: #ffdc72; font-size: 22px; }
+.pt-table { min-width: 0; }
+.pt-play-layout {
+  grid-template-columns: minmax(0, 1fr);
+}
+.pt-play-layout .pt-clock-shell {
+  max-width: 720px;
+}
+.pt-play-layout .pt-turn-order {
+  margin: 0 auto 12px;
+}
+.pt-turn-order { display: flex; flex-wrap: wrap; justify-content: center; gap: 6px; }
+.pt-turn-order span {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 5px 8px;
+  border: 1px solid #c4ac7c;
+  border-radius: 99px;
+  background: #f8f0dc;
+  color: #60482d;
+  font-size: 11px;
+}
+.pt-turn-order span small { font-size: 9px; }
+.pt-turn-order span.is-current { border-color: #89602b; background: #e9d39f; font-weight: 700; }
+.pt-turn-order span.is-offline { opacity: .6; }
+.pt-hand { align-self: stretch; }
+.pt-card-hand { display: flex; flex-wrap: wrap; gap: 8px; }
+.pt-playing-card {
+  display: flex;
+  width: 70px;
+  min-height: 98px;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  border: 2px solid #c2a266 !important;
+  background: linear-gradient(145deg, #fff8e6, #e8d8b5) !important;
+  color: #3a2818 !important;
+  box-shadow: 2px 4px 8px #39241233 !important;
+}
+.pt-playing-card span { font-size: 30px; font-weight: 700; }
+html body[data-game="pass-time"] button.pt-playing-card.black {
+  border-color: #241a12 !important;
+  background: linear-gradient(145deg, #53402d, #21170f) !important;
+  color: #f8edcf !important;
+}
+html body[data-game="pass-time"] button.pt-playing-card.black:hover:not(:disabled) {
+  border-color: #bd9852 !important;
+  background: linear-gradient(145deg, #695137, #302116) !important;
+  color: #fff3d4 !important;
+  box-shadow: 0 0 0 2px #d8b45d, 2px 5px 10px #39241255 !important;
+  text-shadow: none !important;
+}
+html body[data-game="pass-time"] button.pt-playing-card.white {
+  border-color: #b8a06a !important;
+  background: linear-gradient(145deg, #fffdf4, #e7d8b7) !important;
+  color: #3a2818 !important;
+}
+html body[data-game="pass-time"] button.pt-playing-card.white:hover:not(:disabled) {
+  border-color: #9c722a !important;
+  background: linear-gradient(145deg, #fffef8, #f1e4c6) !important;
+  color: #3a2818 !important;
+  box-shadow: 0 0 0 2px #d8b45d, 2px 5px 10px #39241255 !important;
+  text-shadow: none !important;
+}
+.pt-playing-card.is-selected { outline: 3px solid #b88731; transform: translateY(-4px); }
+.pt-place-controls { display: grid; gap: 8px; margin-top: 14px; }
+.pt-place-controls p { margin: 0; color: #705839; font-size: 12px; }
+.pt-hint-toggle { display: flex; gap: 8px; align-items: center; color: #624a2a; font-size: 12px; }
+.pt-hint-toggle input { width: auto; }
+.pt-pass-button { margin-top: 6px; }
+.pt-hand-move-timer {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 5px 12px;
+  align-items: center;
+  margin: 12px 0;
+  padding: 10px 12px;
+  border: 2px double #a77a31;
+  border-radius: 6px;
+  background: linear-gradient(#f7edcf, #e4d1a5);
+  color: #60431f;
+  box-shadow: inset 0 1px 0 #fff8df, 0 2px 4px #402a1826;
+}
+.pt-hand-move-timer > span {
+  font-size: 12px;
+  font-weight: 700;
+}
+.pt-hand-move-timer > strong {
+  color: #4a321d;
+  font-size: 24px;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: .06em;
+}
+.pt-hand-move-timer-track {
+  grid-column: 1 / -1;
+  height: 7px;
+  overflow: hidden;
+  border: 1px solid #a77a31;
+  border-radius: 5px;
+  background: #d3c09a;
+}
+.pt-hand-move-timer-track > span {
+  display: block;
+  height: 100%;
+  background: linear-gradient(90deg, #667144, #b38a3f);
+  transition: width .25s linear;
+}
+.pt-hand-move-timer.is-urgent { border-color: #842e20; color: #842e20; }
+.pt-hand-move-timer.is-urgent > strong { color: #842e20; }
+.pt-hand-move-timer.is-urgent .pt-hand-move-timer-track > span { background: linear-gradient(90deg, #b64c32, #842e20); }
+.pt-passed { display: block; margin-top: 6px; color: #766344; font-size: 11px; }
+.pt-host-actions {
+  margin: 14px 0;
+  border: 1px solid #a88954;
+  border-radius: 7px;
+  background: linear-gradient(#f7edcf, #e4d1a5);
+  color: #4a321d;
+  box-shadow: inset 0 1px 0 #fff8df, 0 2px 5px #402a1826;
+}
+.pt-host-actions > summary {
+  padding: 10px 14px;
+  color: #60431f;
+  cursor: pointer;
+  font-weight: 700;
+}
+.pt-host-actions-content {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+  padding: 0 14px 12px;
+}
+.pt-host-actions-content p {
+  flex: 1 1 260px;
+  margin: 0;
+  color: #705839;
+  font-size: 12px;
+}
+.pt-huddle {
+  margin-top: 20px;
+  padding-top: 12px;
+  border-top: 1px solid #cdb98d;
+}
+.pt-huddle h4 { margin: 0 0 8px; color: #4a321d; }
+.pt-huddle h4 small { display: block; margin-top: 3px; color: #786443; font-size: 10px; font-weight: 400; }
+.pt-huddle-messages { max-height: 180px; overflow-y: auto; margin-bottom: 8px; }
+.pt-huddle-messages p { margin: 5px 0; overflow-wrap: anywhere; color: #4b3822; font-size: 12px; }
+.pt-huddle form { display: flex; gap: 6px; }
+.pt-huddle form input { min-width: 0; }
+.pt-huddle form button { flex: 0 0 auto; }
+.pt-result-header.won { border-color: #546039; }
+.pt-result-header.lost { border-color: #842e20; }
+.pt-result-actions { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; margin: 18px; }
+.pt-reveal > h4 { margin: 16px 0 8px; color: #60431f; }
+.pt-revealed-hands { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 300px), 1fr)); gap: 12px; }
+.pt-revealed-hand {
+  padding: 10px;
+  border: 1px solid #c5ad7b;
+  border-radius: 6px;
+  background: #f8edcf;
+}
+.pt-revealed-hand h5 { margin: 0 0 8px; color: #4a321d; font-size: 13px; }
+.pt-revealed-cards { display: flex; flex-wrap: wrap; gap: 6px; }
+.pt-revealed-card {
+  display: inline-flex;
+  width: 58px;
+  height: 40px;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid #b7a273;
+  border-radius: 5px;
+  background: #fff7e2;
+  color: #332416;
+  box-shadow: 1px 2px 3px #39241233;
+  font-size: 19px;
+  font-weight: 700;
+  text-align: center;
+}
+.pt-revealed-card.black { border-color: #241a12; background: linear-gradient(145deg, #53402d, #21170f); color: #f8edcf; }
+.pt-revealed-card.white { border-color: #b8a06a; background: linear-gradient(145deg, #fffdf4, #e7d8b7); color: #3a2818; }
+.pt-unplaced { margin-top: 18px; }
+@media (max-width: 760px) {
+  body[data-game="pass-time"] .pass-time-page { padding: 12px 0 24px; }
+  .pt-lobby-layout,
+  .pt-play-layout { grid-template-columns: 1fr; }
+  .pt-clock-shell { border-width: 3px; padding: 7px; }
+  .pt-segment-content { gap: 3px; }
+  .pt-segment-number { font-size: 8px; }
+  .pt-rule-list > span { padding: 5px 8px; font-size: 12px; }
+  .pt-board-card { width: 42px; height: 60px; flex-basis: 42px; font-size: 15px; }
+  .pt-board-card + .pt-board-card { margin-left: -10px; }
+}
+@media (max-width: 440px) {
+  .pt-header { padding: 16px; }
+  .pt-clock-mark { font-size: 38px; }
+  .pt-phase-stamp { font-size: 9px; }
+  .pt-editor-fields { grid-template-columns: 1fr; gap: 2px; }
+  .pt-rule-list { gap: 2px; }
+}
+.modal.stats-modal[data-game="pass-time"] {
+  --stats-edge: #8d672f;
+  --stats-glow: rgba(80, 51, 24, .12);
+  --stats-surface: #efe3c5;
+  --stats-panel: linear-gradient(145deg, #f8f0db, #e6d6b2);
+  --stats-text: #332416;
+  --stats-muted: #74634a;
+  --stats-accent: #60431f;
+  --font-big: Georgia, "Times New Roman", serif;
+  --font-small: Georgia, "Times New Roman", serif;
+  border: 5px double #8d672f !important;
+  border-radius: 8px !important;
+  box-shadow: inset 0 0 0 3px #f4e9cd, 0 8px 24px #24170d55 !important;
+  color-scheme: light;
+}
+.modal.stats-modal[data-game="pass-time"] .modal-head h2,
+.modal.stats-modal[data-game="pass-time"] .stats-page h1,
+.modal.stats-modal[data-game="pass-time"] .stats-page h2 {
+  color: #4a321d !important;
+  text-shadow: none !important;
+}
+.modal.stats-modal[data-game="pass-time"] .stats-page .card {
+  border: 1px solid #ad8a50 !important;
+  border-radius: 6px !important;
+  background: linear-gradient(145deg, #f8f0db, #e6d6b2) !important;
+  box-shadow: inset 0 1px 0 #fff8df, 0 3px 8px #50351b24 !important;
+}
+.modal.stats-modal[data-game="pass-time"] .stats-page .stat {
+  border: 1px solid #b89a65;
+  border-radius: 4px !important;
+  background: linear-gradient(#f9f1dc, #e9d9b5) !important;
+  box-shadow: inset 0 1px 0 #fff8df, 0 2px 3px #50351b1c;
+}
+.modal.stats-modal[data-game="pass-time"] .stats-page .stat strong {
+  color: #60431f !important;
+  text-shadow: none !important;
+}
+.modal.stats-modal[data-game="pass-time"] .stats-page .stats-tab {
+  border-radius: 4px !important;
+  box-shadow: inset 0 1px 0 #fff8df, 0 2px 3px #50351b1c !important;
+}
+.modal.stats-modal[data-game="pass-time"] .stats-page .stats-tab[aria-selected="true"],
+.modal.stats-modal[data-game="pass-time"] .stats-page .stats-tab[aria-selected="true"]:hover {
+  background: linear-gradient(#866237, #5c3c20) !important;
+  color: #fff0cb !important;
+  border-color: #52351c !important;
+  box-shadow: inset 0 1px 0 #ad8950, 0 2px 4px #3823133d !important;
+}
+.modal.stats-modal[data-game="pass-time"] .stats-page .pill {
+  border-radius: 4px !important;
+  background: #e4d1a5 !important;
+  color: #60431f !important;
+  box-shadow: none !important;
+}
+.modal.stats-modal[data-game="pass-time"] .stats-page .table-wrap {
+  overflow: auto;
+  border: 1px solid #b89a65;
+  border-radius: 4px;
+  background: #f8f0db;
+}
+.modal.stats-modal[data-game="pass-time"] .stats-page .stats-table th {
+  background: #e4d1a5;
+  color: #60431f !important;
+}
+.modal.stats-modal[data-game="pass-time"] .stats-page .stats-table th,
+.modal.stats-modal[data-game="pass-time"] .stats-page .stats-table td {
+  border-bottom-color: #cdb98d !important;
+}
+.modal.stats-modal[data-game="pass-time"] .stats-page .stats-table tbody tr:nth-child(even) td {
+  background: #efe3c5;
+}
+.modal.stats-modal[data-game="pass-time"] .stats-page .stats-table tr.me td {
+  background: #dfc995 !important;
+  color: #332416 !important;
+}
+.modal.stats-modal[data-game="pass-time"] .modal-head button,
+.modal.stats-modal[data-game="pass-time"] .stats-page .stats-tab,
+.modal.stats-modal[data-game="pass-time"] .stats-page .stats-player-tools button,
+.modal.stats-modal[data-game="pass-time"] .stats-page .stats-pagination button {
+  border-radius: 4px !important;
+  font-family: Georgia, "Times New Roman", serif !important;
+  text-shadow: none !important;
+}
+.modal.stats-modal[data-game="pass-time"] .stats-page .stats-player-tools input {
+  border-radius: 4px !important;
+  background: #fff8e6 !important;
+  color: #332416 !important;
+  box-shadow: inset 0 1px 2px #50351b24 !important;
+}
