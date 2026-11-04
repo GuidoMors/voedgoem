@@ -46,5 +46,13 @@ export interface AdminUser {
   hasRecoveryKey: boolean;
 }
 
-// Add each game's snapshot type here; they are discriminated by `game`.
-export type LobbySnapshot = TetrisSnapshot | CodenamesSnapshot | ThirtyOneSnapshot | DworfSnapshot | BlokusSnapshot | WerewolvesSnapshot | PassTimeSnapshot | KinSnapshot;
+// Keep one snapshot type per line so parallel game additions touch separate lines.
+export type LobbySnapshot =
+  | BlokusSnapshot
+  | CodenamesSnapshot
+  | DworfSnapshot
+  | KinSnapshot
+  | PassTimeSnapshot
+  | TetrisSnapshot
+  | ThirtyOneSnapshot
+  | WerewolvesSnapshot;

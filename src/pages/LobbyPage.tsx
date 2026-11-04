@@ -12,6 +12,7 @@ const noop = () => undefined;
 function getTurnBotId(snapshot: LobbySnapshot): string | null {
   const botIds = new Set(snapshot.bots.map(bot => bot.id));
 
+  // Keep each game's bot-turn handling in its own case.
   switch (snapshot.game) {
     case "blokus":
       return snapshot.phase === "playing" && snapshot.turn && botIds.has(snapshot.turn) ? snapshot.turn : null;

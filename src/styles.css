@@ -4278,6 +4278,7 @@ html body .cn-card:disabled, html body .dworf-card:disabled, html body .dworf-ce
   box-shadow: 0 2px 4px rgba(60,40,10,.2),inset 0 0 0 3px #fffdf5,inset 0 0 0 4px #e0d3b0;
 }
 
+/* Add new game-specific rules in src/games/<id>/styles.css and import them from that game's Lobby.tsx. */
 body[data-game="pass-time"] {
   --pt-ink: #2b2117;
   --pt-muted: #74634a;

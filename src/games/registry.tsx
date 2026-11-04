@@ -10,16 +10,16 @@ import type { LobbySnapshot } from "../types";
 import type { Send } from "./types";
 import type { ReactNode } from "react";
 
-// To add a game: create src/games/<id>/ with types.ts and Lobby.tsx, add its snapshot to LobbySnapshot in ../types.ts, and render it here.
+// Keep each game's import and switch case on its own line to reduce merge overlap.
 export function GameLobby({ snapshot, userId, isHost, isAdmin, isDisplay, send, hostControls }: { snapshot: LobbySnapshot; userId: string; isHost: boolean; isAdmin: boolean; isDisplay?: boolean; send: Send; hostControls?: ReactNode }) {
   switch (snapshot.game) {
-    case "tetris": return <TetrisLobby {...{ snapshot, userId, isHost, isAdmin, isDisplay, send }} />;
     case "blokus": return <BlokusLobby {...{ snapshot, userId, isHost, isAdmin, isDisplay, send }} />;
     case "codenames": return <CodenamesLobby {...{ snapshot, userId, isHost, isAdmin, isDisplay, send }} />;
-    case "thirtyone": return <ThirtyOneLobby {...{ snapshot, userId, isHost, isAdmin, isDisplay, send }} />;
     case "dworf": return <DworfLobby {...{ snapshot, userId, isHost, isAdmin, isDisplay, send }} />;
-    case "werewolves": return <WerewolvesLobby {...{ snapshot, userId, isHost, isAdmin, isDisplay, send }} />;
-    case "pass-time": return <PassTimeLobby {...{ snapshot, userId, isHost, isAdmin, isDisplay, send }} />;
     case "kin": return <KinLobby {...{ snapshot, userId, isHost, isAdmin, isDisplay, send, hostControls }} />;
+    case "pass-time": return <PassTimeLobby {...{ snapshot, userId, isHost, isAdmin, isDisplay, send }} />;
+    case "tetris": return <TetrisLobby {...{ snapshot, userId, isHost, isAdmin, isDisplay, send }} />;
+    case "thirtyone": return <ThirtyOneLobby {...{ snapshot, userId, isHost, isAdmin, isDisplay, send }} />;
+    case "werewolves": return <WerewolvesLobby {...{ snapshot, userId, isHost, isAdmin, isDisplay, send }} />;
   }
 }
