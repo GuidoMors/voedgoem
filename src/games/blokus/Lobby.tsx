@@ -96,7 +96,7 @@ function Waiting({ snapshot, userId, isHost, send }: GameLobbyProps<BlokusSnapsh
                         <KickButton id={occupant.id} name={occupant.username} isHost={isHost} send={send} />
                       </span>
                     </div>
-                  ) : <span className="muted small">Open</span>}
+                  ) : <span className="blokus-seat-open muted small">Open</span>}
                   {!occupant && (!me || me.color !== color) && (
                     <button className={`blokus-color-button ${color}`} disabled={full && !me} onClick={() => send({ type: "join", color })}>
                       {me ? `Switch to ${COLOR_NAMES[color]}` : `Join as ${COLOR_NAMES[color]}`}
@@ -138,11 +138,12 @@ function Waiting({ snapshot, userId, isHost, send }: GameLobbyProps<BlokusSnapsh
   );
 }
 
-function Board({ snapshot, piece, rotation, flipped, anchor, setAnchor, canPlace, onPlace }: {
+function Board({ snapshot, piece, rotation, flipped, previewColor, anchor, setAnchor, canPlace, onPlace }: {
   snapshot: BlokusSnapshot;
   piece: BlokusPiece | undefined;
   rotation: number;
   flipped: boolean;
+  previewColor?: BlokusColor;
   anchor: Anchor | null;
   setAnchor: (anchor: Anchor) => void;
   canPlace: boolean;
@@ -157,7 +158,7 @@ function Board({ snapshot, piece, rotation, flipped, anchor, setAnchor, canPlace
         const y = Math.floor(index / snapshot.boardSize);
         const owner = COLORS[value - 1];
         const isPreview = preview.has(`${x},${y}`);
-        const className = ["blokus-cell", owner ? `occupied ${owner}` : "", isPreview ? `preview ${canPlace ? "legal" : "illegal"}` : ""].filter(Boolean).join(" ");
+        const className = ["blokus-cell", owner ? `occupied ${owner}` : "", isPreview ? `preview ${canPlace ? "legal" : "illegal"} ${previewColor ?? ""}` : ""].filter(Boolean).join(" ");
         return (
           <button
             key={index}
@@ -234,34 +235,66 @@ function Playing({ snapshot, userId, isHost, send }: GameLobbyProps<BlokusSnapsh
 
   return (
     <div className="blokus-game">
-      <div className="blokus-turn-bar">
-        <strong>{turn ? `${COLOR_NAMES[turn.color]}'s turn` : "Game over"}</strong>
-        <span>{snapshot.players.filter(item => !item.out).length} players still playing</span>
-      </div>
       <div className="blokus-layout">
-        <section className="card blokus-board-card">
-          <Board snapshot={snapshot} piece={selectedPiece} rotation={rotation} flipped={flipped} anchor={anchor} setAnchor={setAnchor} canPlace={canPlace} onPlace={placeAt} />
-          {canAct && selectedPiece && (
-            <div className="blokus-placement-tools">
-              <p className="muted small">Click a board square to place {selectedPiece.id}{anchor ? ` at column ${anchor.x + 1}, row ${anchor.y + 1}` : ""}. Use ←/→ to rotate and ↑/↓ to flip. {canPlace ? "Legal placement." : "Choose a legal corner placement."}</p>
-              <div className="row">
-                <button onClick={() => { setRotation(value => (value + 3) % 4); setAnchor(null); }}>Rotate left</button>
-                <button onClick={() => { setRotation(value => (value + 1) % 4); setAnchor(null); }}>Rotate right</button>
-                <button onClick={() => { setFlipped(value => !value); setAnchor(null); }}>Flip</button>
-              </div>
-              <PiecePreview cells={shape} className={player.color} />
-              <span className="muted small">Preview: {usedCells.length} squares</span>
+        <section className="card blokus-hand">
+          <h2>Your pieces <span className="pill">{player?.remaining.length ?? 0}</span></h2>
+          {player ? <>
+            <div className="blokus-piece-list">
+              {snapshot.pieces.filter(piece => player.remaining.includes(piece.id)).map(piece => (
+                <button key={piece.id} disabled={!canAct} className={`blokus-piece-choice ${player.color} ${selectedId === piece.id ? "selected" : ""}`} onClick={() => choosePiece(piece.id)} aria-pressed={selectedId === piece.id}>
+                  <PiecePreview cells={piece.cells} className={player.color} />
+                  <span>{piece.id}</span>
+                </button>
+              ))}
             </div>
-          )}
-          {player?.out && <p className="muted">You are out of moves. Your placed pieces stay on the board.</p>}
-          {player && snapshot.turn !== userId && !player.out && <p className="muted small">Waiting for {turn ? `${turn.username} (${COLOR_NAMES[turn.color]})` : "the next turn"}.</p>}
-          {!player && <p className="muted small">Spectating. {turn ? `${turn.username} is taking a turn.` : ""}</p>}
-          {player && (
-            <p className="muted small">Your color: <strong className={player.color}>{COLOR_NAMES[player.color]}</strong> · {player.remainingSquares} squares in {player.remaining.length} pieces.</p>
-          )}
+            <p className="muted small">{player.out ? "You are out of moves." : canAct ? "Choose a piece, then place it on the board." : "Your remaining pieces are shown while you wait for your turn."}</p>
+          </> : <p className="muted small">Join a team to see your pieces.</p>}
         </section>
+        <div className="blokus-center">
+          <section className="card blokus-board-card">
+            <Board snapshot={snapshot} piece={selectedPiece} rotation={rotation} flipped={flipped} previewColor={player?.color} anchor={anchor} setAnchor={setAnchor} canPlace={canPlace} onPlace={placeAt} />
+            {canAct && selectedPiece && (
+              <div className="blokus-placement-tools">
+                <p className="muted small">Click a board square to place {selectedPiece.id}{anchor ? ` at column ${anchor.x + 1}, row ${anchor.y + 1}` : ""}. Use ←/→ to rotate and ↑/↓ to flip. {canPlace ? "Legal placement." : "Choose a legal corner placement."}</p>
+                <div className="row">
+                  <button onClick={() => { setRotation(value => (value + 3) % 4); setAnchor(null); }}>Rotate left</button>
+                  <button onClick={() => { setRotation(value => (value + 1) % 4); setAnchor(null); }}>Rotate right</button>
+                  <button onClick={() => { setFlipped(value => !value); setAnchor(null); }}>Flip</button>
+                </div>
+                <PiecePreview cells={shape} className={player.color} />
+                <span className="muted small">Preview: {usedCells.length} squares</span>
+              </div>
+            )}
+            {player?.out && <p className="muted">You are out of moves. Your placed pieces stay on the board.</p>}
+            {player && snapshot.turn !== userId && !player.out && <p className="muted small">Waiting for {turn ? `${turn.username} (${COLOR_NAMES[turn.color]})` : "the next turn"}.</p>}
+            {!player && <p className="muted small">Spectating. {turn ? `${turn.username} is taking a turn.` : ""}</p>}
+            {player && (
+              <p className="muted small">Your color: <strong className={player.color}>{COLOR_NAMES[player.color]}</strong> · {player.remainingSquares} squares in {player.remaining.length} pieces.</p>
+            )}
+          </section>
+          <section className="blokus-opponent-hands" aria-label="Other players' remaining pieces">
+            {snapshot.players.filter(item => item.id !== userId).map(item => (
+              <div className={`card blokus-opponent-hand ${item.color}`} key={item.id}>
+                <h2><Person id={item.id} name={item.username} size={22} /> <span className="pill">{item.remaining.length}</span></h2>
+                <div className="blokus-opponent-piece-list">
+                  {snapshot.pieces.filter(piece => item.remaining.includes(piece.id)).map(piece => (
+                    <div className={`blokus-opponent-piece ${item.color}`} key={piece.id} title={piece.id} aria-label={piece.id}>
+                      <PiecePreview cells={piece.cells} />
+                    </div>
+                  ))}
+                  {item.remaining.length === 0 && <span className="muted small">No pieces remaining.</span>}
+                </div>
+              </div>
+            ))}
+          </section>
+          {isHost && <section className="card blokus-host-controls"><button className="danger" onClick={() => send({ type: "abort" })}>Abort game</button></section>}
+        </div>
         <aside className="blokus-sidebar">
           <section className="card">
+            <div className="blokus-turn-bar">
+              <strong>{turn ? `${COLOR_NAMES[turn.color]}'s turn` : "Game over"}</strong>
+              <span>{snapshot.players.filter(item => !item.out).length} players still playing</span>
+            </div>
             <div className="blokus-tabs" role="tablist" aria-label="Game information">
               <button type="button" role="tab" aria-selected={sidebarTab === "players"} className={sidebarTab === "players" ? "active" : ""} onClick={() => setSidebarTab("players")}>Players</button>
               <button type="button" role="tab" aria-selected={sidebarTab === "spectators"} className={sidebarTab === "spectators" ? "active" : ""} onClick={() => setSidebarTab("spectators")}>Spectators <span className="pill">{snapshot.spectators.length}</span></button>
@@ -281,21 +314,6 @@ function Playing({ snapshot, userId, isHost, send }: GameLobbyProps<BlokusSnapsh
               </>
             ) : <><h2>Spectators</h2><SpectatorList snapshot={snapshot} /></>}
           </section>
-          {canAct && (
-            <section className="card blokus-hand">
-              <h2>Your pieces <span className="pill">{player.remaining.length}</span></h2>
-              <div className="blokus-piece-list">
-                {snapshot.pieces.filter(piece => player.remaining.includes(piece.id)).map(piece => (
-                  <button key={piece.id} className={`blokus-piece-choice ${player.color} ${selectedId === piece.id ? "selected" : ""}`} onClick={() => choosePiece(piece.id)} aria-pressed={selectedId === piece.id}>
-                    <PiecePreview cells={piece.cells} />
-                    <span>{piece.id}</span>
-                  </button>
-                ))}
-              </div>
-              <p className="muted small">Choose any unused piece. Rotate or flip it, then select its top-left board square.</p>
-            </section>
-          )}
-          {isHost && <section className="card"><button className="danger" onClick={() => send({ type: "abort" })}>Abort game</button></section>}
         </aside>
       </div>
     </div>
