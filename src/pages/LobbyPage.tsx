@@ -101,7 +101,7 @@ export function LobbyPage({ lobbyId, user, onGameChange, chatOpen, onChatClose }
   const view = acting ? ({ ...snapshot, ...botView } as LobbySnapshot) : snapshot;
   const turnBotId = getTurnBotId(snapshot);
 
-  const botControls = user.isAdmin && (
+  const botControls = user.isAdmin && (snapshot.phase === "lobby" || snapshot.bots.length > 0) && (
         <section className="card bot-panel">
           <div className="row between">
             <h2>Test bots</h2>

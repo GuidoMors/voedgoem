@@ -520,6 +520,18 @@ button:disabled {
   --hub-shadow: 0 3px 8px rgba(64,43,27,.18);
   --hub-text: #2b2117;
 }
+.lobby-list li.hub-lobby[data-game="wordle-pvp"] {
+  --hub-surface: #fff;
+  --hub-panel: #f5f5f5;
+  --hub-edge: #d7d7d7;
+  --hub-panel-font-color: #171717;
+  --hub-sub-text-color: #666;
+  --hub-font: Inter, ui-sans-serif, system-ui, sans-serif;
+  --hub-sub-font: Inter, ui-sans-serif, system-ui, sans-serif;
+  --hub-radius: 5px;
+  --hub-shadow: none;
+  --hub-text: #171717;
+}
 .lobby-list li.hub-lobby[data-game="new-template"] {
   --hub-surface: #15191f;
   --hub-panel: #202631;
@@ -4030,6 +4042,19 @@ html body .cn-card:disabled, html body .dworf-card:disabled, html body .dworf-ce
   --font-small: system-ui, sans-serif;
 }
 
+.modal.stats-modal[data-game="wordle-pvp"] {
+  --stats-border-radius: 5px;
+  --stats-edge: #d7d7d7;
+  --stats-glow: rgba(0, 0, 0, 0);
+  --stats-surface: #fff;
+  --stats-panel: #f3f3f3;
+  --stats-text: #171717;
+  --stats-muted: #666;
+  --stats-accent: #222;
+  --font-big: Inter, ui-sans-serif, system-ui, sans-serif;
+  --font-small: Inter, ui-sans-serif, system-ui, sans-serif;
+}
+
 .modal.stats-modal[data-game="kin"] {
   --stats-edge: #e0584c;
   --stats-glow: rgba(0, 0, 0, 0);
@@ -6382,6 +6407,10 @@ body[data-game="werewolves"] .werewolves-circle-seat.lynch-target {
 .modal.stats-modal[data-game] .stats-page .stats-tab[data-tab-game="codenames"] {
   --t-edge: #a8956b; --t-glow: rgba(122,28,28,.15); --t-surface: #e8dcc0; --t-panel: #fbf6e8; --t-text: #2b2118; --t-accent: #7a1c1c;
   font-family: 'Libre Baskerville', Georgia, serif;
+}
+.modal.stats-modal[data-game] .stats-page .stats-tab[data-tab-game="wordle-pvp"] {
+  --t-edge: #d7d7d7; --t-glow: rgba(0,0,0,0); --t-surface: #fff; --t-panel: #f3f3f3; --t-text: #171717; --t-accent: #222;
+  font-family: Inter, ui-sans-serif, system-ui, sans-serif;
 }
 .modal.stats-modal[data-game] .stats-page .stats-tab[data-tab-game] {
   background: var(--t-surface) !important;

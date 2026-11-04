@@ -8,18 +8,28 @@ export interface WordleGuess {
   result: WordleFeedback[];
 }
 
+export interface WordlePuzzleSnapshot {
+  id: number;
+  solved: boolean;
+  history: WordleGuess[];
+  player: { id: string; username: string; connected: boolean } | null;
+  waitingPlayers: { id: string; username: string; connected: boolean }[];
+}
+
 export interface WordleTeamSnapshot {
   solved: number;
   total: number;
   guesses: number;
   remainingMs: number;
   locked: boolean;
+  puzzles: WordlePuzzleSnapshot[];
   players: {
     id: string;
     username: string;
     connected: boolean;
-    queueCount: number;
-    active: boolean;
+    position: number | null;
+    waitingFor: number | null;
+    stats: { guesses: number; yellow: number; green: number };
     isYou: boolean;
   }[];
 }
@@ -40,7 +50,6 @@ export interface WordlePvpSnapshot extends BaseSnapshot {
   current: {
     puzzleId: number;
     history: WordleGuess[];
-    queueCount: number;
     feedback: {
       guess: string;
       result: WordleFeedback[];
@@ -49,6 +58,7 @@ export interface WordlePvpSnapshot extends BaseSnapshot {
     } | null;
   } | null;
   now: number;
+  settings: { roundMinutes: number; penaltySeconds: number };
   winner: WordleTeamId | "draw" | null;
   resultsAt: number | null;
   options: {
@@ -56,6 +66,7 @@ export interface WordlePvpSnapshot extends BaseSnapshot {
     leave: boolean;
     start: boolean;
     guess: boolean;
+    endGame: boolean;
     closeResults: boolean;
   };
 }

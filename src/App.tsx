@@ -84,6 +84,7 @@ export default function App() {
       {user.isDisplay && <DisplayQr url={window.location.href} />}
       <header className="topbar">
         <a className="brand" href="#/" onClick={event => inGame && event.preventDefault()}>voedgoem</a>
+        <div id="wordle-theme-slot" />
         <button className="burger" aria-label="Menu" aria-expanded={menuOpen} onClick={() => setMenuOpen(open => !open)}>{menuOpen ? "✕" : "☰"}</button>
         <div className={`menu ${menuOpen ? "open" : ""}`}>
         <nav>
