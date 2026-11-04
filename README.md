@@ -32,7 +32,7 @@ After changing Kin card rules, run `node scripts/gen-cards.mjs` in `voedgoem-ser
 
 During a Kin game, hosts and admins have a **Host controls** court tab. It contains the host controls and, for admins, the existing test-bot tools. The game fits the viewport without page scrolling; the bottom court expands to its content, with internal scrolling only when content exceeds the available space.
 
-The top header shows the round, a full-Kin-color current-player pill, and the phase dots. Its next-click guidance is visible to everyone. Local action selections share only a generic step (card, army, tile, building, technology, treaty, or form), never form contents or secret card choices; gameplay clears the shared step.
+The top header shows the round in slightly larger text at font weight 100, followed immediately by a full-Kin-color current-player pill labelled `Name (Kin)`. The larger phase dots on the right replace the redundant phase-name pill. Center next-click guidance on the whole bar for everyone, not only the active player; describe what to click rather than enumerating action cards. Local action selections share only a generic step (card, army, tile, building, technology, treaty, or form), never form contents or secret card choices; gameplay clears the shared step.
 
 Court tabs are disabled when the selected player's corresponding section is empty. Characters includes activation cards, and Tactics & subterfuge includes hidden subterfuge cards when viewing another player. If the selected tab becomes empty, the court displays an available tab instead.
 
@@ -44,7 +44,7 @@ Kin number fields share paper-and-red up/down controls instead of browser-native
 
 Only the Syndicate's side can contribute Tradegoods. The offer composer chooses which basic resource those become, including when requesting Tradegoods from the Syndicate. Switching trade partners clears the requested goods.
 
-Held treaties cannot be offered or requested in Barter. Use **+ Add a treaty** to create a new treaty, subject to the existing diplomacy requirements.
+Held treaties cannot be offered or requested in Barter. Create a new treaty through the directional treaty selectors, subject to the existing diplomacy requirements.
 
 Add barter characters through the dropdown on either side. Multiple characters can be selected; each appears as a full character card with a Remove button and is excluded from the dropdown until removed.
 
@@ -52,11 +52,11 @@ Lumon and the Ethereal cannot be offered or requested in Barter.
 
 The barter partner dropdown lists each player's Kin in parentheses and whether they hold a Trade Treaty given by you.
 
-New treaties have separate give and receive selectors, each using the giver's diplomacy knowledge and the pair's treaty eligibility. Changing partners clears selected new treaties.
+New treaties have separate **I give treaty to you** and **I receive treaty from you** selectors, each using the giver's diplomacy knowledge and the pair's treaty eligibility. Changing partners clears selected new treaties. Each resource shows the corresponding side's available quantity in parentheses; relics instead show tapped/total.
 
 Relics show (tapped/total) in the court Resources tab and both barter sides. Only untapped relics can be bartered. During your turn in any phase, click your relic icon to choose an amount and one basic resource; confirming taps that many relics and grants that many resources without ending your turn. Relics untap at Seasons Change.
 
-Temporary action forms (including Barter, building payment, Reclaim, attack dice, Reinforce, and event configuration) open as modal popups outside the board's pan/zoom layer. Click the backdrop, press Escape, or close the popup to cancel the unsubmitted action. Optional action settings offer Continue to return to board selection. Existing court/board card choices and mandatory responses retain their existing locations.
+Temporary action forms (including Barter, building payment, Reclaim, attack dice, Reinforce, and event configuration) open as large modal popups covering most of the viewport, outside the board's pan/zoom layer. Click the backdrop, press Escape, or close the popup to cancel the unsubmitted action. Optional action settings offer Continue to return to board selection. Existing court/board card choices and mandatory responses retain their existing locations.
 
 Kin test bots default to **Force pass**. Host controls show the current mode separately from explicit **Enable force pass** / **Disable force pass** buttons. Disable force pass for **Normal play** to leave gameplay turns for manual control. Both modes automate setup when global Autopilot is on; with Autopilot off neither mode acts automatically. **Control bot whose turn it is** supports Kin setup and gameplay. Bots can only join before a game starts.
 
@@ -71,6 +71,12 @@ Boards without a saved view start at 75% zoom, at the top edge and horizontally 
 Phase tracks use readable phase-colored backgrounds with three cards per row, except the wider Event track which fits four. Player tracks align under Discovery, Expansion, and Control, leaving the Event column empty. An active law appears separately to the left of Events; no law panel is shown when none is active.
 
 Board backdrops use teal (#004b50) for World, Kin paper for Building, Kin ink for Technology, and a muted current-phase tint (15% phase color over Kin paper) for Phase.
+
+Board navigation order is World, Phase, Building, Technology. Give each tab a distinct color, a solid thick Kin-red selected border reaching its edges, and retain the attention glow for activatable choices even when selected.
+
+Player turn entries use their Kin color without resource/card preview pills. The active player has a thick red border; the inspected player's entry glows. Keep the player dock above the court in stacking order. The inspected court is labelled `Name (Kin)` and uses a muted Kin background. Resources have their own court tab with a borderless Kin-paper panel.
+
+Tapped cards rotate upright and return to normal size on hover. Board text is not selectable while panning, but input and textarea text remains selectable.
 
 Victory standings appear only on World, in an always-open paper panel to the left of the board. Gold cells identify sole leaders; the footer shows areas led against the victory requirement.
 
@@ -88,9 +94,21 @@ The shared building board has Public and Locked tracks. Each track keeps all its
 
 Player building boards use two columns with thin light-brown dividers instead of outer borders.
 
+Worksites adjacent to plains use the Rice Field icon 🌾 rather than the default worksite icon.
+
 ## Adding a game
 
-Each game lives in `src/games/<id>/` (`types.ts` for its snapshot type, `Lobby.tsx` for its UI, plus any engine/helpers). Add the snapshot type to `LobbySnapshot` in `src/types.ts` and render the lobby in `src/games/registry.tsx`. Shared pieces are in `src/games/types.ts`. Current games: `tetris`, `codenames`.
+Adding a game is a cross-repository task. Complete all of the following before considering it integrated:
+
+1. **Register and render:** create `src/games/<id>/` (`types.ts` for its snapshot and `Lobby.tsx` for its UI). Add the snapshot to `LobbySnapshot` in `src/types.ts` and render it in `src/games/registry.tsx`. Shared contracts are in `src/games/types.ts`. Follow the [server's registration instructions](../voedgoem-server/README.md); its registry is generated, not manually maintained.
+2. **Find and apply the favicon:** inspect `../voedgoem-server/content/favicons/` for the supplied artwork before inventing a replacement. Copy the matching asset into `public/favicons/` and add the canonical game ID to `src/gameFavicon.ts`. Names may differ (`tetris` uses `tetrys.ico`, for example). The shared mapping powers both hub icons and the in-lobby browser favicon; preserve the Voedgoem favicon outside lobbies. If no asset exists or the match is ambiguous, report it and ask for the asset/choice rather than silently omitting this step.
+3. **Theme the hub bar:** add `.hub-lobby[data-game="<id>"]` theme variables in `src/styles.css`: surface/panel, border, primary/secondary text, typography, radius, and shadow. Match the game's own visual style instead of leaving the generic fallback. Keep Join/Show green, with game-appropriate details and readable contrast.
+4. **Wire statistics end to end:** register meaningful aggregates in server `src/stats.ts` and implement result recording through the game-module contract. Keep canonical IDs consistent across registry, results, and `/api/stats/:game`. Routes must support hyphenated IDs such as `pass-time`. Exclude bots from persisted user results.
+5. **Theme statistics:** add the game's `.stats-tab[data-tab-game="<id>"]` theme variables, including normal, hover, and selected states. Also supply its `.stats-modal[data-game="<id>"]` theme so panels, tables, inputs, and pagination match. Each tab must retain the style of the game it selects even while another game's modal theme is active.
+6. **Preserve shared UX:** support spectator/display views and existing host/admin bot controls without exposing hidden information. Use the existing modal/navigation flow instead of leaving the running lobby to view statistics.
+7. **Verify the actual surfaces:** build/typecheck both changed projects and run relevant existing tests. In the browser check hub bar/icon, lobby browser favicon, statistics tab states, an authenticated statistics response, and the empty-results state. Switch tabs quickly to check that old responses/errors do not overwrite the current game. Verify desktop and narrow layouts. Do not call registration or compilation alone proof of complete integration.
+
+Pass Time is the parchment/brass/wood reference: serif typography, warm paper surfaces, brown text, and brass edges in both hub and statistics styling.
 
 ## Avatars
 
@@ -99,4 +117,4 @@ ode scripts/import-avatars.mjs <folder with bodies, faces and hats>, which also 
 
 ## Statistics
 
-The Statistics page has one tab per game. Each tab shows your own stats and a compact table of all players. Stat definitions live in the server's src/stats.ts. Display accounts show a QR code to log in.
+The Statistics page has one tab per game. Each tab shows your own stats and a compact table of all players. Stat definitions live in the server's `src/stats.ts`. Show a normal empty state for games without finished results, not "Not found." Clear old errors when changing games and ignore responses from superseded requests. Display accounts show a QR code to log in.
