@@ -1,0 +1,263 @@
+.wordle-pvp {
+  color-scheme: light;
+  --wp-bg: #fff;
+  --wp-surface: #fff;
+  --wp-text: #171717;
+  --wp-muted: #666;
+  --wp-border: #d7d7d7;
+  --wp-soft: #f3f3f3;
+  --wp-key: #e8e8e8;
+  --wp-correct: #4b8b62;
+  --wp-present: #bd963d;
+  --wp-absent: #777;
+  width: min(100%, 1120px);
+  margin: 0 auto;
+  padding: clamp(16px, 3vw, 32px);
+  background: var(--wp-bg);
+  color: var(--wp-text);
+  font-family: Inter, ui-sans-serif, system-ui, sans-serif;
+  transition: background-color 140ms ease, color 140ms ease;
+}
+
+.wordle-pvp.wp-night {
+  color-scheme: dark;
+  --wp-bg: #111;
+  --wp-surface: #171717;
+  --wp-text: #f4f4f4;
+  --wp-muted: #b7b7b7;
+  --wp-border: #414141;
+  --wp-soft: #222;
+  --wp-key: #333;
+  --wp-correct: #467c56;
+  --wp-present: #92732f;
+  --wp-absent: #555;
+  color-scheme: dark;
+}
+
+body[data-wordle-theme="day"] {
+  background: #fff;
+  color: #171717;
+}
+
+body[data-wordle-theme="night"] {
+  background: #111;
+  color: #f4f4f4;
+}
+
+.wordle-pvp *,
+.wordle-pvp *::before,
+.wordle-pvp *::after { box-sizing: border-box; }
+.wordle-pvp button,
+.wordle-pvp input { font: inherit; }
+.wordle-pvp button { cursor: pointer; }
+.wordle-pvp button:hover:not(:disabled) { background: var(--wp-soft); }
+.wordle-pvp .wp-key:hover:not(:disabled) { background: var(--wp-key); }
+.wordle-pvp .wp-key-correct:hover:not(:disabled) { background: var(--wp-correct); }
+.wordle-pvp .wp-key-present:hover:not(:disabled) { background: var(--wp-present); }
+.wordle-pvp .wp-key-absent:hover:not(:disabled) { background: var(--wp-absent); }
+.wordle-pvp button:disabled { cursor: not-allowed; opacity: .5; }
+.wordle-pvp h1,
+.wordle-pvp h2,
+.wordle-pvp h3 { color: var(--wp-text); font-family: inherit; text-shadow: none; letter-spacing: normal; }
+.wordle-pvp h1,
+.wordle-pvp h2,
+.wordle-pvp h3,
+.wordle-pvp p { margin-top: 0; }
+.wordle-pvp .wp-muted { color: var(--wp-muted); }
+.wordle-pvp .wp-eyebrow {
+  margin-bottom: 5px;
+  color: var(--wp-muted);
+  font-size: .73rem;
+  font-weight: 700;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+}
+
+.wp-header,
+.wp-team-header,
+.wp-puzzle-header,
+.wp-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+.wp-header { border-bottom: 1px solid var(--wp-border); padding-bottom: 18px; }
+.wp-header h1 { margin: 0; font-size: clamp(1.7rem, 4vw, 2.4rem); letter-spacing: -.04em; }
+.wp-theme-toggle,
+.wp-join,
+.wp-leave,
+.wp-host-controls button,
+.wp-results button,
+.wp-guess-form button {
+  min-height: 40px;
+  padding: 8px 14px;
+  border: 1px solid var(--wp-border);
+  border-radius: 4px;
+  background: var(--wp-surface);
+  color: var(--wp-text);
+}
+.wp-theme-toggle { white-space: nowrap; }
+.wp-intro { max-width: 660px; margin: 20px 0; color: var(--wp-muted); }
+.wp-teams,
+.wp-scoreboard {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+}
+.wp-team {
+  min-width: 0;
+  padding: 16px;
+  border: 1px solid var(--wp-border);
+  border-radius: 5px;
+  background: var(--wp-surface);
+}
+.wp-team-header h2 { margin: 0; font-size: 1.05rem; }
+.wp-team-red .wp-team-header h2,
+.wp-result-team.wp-team-red h3 { color: #b74242; }
+.wp-team-blue .wp-team-header h2,
+.wp-result-team.wp-team-blue h3 { color: #4376b8; }
+.wp-clock { font-variant-numeric: tabular-nums; font-size: 1.25rem; }
+.wp-clock-urgent { color: #c33; }
+.wp-team-score { margin: 12px 0; color: var(--wp-muted); font-size: .9rem; }
+.wp-team-score strong { color: var(--wp-text); font-size: 1.3rem; }
+.wp-team-score span { margin: 0 5px; }
+.wp-player-list { display: grid; gap: 7px; margin: 0; padding: 0; list-style: none; }
+.wp-player-list li { display: flex; min-width: 0; align-items: center; gap: 8px; }
+.wp-player-status {
+  overflow: hidden;
+  margin-left: auto;
+  color: var(--wp-muted);
+  font-size: .78rem;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.wp-player-list .wp-offline { opacity: .55; }
+.wp-you { border: 1px solid var(--wp-border); border-radius: 3px; padding: 2px 5px; color: var(--wp-muted); font-size: .7rem; }
+.wp-join { margin-top: 15px; }
+.wp-leave { margin-top: 12px; }
+.wp-host-controls { display: flex; align-items: center; flex-wrap: wrap; gap: 12px; margin-top: 18px; }
+.wp-host-controls p { margin: 0; font-size: .85rem; }
+.wp-primary { border-color: var(--wp-text) !important; background: var(--wp-text) !important; color: var(--wp-bg) !important; }
+.wp-scoreboard { margin-bottom: 18px; }
+.wp-scoreboard .wp-team { padding: 12px; }
+.wp-scoreboard .wp-player-list li:nth-child(n+5) { display: none; }
+.wp-scoreboard .wp-team-score { margin-bottom: 7px; }
+
+.wp-puzzle {
+  width: min(100%, 520px);
+  margin: 0 auto;
+  padding: clamp(15px, 3vw, 24px);
+  border: 1px solid var(--wp-border);
+  border-radius: 5px;
+  background: var(--wp-surface);
+}
+.wp-puzzle-header { margin-bottom: 16px; }
+.wp-puzzle-header h2 { margin: 0; font-size: 1.2rem; }
+.wp-queue-count { color: var(--wp-muted); font-size: .82rem; white-space: nowrap; }
+.wp-board {
+  display: grid;
+  justify-content: center;
+  gap: 5px;
+  max-height: 390px;
+  overflow: auto;
+  margin: 0 auto 17px;
+  scrollbar-color: var(--wp-border) transparent;
+}
+.wp-board-row { display: grid; grid-template-columns: repeat(5, 48px); gap: 5px; }
+.wp-tile {
+  display: grid;
+  width: 48px;
+  aspect-ratio: 1;
+  place-items: center;
+  border: 1px solid var(--wp-border);
+  color: var(--wp-text);
+  font-size: 1.2rem;
+  font-weight: 750;
+}
+.wp-tile-filled { border-color: var(--wp-muted); }
+.wp-tile-correct { border-color: var(--wp-correct); background: var(--wp-correct); color: #fff; }
+.wp-tile-present { border-color: var(--wp-present); background: var(--wp-present); color: #fff; }
+.wp-tile-absent { border-color: var(--wp-absent); background: var(--wp-absent); color: #fff; }
+.wp-guess-form { display: flex; gap: 8px; }
+.wp-guess-form input {
+  min-width: 0;
+  flex: 1;
+  height: 42px;
+  border: 1px solid var(--wp-border);
+  border-radius: 4px;
+  padding: 0 12px;
+  background: var(--wp-bg);
+  color: var(--wp-text);
+  font-size: 1rem;
+  letter-spacing: .15em;
+  text-transform: uppercase;
+}
+.wp-guess-form button { min-width: 78px; border-color: var(--wp-text); background: var(--wp-text); color: var(--wp-bg); }
+.wp-keyboard { display: grid; gap: 7px; margin-top: 14px; }
+.wp-key-row { display: flex; justify-content: center; gap: 5px; }
+.wp-key {
+  min-width: 0;
+  width: clamp(25px, 7vw, 42px);
+  height: 42px;
+  border: 0;
+  border-radius: 3px;
+  background: var(--wp-key);
+  color: var(--wp-text);
+  font-size: .8rem;
+  font-weight: 700;
+}
+.wp-key-wide { width: auto; padding: 0 8px; font-size: .68rem; }
+.wp-key-correct { background: var(--wp-correct); color: #fff; }
+.wp-key-present { background: var(--wp-present); color: #fff; }
+.wp-key-absent { background: var(--wp-absent); color: #fff; }
+.wp-hint { margin: 12px 0 0; font-size: .76rem; text-align: center; }
+.wp-feedback { margin: 0 0 12px; color: var(--wp-muted); font-size: .9rem; text-align: center; }
+.wp-feedback-solved { color: var(--wp-correct); font-weight: 700; }
+.wp-error { color: #c33; font-size: .85rem; }
+.wp-over {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 14px;
+  padding: 12px 14px;
+  border: 1px solid var(--wp-border);
+  background: var(--wp-soft);
+}
+.wp-over span { color: var(--wp-muted); font-size: .85rem; }
+.wp-wait-dots { display: inline-flex; margin-left: 5px; }
+.wp-wait-dots i { font-style: normal; animation: wp-dot 1s infinite; }
+.wp-wait-dots i:nth-child(2) { animation-delay: .15s; }
+.wp-wait-dots i:nth-child(3) { animation-delay: .3s; }
+@keyframes wp-dot { 0%, 60%, 100% { opacity: .25; } 30% { opacity: 1; } }
+.wp-results {
+  width: min(100%, 600px);
+  margin: 22px auto 0;
+  padding: 22px;
+  border: 1px solid var(--wp-border);
+  background: var(--wp-surface);
+  text-align: center;
+}
+.wp-results h2 { margin-bottom: 18px; }
+.wp-result-teams { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; margin-bottom: 20px; }
+.wp-result-team { display: grid; gap: 5px; padding: 14px; border: 1px solid var(--wp-border); }
+.wp-result-team h3 { margin: 0; }
+.wp-result-team strong { font-size: 1.35rem; }
+.wp-result-team span { color: var(--wp-muted); font-size: .85rem; }
+.wp-footer { margin-top: 22px; color: var(--wp-muted); font-size: .75rem; }
+
+@media (max-width: 640px) {
+  .wordle-pvp { padding: 14px; }
+  .wp-teams { grid-template-columns: 1fr; }
+  .wp-team { padding: 13px; }
+  .wp-player-list li:nth-child(n+6) { display: none; }
+  .wp-board-row { grid-template-columns: repeat(5, min(15vw, 48px)); gap: 4px; }
+  .wp-tile { width: min(15vw, 48px); font-size: 1rem; }
+  .wp-key { height: 38px; }
+  .wp-over { align-items: flex-start; flex-direction: column; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .wordle-pvp, .wp-wait-dots i { transition: none; animation: none; }
+}
