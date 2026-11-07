@@ -225,7 +225,7 @@ export function BarterComposer({ world, players: seats, userId, names, targets, 
       })}
       </div>
       <div className="kin-barter-answer">
-        <button type="button" className="primary" disabled={!to} onClick={() => { send({ type: "barter", kind: source.kind, card: source.id, to, give, take, mint: mint.map(clean) }); onClose(); }}>Offer</button>
+        <button type="button" className="primary" disabled={!to} onClick={() => send({ type: "barter", kind: source.kind, card: source.id, to, give, take, mint: mint.map(clean) })}>Offer</button>
         <button type="button" onClick={onClose}>Cancel</button>
       </div>
     </div>

@@ -42,7 +42,7 @@ Their society revolves around trade, economic deals, and business. Always busine
 
 # Faction Effects
 
-## Tradespeopple | effect card | core
+## Tradespeople | effect card | core
 > Gain 1 [[gold]] when you receive a [[Trade Treaty]] from another player.
 // Condition: You receive a Trade Treaty from another player in this barter.
 // Trigger: Barter, when it resolves.
@@ -69,7 +69,7 @@ Their society revolves around trade, economic deals, and business. Always busine
 // Effect: You and the selected player each gain a [[Trade Treaty]] from the other.
 
 ## River Roamers | effect card
-> You can [[Build]] a [[village]] on an tile connected by [[river]] to another village you own, without needing an army there or an adjacent building.
+> You can [[Build]] a [[village]] on a tile connected by [[river]] to another village you own, without needing an army there or an adjacent building.
 // Condition: You are building a village
 // Trigger: Build, when checking the eligible tiles to build on
 // Effect: Add all tiles to the build location options which are adjacent to rivers which connect through river tiles to a village you own.

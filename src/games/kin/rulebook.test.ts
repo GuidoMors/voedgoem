@@ -6,13 +6,30 @@ import { renderToStaticMarkup } from "react-dom/server";
 import { CARDS, cardById } from "./cards.data.ts";
 import { CHARACTERS } from "./characters.data.ts";
 import { ExplorationBoard } from "./Exploration.tsx";
-import { buildRulebook, findLinks } from "./rulebookParser.ts";
+import { buildRulebook, findLinks, parseDoc } from "./rulebookParser.ts";
 import type { KinVictory, KinWorld } from "./types.ts";
 
 const dir = new URL("./rulebook/", import.meta.url);
 const files: Record<string, string> = {};
 for (const f of readdirSync(dir)) if (f.endsWith(".md") && !f.startsWith("x-")) files[f] = readFileSync(new URL(f, dir), "utf8");
 const book = buildRulebook(files);
+
+test("Kin overview table preserves aliased links inside its two columns", () => {
+  const table = book.docs.find(doc => doc.file === "12-0-kin.md")?.blocks.find(block => block.t === "table");
+  assert.ok(table?.t === "table");
+  assert.equal(table.rows.length, 11);
+  assert.ok(table.rows.every(row => row.length === 2));
+  assert.ok(table.rows.find(row => row[0] === "[[Wanderers]]")?.[1].includes("[[army|armies]]"));
+  assert.ok(table.rows.find(row => row[0] === "[[Archive Ark]]")?.[1].includes("[[technology|technologies]]"));
+});
+
+test("table parsing distinguishes column separators from multiple aliased links", () => {
+  const doc = parseDoc("table.md", "| First | Second | Third |\n|---|---|---|\n| [[army|armies]] | [[gear]] and [[technology|technologies]] | |");
+  assert.deepEqual(doc.blocks, [{ t: "table", rows: [
+    ["First", "Second", "Third"],
+    ["[[army|armies]]", "[[gear]] and [[technology|technologies]]", ""]
+  ] }]);
+});
 
 test("Yamanano's Grand Works retains its description", () => {
   const ability = CHARACTERS.find(character => character.id === "yamanano")?.abilities.find(entry => entry.name === "Grand Works");

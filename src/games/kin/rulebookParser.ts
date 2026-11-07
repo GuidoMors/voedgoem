@@ -66,7 +66,8 @@ export function parseDoc(file: string, text: string): Doc {
     } else if (line.trim().startsWith("|")) {
       const rows: string[][] = [];
       while (i < lines.length && lines[i].trim().startsWith("|")) {
-        const row = lines[i++].trim().replace(/^\||\|$/g, "").split("|").map((c) => c.trim());
+        const row = lines[i++].trim().replace(/^\||\|$/g, "")
+          .split(/\|(?![^[\]]*\]\])/).map((c) => c.trim());
         if (!row.every((c) => /^:?-{2,}:?$/.test(c))) rows.push(row);
       }
       blocks.push({ t: "table", rows });

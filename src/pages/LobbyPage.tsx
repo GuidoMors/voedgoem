@@ -146,7 +146,7 @@ export function LobbyPage({ lobbyId, user, onGameChange, chatOpen, onChatClose }
               <span className="host-tag">Hosted by {snapshot.host.name}{status === "reconnecting" && " · reconnecting…"}</span>
             </div>
           </div>}
-          {notice && <p className="error">{notice}</p>}
+          {notice && <p className="error lobby-notice" role="alert">{notice}</p>}
           {acting && <p className="cn-status">Controlling <strong>{bot.username}</strong>. Everything you do is done as this bot.</p>}
           <GameLobby
             key={acting ? bot.id : "me"}

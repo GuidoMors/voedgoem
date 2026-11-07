@@ -23,7 +23,7 @@ function CharacterChoice({ label, ids = [], value, onChange, kins }: { label: st
 export const DIRECT_ABILITIES = ["torke", "steen", "eyir", "prishna", "jaggengrog", "koroko", "carvano"];
 
 // The choices for a tap ability of a neutral character in the player's own court. Using it taps the character and ends the turn.
-export function AbilityForm({ option: raw, send, kins }: { option: KinAbilityOption; send: (action: Record<string, unknown>) => void; kins: KinInfo[] }) {
+export function AbilityForm({ option: raw, send, kins, names }: { option: KinAbilityOption; send: (action: Record<string, unknown>) => void; kins: KinInfo[]; names: Record<string, string> }) {
   // Birchawe: the form of the borrowed ability is shown instead of his own.
   const option = { ...raw, character: raw.ability ?? raw.character };
   const [resource, setResource] = useState("gold");
@@ -46,7 +46,7 @@ export function AbilityForm({ option: raw, send, kins }: { option: KinAbilityOpt
         <>
           <select value={target} onChange={event => setTarget(event.target.value)} aria-label="Player to receive gold">
             <option value="">Player…</option>
-            {option.targets?.map(id => <option key={id} value={id}>{id}</option>)}
+            {option.targets?.map(id => <option key={id} value={id}>{names[id] ?? id}</option>)}
           </select>
           <button type="button" disabled={!target} onClick={() => fire({ target })}>Give 2 gold</button>
         </>
@@ -92,7 +92,7 @@ export function AbilityForm({ option: raw, send, kins }: { option: KinAbilityOpt
         <>
           <select value={target} onChange={event => setTarget(event.target.value)} aria-label="Player">
             <option value="">Player…</option>
-            {option.players?.map(entry => <option key={entry.player} value={entry.player}>{entry.player}</option>)}
+            {option.players?.map(entry => <option key={entry.player} value={entry.player}>{names[entry.player] ?? entry.player}</option>)}
           </select>
           <select value={treaty} onChange={event => setTreaty(event.target.value)} aria-label="Treaty">
             <option value="">Treaty…</option>

@@ -48,7 +48,7 @@ export function useLobbyConnection(lobbyId: string) {
           if (data.type === "snapshot") {
             setSnapshot(data as LobbySnapshot);
             setPasswordRequired(false);
-            setNotice(null);
+            if (noticeTimer.current === undefined) setNotice(null);
           }
           else if (data.type === "password_required") {
             setPasswordRequired(true);
@@ -60,7 +60,10 @@ export function useLobbyConnection(lobbyId: string) {
           else if (data.type === "error" && typeof data.message === "string") {
             setNotice(data.message);
             window.clearTimeout(noticeTimer.current);
-            noticeTimer.current = window.setTimeout(() => setNotice(null), 5000);
+            noticeTimer.current = window.setTimeout(() => {
+              noticeTimer.current = undefined;
+              setNotice(null);
+            }, 5000);
           }
         } catch { /* ignore malformed messages */ }
       };
@@ -81,6 +84,7 @@ export function useLobbyConnection(lobbyId: string) {
       disposed = true;
       window.clearTimeout(retry);
       window.clearTimeout(noticeTimer.current);
+      noticeTimer.current = undefined;
       socket.current?.close();
     };
   }, [lobbyId]);

@@ -375,7 +375,8 @@ export function MainGame({ snapshot, userId, isHost, send: dispatch, hostControl
   // Dissolve is decided in your own court, among the treaties others gave you.
   useEffect(() => { if (picked && action === "dissolve") { setSelectedId(userId); setCourtTab("treaties"); } }, [picked, action, userId]);
   const hasOptions = !!play?.options;
-  useEffect(() => { setPicked(null); setAction(null); setBlueprint(null); setTarget(null); setPair(null); setEmbarkArmy(null); setStrikeTile(null); setReclaimAt(null); }, [myTurn, play?.turn, play?.phase, snapshot.round, hasOptions]);
+  const hasBarter = !!play?.barter;
+  useEffect(() => { setPicked(null); setAction(null); setBlueprint(null); setTarget(null); setPair(null); setEmbarkArmy(null); setStrikeTile(null); setReclaimAt(null); }, [myTurn, play?.turn, play?.phase, snapshot.round, hasOptions, hasBarter]);
   useEffect(() => {
     if (explorationPlacing) {
       setRelicDialog(false);
@@ -678,7 +679,7 @@ export function MainGame({ snapshot, userId, isHost, send: dispatch, hostControl
         <Plane key={board} initialView={boardViews.current[board]} onViewChange={view => { boardViews.current[board] = view; }} focusKey={boardNeedsAttention(board) ? JSON.stringify([boardOpen, action, picked, blueprint, armyChoices, spots.map(spot => spot.key), move?.targets, actionCardIds, [...(eventPick?.ids ?? [])], available?.research, available?.publicize]) : undefined}>
         {play?.barter && <BarterOfferBanner key={JSON.stringify(play.barter)} world={world} offer={play.barter} userId={userId} names={names} send={send} />}
         {play && play.verdicts.length > 0 && <VerdictBanner world={world} verdicts={play.verdicts} userId={userId} names={names} send={send} />}
-        {picked && action === "barter" && available ? (
+        {picked && action === "barter" && available && !hasBarter ? (
           <Modal title="Barter" onClose={cancel} wide className="kin-action-modal">
           <BarterComposer world={world} players={snapshot.seats} userId={userId} names={names} targets={available.barter?.targets ?? []} mintable={available.barter?.mintable ?? []} source={{ kind: picked.kind, id: picked.id }} send={send} onClose={cancel} />
           </Modal>
@@ -1039,7 +1040,7 @@ export function MainGame({ snapshot, userId, isHost, send: dispatch, hostControl
               })()}
             />
           ))}
-          {courtTab === "characters" && viewingMyCourt && myTurn && openAbility && (play?.abilities ?? []).filter(option => option.character === openAbility && !option.reason).map(option => <AbilityForm key={option.character} option={option} kins={world.kins} send={action => { send(action); setOpenAbility(null); }} />)}
+          {courtTab === "characters" && viewingMyCourt && myTurn && openAbility && (play?.abilities ?? []).filter(option => option.character === openAbility && !option.reason).map(option => <AbilityForm key={option.character} option={option} kins={world.kins} names={names} send={action => { send(action); setOpenAbility(null); }} />)}
           {courtTab === "characters" && selected && <CourtCards world={world} player={selected.id} kinds={["activation"]} pick={itemPick} />}
           {courtTab === "effects" && selected && <div className="kc-row">{courtEffects.map(item => <ItemCard key={item.id} item={item} kins={world.kins} kinPicks={world.kinPicks} />)}</div>}
           {courtTab === "treaties" && selected && <CourtCards world={world} player={selected.id} kinds={["treaty", "ban"]} pick={viewingMyCourt ? dissolvePick : undefined} />}
