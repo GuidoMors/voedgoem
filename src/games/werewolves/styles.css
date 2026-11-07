@@ -1,0 +1,687 @@
+.lobby-list li.hub-lobby[data-game="werewolves"] {
+  --hub-surface: #15191f;
+  --hub-panel: #202631;
+  --hub-edge: #45505e;
+  --hub-panel-font-color: #d1d8e2;
+  --hub-sub-text-color: #abb4c1;
+  --hub-font: system-ui,sans-serif;
+  --hub-sub-font: 'Tilt Neon',system-ui,sans-serif;
+  --hub-radius: 8px;
+  --hub-shadow: none;
+  --hub-text: #f2f4f7;
+}
+.lobby-list li.hub-lobby[data-game="werewolves"] {
+  --hub-surface: #15191f;
+  --hub-panel: #202631;
+  --hub-edge: #45505e;
+  --hub-panel-font-color: #d1d8e2;
+  --hub-sub-text-color: #abb4c1;
+  --hub-font: system-ui,sans-serif;
+  --hub-sub-font: 'Tilt Neon',system-ui,sans-serif;
+  --hub-radius: 8px;
+  --hub-shadow: none;
+  --hub-text: #f2f4f7;
+}
+
+/* Werewolves lobby and table */
+.werewolves-game {
+  display: grid;
+  gap: 16px;
+}
+.werewolves-heading,
+.werewolves-game-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+.werewolves-heading h2,
+.werewolves-game-header h2 {
+  margin: 0;
+}
+.werewolves-heading .eyebrow,
+.werewolves-game-header .eyebrow {
+  margin: 0 0 4px;
+  text-transform: uppercase;
+  letter-spacing: .12em;
+  font-size: .75rem;
+  color: var(--muted);
+}
+.werewolves-lobby-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(260px, .75fr);
+  gap: 16px;
+  align-items: start;
+}
+.werewolves-lobby-grid > .card,
+.werewolves-game .host-controls-panel {
+  min-width: 0;
+}
+.werewolves-gm-seat,
+.werewolves-lobby-seats li,
+.werewolves-player-list li,
+.werewolves-results li {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  min-width: 0;
+  padding: 8px;
+  border-bottom: 1px solid rgba(255,255,255,.12);
+}
+.werewolves-gm-seat {
+  margin-bottom: 10px;
+  background: rgba(130, 80, 190, .15);
+  border-radius: 6px;
+}
+.werewolves-gm-seat > strong {
+  margin-right: auto;
+}
+.werewolves-lobby-seats,
+.werewolves-player-list,
+.werewolves-results ul {
+  list-style: none;
+  padding: 0;
+  margin: 8px 0 14px;
+}
+.werewolves-lobby-seats li > .person,
+.werewolves-player-list li > .person,
+.werewolves-results li > .person {
+  flex: 1;
+  min-width: 0;
+}
+.werewolves-seat-number {
+  display: inline-grid;
+  place-items: center;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: rgba(255,255,255,.12);
+  font-weight: 700;
+}
+.werewolves-admin-gm,
+.werewolves-settings {
+  display: grid;
+  gap: 10px;
+  margin-top: 16px;
+}
+.werewolves-admin-gm label,
+.werewolves-settings label:not(.werewolves-check) {
+  display: grid;
+  gap: 6px;
+}
+.werewolves-settings {
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  align-items: end;
+}
+.werewolves-settings small {
+  color: var(--muted);
+}
+.werewolves-check {
+  display: flex !important;
+  align-items: center;
+  gap: 8px;
+}
+.werewolves-check input {
+  width: auto;
+}
+.werewolves-role-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
+  gap: 8px;
+}
+.werewolves-role-card {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  min-height: 66px;
+  padding: 8px;
+  text-align: left;
+  border: 2px solid rgba(255,255,255,.18);
+  border-radius: 8px;
+  background: rgba(255,255,255,.05);
+  color: inherit;
+}
+button.werewolves-role-card {
+  cursor: pointer;
+}
+body[data-game="werewolves"] button.werewolves-role-card {
+  background: transparent !important;
+}
+body[data-game="werewolves"] button.werewolves-role-card.selected.werewolf {
+  background: #7f1d1d !important;
+  color: #fff !important;
+}
+body[data-game="werewolves"] button.werewolves-role-card.selected.neutral {
+  background: #374151 !important;
+  color: #fff !important;
+}
+body[data-game="werewolves"] button.werewolves-role-card.selected.villager {
+  background: #facc15 !important;
+  color: #422006 !important;
+}
+.werewolves-role-card > span {
+  display: grid;
+  gap: 3px;
+}
+.werewolves-role-card small {
+  text-transform: capitalize;
+  color: var(--muted);
+}
+body[data-game="werewolves"] button.werewolves-role-card small {
+  color: inherit;
+}
+.werewolves-role-icon {
+  object-fit: contain;
+  flex: 0 0 auto;
+}
+.werewolves-rules {
+  display: grid;
+  gap: 12px;
+}
+.werewolves-rules h2 {
+  margin: 8px 0 0;
+}
+.werewolves-rules ul {
+  padding-left: 22px;
+}
+.werewolves-rule-role {
+  padding: 10px;
+  border: 1px solid rgba(255,255,255,.12);
+  border-radius: 8px;
+  background-color: var(--border);
+}
+.werewolves-rule-role.werewolf {
+  background-color: #7f1d1d;
+  color: #fff;
+}
+.werewolves-rule-role.neutral {
+  background-color: #374151;
+  color: #fff;
+}
+.werewolves-rule-role.villager {
+  background-color: #facc15;
+  color: #422006;
+}
+.werewolves-rule-role .werewolves-role-card small {
+  color: inherit;
+}
+.werewolves-rule-role .werewolves-role-card {
+  border: 0;
+  padding: 0;
+  background: transparent;
+}
+.werewolves-rule-role p {
+  margin: 8px 0 0;
+}
+.werewolves-game-header .row {
+  justify-content: flex-end;
+}
+.werewolves-gm-navigation {
+  justify-content: flex-end;
+  margin-top: 12px;
+}
+.werewolves-gm-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 12px;
+}
+.werewolves-gm-footer .werewolves-gm-navigation {
+  margin-top: 0;
+  margin-left: auto;
+}
+.werewolves-confirm-summary {
+  flex: 1;
+  min-width: 180px;
+  overflow-wrap: anywhere;
+}
+body[data-game="werewolves"] button.werewolves-secret-button[aria-pressed="false"] {
+  background: #b91c1c !important;
+  color: #fff !important;
+}
+.werewolves-secret-button[aria-pressed="true"] {
+  background: #eab308;
+  color: #201600;
+}
+.werewolves-private-role {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 14px;
+  border: 2px solid rgba(255,255,255,.2);
+  border-radius: 10px;
+  background: rgba(255,255,255,.06);
+}
+.werewolves-private-role strong {
+  font-size: 1.35rem;
+}
+.werewolves-private-role p {
+  margin: 4px 0;
+}
+.werewolves-private-role.werewolf {
+  border-color: #dc2626;
+  background: rgba(127, 29, 29, .24);
+}
+.werewolves-private-role.villager {
+  border-color: #60a5fa;
+  background: rgba(30, 58, 138, .22);
+}
+.werewolves-private-role.neutral {
+  border-color: #c084fc;
+  background: rgba(88, 28, 135, .2);
+}
+.werewolves-gm-banner,
+.werewolves-public-step,
+.werewolves-status {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px;
+  border: 1px solid rgba(255,255,255,.18);
+  border-radius: 8px;
+  background: rgba(255,255,255,.06);
+}
+.werewolves-gm-banner {
+  display: none;
+}
+.werewolves-public-step strong {
+  flex: 1;
+}
+.werewolves-circle-wrap {
+  width: min(100%, 840px);
+  margin: 0 auto;
+  padding: 10px;
+  overflow: hidden;
+}
+.werewolves-circle {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 1.45;
+  min-height: 340px;
+  border: 3px solid #6b4a2f;
+  border-radius: 50%;
+  background: radial-gradient(ellipse, rgba(120,76,45,.22) 0 40%, rgba(30,22,18,.1) 41% 100%);
+}
+.werewolves-circle::before {
+  content: "";
+  position: absolute;
+  inset: 14%;
+  border: 2px dashed rgba(220,190,150,.25);
+  border-radius: 50%;
+}
+.werewolves-circle-table {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  display: grid;
+  gap: 5px;
+  transform: translate(-50%, -50%);
+  text-align: center;
+  color: var(--muted);
+}
+.werewolves-circle-seat {
+  position: absolute;
+  display: grid;
+  justify-items: center;
+  gap: 3px;
+  width: 120px;
+  max-width: 28%;
+  padding: 6px;
+  transform: translate(-50%, -50%);
+  border: 2px solid transparent;
+  border-radius: 8px;
+  background: rgba(10,10,20,.85);
+  text-align: center;
+  overflow-wrap: anywhere;
+}
+.werewolves-circle-seat.self {
+  border-color: #c084fc;
+}
+body[data-game="werewolves"] .werewolves-circle-seat.mayor {
+  border: 2px solid #facc15 !important;
+}
+body[data-game="werewolves"] .werewolves-circle-seat.imitated {
+  border: 2px solid #f97316 !important;
+}
+body[data-game="werewolves"] .werewolves-circle-seat.imitated.dead {
+  filter: none;
+}
+body[data-game="werewolves"] .werewolves-circle-seat.lover {
+  border: 2px solid #ec4899 !important;
+}
+body[data-game="werewolves"] .werewolves-circle-seat.lover.imitated {
+  outline: 2px solid #f97316;
+  outline-offset: 3px;
+}
+body[data-game="werewolves"] .werewolves-circle-seat.throat-cut {
+  border: 2px dashed #dc2626 !important;
+  filter: none;
+}
+.werewolves-circle-seat.spared {
+  border-color: #4ade80;
+  background: rgba(20, 70, 42, .94);
+}
+.werewolves-circle-seat.current-voter {
+  border-color: #facc15;
+  box-shadow: 0 0 0 3px rgba(250,204,21,.28);
+}
+.werewolves-circle-seat.lynch-target {
+  border-color: #f87171;
+  background: rgba(100, 25, 30, .96);
+  box-shadow: 0 0 0 3px rgba(248,113,113,.3);
+}
+.werewolves-voting-mark {
+  padding: 1px 6px;
+  border-radius: 999px;
+  background: #facc15;
+  color: #281d00;
+  font-size: .68rem;
+  font-weight: 700;
+}
+.werewolves-spared-mark {
+  padding: 1px 6px;
+  border-radius: 999px;
+  background: #4ade80;
+  color: #10251a;
+  font-size: .68rem;
+  font-weight: 700;
+}
+.werewolves-lynch-target-mark {
+  padding: 1px 6px;
+  border-radius: 999px;
+  background: #f87171;
+  color: #2b0909;
+  font-size: .68rem;
+  font-weight: 700;
+}
+.werewolves-lynch-announcement {
+  padding: 12px;
+  border: 1px solid #f87171;
+  border-radius: 8px;
+  background: rgba(127, 29, 29, .28);
+  font-size: 1.1rem;
+  font-weight: 700;
+}
+.werewolves-circle-seat.dead {
+  opacity: .58;
+  filter: grayscale(.85);
+}
+.werewolves-dead-mark {
+  position: absolute;
+  top: -7px;
+  right: 2px;
+  font-size: 1.6rem;
+  color: #f87171;
+}
+.werewolves-seat-role {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  font-size: .7rem;
+  background: var(--themesubmain);
+  padding: 3px;
+  color: black;
+}
+.werewolves-seat-role.neutral {
+  background: #374151;
+  color: #fff;
+}
+.werewolves-seat-role.villager {
+  background: #facc15;
+  color: #422006;
+}
+.werewolves-seat-role.werewolf {
+  background: #7f1d1d;
+  color: #fff;
+}
+.werewolves-player-action,
+.werewolves-gm-seats,
+.werewolves-events,
+.werewolves-results,
+.werewolves-private-results {
+  min-width: 0;
+}
+.werewolves-gm-seats {
+  display: none;
+}
+.werewolves-action-form {
+  display: grid;
+  gap: 10px;
+  margin-top: 10px;
+}
+.werewolves-action-form label {
+  display: grid;
+  gap: 5px;
+}
+.werewolves-action-form label.werewolves-check {
+  display: flex;
+}
+.werewolves-action-form input,
+.werewolves-action-form select {
+  max-width: 100%;
+}
+.werewolves-step-head {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+.werewolves-step-prompt {
+  font-size: 1.1rem;
+}
+.werewolves-submissions {
+  padding: 10px;
+  margin: 10px 0;
+  border: 1px solid rgba(255,255,255,.14);
+  border-radius: 8px;
+}
+.werewolves-submissions p {
+  margin: 6px 0;
+  overflow-wrap: anywhere;
+}
+.werewolves-gm-entry {
+  display: grid;
+  gap: 8px;
+  margin: 10px 0;
+}
+.werewolves-sniffer-result p {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.werewolves-revealed-role {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 10px;
+  border: 2px solid;
+}
+.werewolves-revealed-role.werewolf {
+  border-color: #dc2626;
+}
+.werewolves-revealed-role.villager {
+  border-color: #facc15;
+}
+.werewolves-revealed-role.neutral {
+  border-color: #9ca3af;
+}
+.werewolves-step-list {
+  margin-top: 14px;
+}
+.werewolves-step-list ol {
+  padding-left: 24px;
+}
+.werewolves-player-list li.dead {
+  opacity: .62;
+  text-decoration: line-through;
+}
+.werewolves-player-list li.silenced {
+  border-left: 3px solid #facc15;
+}
+.werewolves-village-layout {
+  position: relative;
+}
+.werewolves-gm-choice-row {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+  padding: 10px 0;
+}
+.werewolves-gm-choice-row > .werewolves-action-form {
+  flex: 1;
+  min-width: 220px;
+  margin: 0;
+}
+.werewolves-action-inline,
+.werewolves-action-inline .werewolves-inline-options {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.werewolves-gm-choice-row > strong {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex: 0 0 140px;
+}
+.werewolves-potion-controls,
+.werewolves-potion-targets {
+  flex-basis: 100%;
+}
+.werewolves-potion-targets {
+  padding: 10px;
+  border: 1px solid var(--border);
+  border-radius: 5px;
+}
+.werewolves-inline-options button {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+body[data-game="werewolves"] .werewolves-action-inline button[aria-pressed="true"] {
+  background: #eab308 !important;
+  color: #201600 !important;
+}
+.werewolves-village-layout > .werewolves-upcoming {
+  position: absolute;
+  top: 10px;
+  right: calc(100% + 20px);
+  width: 300px;
+  max-height: 580px;
+  overflow-y: auto;
+  overflow-wrap: anywhere;
+}
+.werewolves-village-layout > .werewolves-events {
+  position: absolute;
+  top: 10px;
+  left: calc(100% + 20px);
+  width: 300px;
+  max-height: 580px;
+  overflow-y: auto;
+  overflow-wrap: anywhere;
+}
+.werewolves-events ol {
+  display: grid;
+  gap: 6px;
+  padding-left: 24px;
+  list-style: disc;
+}
+.werewolves-results li.winner {
+  border-left: 3px solid #4ade80;
+  background: rgba(34,197,94,.12);
+}
+@media (max-width: 760px) {
+  .werewolves-lobby-grid {
+    grid-template-columns: 1fr;
+  }
+  .werewolves-heading,
+.werewolves-game-header {
+    align-items: flex-start;
+  }
+  .werewolves-game-header {
+    flex-direction: column;
+  }
+  .werewolves-game-header .row {
+    justify-content: flex-start;
+  }
+  .werewolves-circle-wrap {
+    padding: 0;
+  }
+  .werewolves-circle {
+    min-height: 300px;
+  }
+  .werewolves-circle-seat {
+    width: 96px;
+    padding: 4px;
+    font-size: .8rem;
+  }
+  .werewolves-seat-role {
+    font-size: .6rem;
+  }
+}
+
+.modal.stats-modal[data-game="werewolves"] {
+  --stats-edge: rgba(156,163,175,.55);
+  --stats-glow: rgba(0, 0, 0, 0);
+  --stats-surface: #14161a;
+  --stats-panel: #1d2026;
+  --stats-text: #e5e7eb;
+  --stats-muted: #e5e7eb;
+  --stats-accent: #9ca3af;
+  --font-big: system-ui, sans-serif;
+  --font-small: system-ui, sans-serif;
+}
+/* ===== Werewolves: muted grey lobby; the circle table keeps its brown ===== */
+body[data-game="werewolves"] {
+  --neon-rgb: 156, 163, 175;
+  --neon: rgb(var(--neon-rgb));
+  --neon-soft: rgb(200, 205, 213);
+  --thememain: rgb(156, 163, 175);
+  --themesubmain: rgb(107, 114, 128);
+  --themeblack: #14161a;
+  --themegrey: #1d2026;
+  --themelog: #1a1d22;
+  --themewhite: #e5e7eb;
+  --muted: #9ca3af;
+  --card: var(--themelog);
+  --border: rgba(var(--neon-rgb), .45);
+  --accent: var(--neon);
+  --font-big: system-ui, sans-serif;
+}
+body[data-game="werewolves"] .werewolves-circle-table {
+  color: #c9a77c;
+}
+/* Werewolves: no neon glow, small corner radius */
+body[data-game="werewolves"] *,
+body[data-game="werewolves"] *::before,
+body[data-game="werewolves"] *::after {
+  text-shadow: none !important;
+}
+body[data-game="werewolves"] :is(.card, .modal, button, .button, input, select, textarea, .pill, .topbar, header, .menu, [class*="werewolves-"]):not(.werewolves-circle):not(.werewolves-role-icon),
+body[data-game="werewolves"] :is(.card, button, .button, input, select, textarea, .pill, [class*="werewolves-"]):not(.werewolves-circle):not(.werewolves-role-icon)::before {
+  box-shadow: none !important;
+  border-radius: 5px !important;
+}
+body[data-game="werewolves"] :is(.card, .modal, button, .button, input, select, textarea, .pill):not(:disabled) {
+  filter: none !important;
+}
+body[data-game="werewolves"] .card,
+body[data-game="werewolves"] :is(button, .button, input, select, textarea) {
+  border-color: rgba(156, 163, 175, .35) !important;
+}
+body[data-game="werewolves"] .werewolves-circle-seat.self,
+body[data-game="werewolves"] .werewolves-circle-seat.spared,
+body[data-game="werewolves"] .werewolves-circle-seat.current-voter,
+body[data-game="werewolves"] .werewolves-circle-seat.lynch-target {
+  border-radius: 5px !important;
+}
+.modal.stats-modal[data-game] .stats-page .stats-tab[data-tab-game="werewolves"] {
+  --t-edge: rgba(156,163,175,.55); --t-glow: rgba(0,0,0,0); --t-surface: #14161a; --t-panel: #1d2026; --t-text: #e5e7eb; --t-accent: #9ca3af;
+  font-family: system-ui, sans-serif;
+}
+.modal.stats-modal[data-game="werewolves"] { --stats-border-radius: 5px; }

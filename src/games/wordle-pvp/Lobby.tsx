@@ -3,7 +3,6 @@ import { createPortal } from "react-dom";
 import { Person } from "../../avatar/Avatar";
 import type { GameLobbyProps } from "../types";
 import type { WordleFeedback, WordlePvpSnapshot, WordleTeamId, WordlePuzzleSnapshot } from "./types";
-import "./styles.css";
 
 const TEAM_IDS: WordleTeamId[] = ["red", "blue"];
 const TEAM_NAMES: Record<WordleTeamId, string> = { red: "Red", blue: "Blue" };
