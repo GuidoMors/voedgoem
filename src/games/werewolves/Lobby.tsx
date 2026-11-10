@@ -120,8 +120,11 @@ function Lobby({ snapshot, userId, isAdmin, isDisplay, send }: GameLobbyProps<We
           {snapshot.gm && <div className="werewolves-gm-seat"><strong>Game Master</strong><Person id={snapshot.gm.id} name={snapshot.gm.username} size={22} />{snapshot.gm.id === userId && <span className="pill">You</span>}</div>}
           {snapshot.seats.length > 0 ? <ol className="werewolves-lobby-seats">
             {snapshot.seats.map((player, index) => <li key={player.id}>
-              <span className="werewolves-seat-number">{index + 1}</span><Person id={player.id} name={player.username} size={22} />
-              <span className={`pill ${player.connected ? "" : "muted"}`}>{player.connected ? "Connected" : "Offline"}</span>
+              <span className="werewolves-seat-number">{index + 1}</span>
+              <span className="werewolves-lobby-person">
+                <Person id={player.id} name={player.username} size={22} />
+                <span className={`pill ${player.connected ? "" : "muted"}`}>{player.connected ? "Connected" : "Offline"}</span>
+              </span>
               {player.id === userId && <span className="pill">You</span>}
               {snapshot.gm?.id === userId && !isDisplay && <span className="row">
                 <button type="button" disabled={index === 0} aria-label={`Move ${player.username} up`} onClick={() => moveSeat(index, -1)}>↑</button>
@@ -434,6 +437,7 @@ function Circle({ snapshot, userId, showLovers, showImitation }: { snapshot: Wer
       const showRole = snapshot.isGM || player.publiclyRevealed || player.packRevealed || (snapshot.phase === "results" && player.role);
       const faction = player.faction ?? (player.role === "wolfchild" ? "villager" : snapshot.roleCatalog.find(role => role.id === player.role)?.faction);
       return <div key={player.id} className={`werewolves-circle-seat ${player.alive ? "" : "dead"} ${player.mayor ? "mayor" : ""} ${isViewer ? "self" : ""} ${isSpared ? "spared" : ""} ${isCurrentVoter ? "current-voter" : ""} ${isLynchTarget ? "lynch-target" : ""} ${player.id === imitationTargetId ? "imitated" : ""} ${showLovers && snapshot.lovers?.includes(player.id) ? "lover" : ""} ${player.throatCut ? "throat-cut" : ""}`} style={{ left: `${x}%`, top: `${y}%` }}>
+        <span className="werewolves-circle-seat-number" aria-label={`Seat ${index + 1}`}>{index + 1}</span>
         <Person id={player.id} name={player.username} size={23} />
         {player.mayor && <span className="pill">Mayor</span>}
         {player.throatCut && <span className="pill">Throat cut · Cannot speak</span>}

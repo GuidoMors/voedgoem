@@ -60,9 +60,6 @@ client retries.
 Run `npm test` for the frontend rulebook and stylesheet organization tests. The test script currently uses
 `tsx` from the sibling server's `node_modules`, so install server dependencies
 first. Run `npm run build` for the normal TypeScript and Vite production build.
-The current unused `showHeading` parameter in `HostControlsTab.tsx` can cause
-the strict build to fail; fix the underlying error rather than treating a
-relaxed typecheck as the normal build.
 
 ## Deployment
 
