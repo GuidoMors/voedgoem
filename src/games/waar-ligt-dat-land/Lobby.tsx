@@ -49,7 +49,7 @@ const TEXT = {
     missingLegacyResponse: "De opgeslagen keuze ontbreekt. Start een nieuw spel om verder te spelen.",
     readyNextTurn: "Klaar voor de volgende beurt?", waitingForActive: "Wachten tot de speler aan de beurt verdergaat.",
     nextTurn: "Volgende beurt", gameOver: "Spel afgelopen", points: "punten", returnToLobby: "Terug naar de lobby",
-    yourScore: "Jouw score", countriesFound: "Gevonden landen", language: "Taal",
+    yourScore: "Jouw score", countriesFound: "Gevonden landen", language: "Taal", explanation: "Uitleg",
   },
   en: {
     players: "Players", you: "You", spectators: "Spectators", backToSpectating: "Back to spectating",
@@ -77,7 +77,7 @@ const TEXT = {
     missingLegacyResponse: "The saved choice is missing. Start a new game to continue.",
     readyNextTurn: "Ready for the next turn?", waitingForActive: "Waiting for the active player to continue.",
     nextTurn: "Next turn", gameOver: "Game over", points: "points", returnToLobby: "Return to lobby",
-    yourScore: "Your score", countriesFound: "Countries found", language: "Language",
+    yourScore: "Your score", countriesFound: "Countries found", language: "Language", explanation: "Explanation",
   }
 } as const;
 
@@ -640,6 +640,12 @@ export function WaarLandLobby(props: GameLobbyProps<WaarLandSnapshot>) {
                   <strong>{language === "en" ? CATEGORY_NAMES_EN[snapshot.trivia.category] ?? snapshot.trivia.category : snapshot.trivia.category}</strong>
                   <p>{language === "en" ? snapshot.trivia.questionEn ?? snapshot.trivia.question : snapshot.trivia.question}</p>
                   <p className="wld-answer">{language === "en" ? snapshot.trivia.answerEn ?? snapshot.trivia.answer : snapshot.trivia.answer}</p>
+                  {snapshot.trivia.explanation && (
+                    <p className="wld-explanation">
+                      <strong>{text.explanation}:</strong>{" "}
+                      {language === "en" ? snapshot.trivia.explanationEn ?? snapshot.trivia.explanation : snapshot.trivia.explanation}
+                    </p>
+                  )}
                   {snapshot.trivia.trueFalse ? (
                     <>
                       {snapshot.trivia.response !== null && <p>{snapshot.trivia.response ? text.selectedTrue : text.selectedFalse}</p>}
@@ -665,7 +671,17 @@ export function WaarLandLobby(props: GameLobbyProps<WaarLandSnapshot>) {
               )}
               {snapshot.step === "turnComplete" && (
                 <>
-                  {snapshot.trivia && <p className="wld-answer">{language === "en" ? snapshot.trivia.answerEn ?? snapshot.trivia.answer : snapshot.trivia.answer}</p>}
+                  {snapshot.trivia && (
+                    <>
+                      <p className="wld-answer">{language === "en" ? snapshot.trivia.answerEn ?? snapshot.trivia.answer : snapshot.trivia.answer}</p>
+                      {snapshot.trivia.explanation && (
+                        <p className="wld-explanation">
+                          <strong>{text.explanation}:</strong>{" "}
+                          {language === "en" ? snapshot.trivia.explanationEn ?? snapshot.trivia.explanation : snapshot.trivia.explanation}
+                        </p>
+                      )}
+                    </>
+                  )}
                   <p>{active ? text.readyNextTurn : text.waitingForActive}</p>
                   {active && <button className="primary" type="button" onClick={() => send({ type: "next" })}>{text.nextTurn}</button>}
                 </>

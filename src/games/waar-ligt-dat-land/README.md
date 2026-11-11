@@ -84,7 +84,9 @@ custom four-letter room code, or browser-local multiplayer protocol.
   document any small-country centroid/geometry fallbacks with the map asset.
 - The server includes the source's six trivia categories and six questions
   per country in `questions.ts`, with both true/false and open-ended
-  questions. Review factual accuracy and wording before release.
+  questions. Every question has a simple answer and a separate explanation;
+  both are shown in the selected language only after the answer is revealed.
+  Review factual accuracy and wording before release.
 
 ## Privacy, accessibility, and resilience
 

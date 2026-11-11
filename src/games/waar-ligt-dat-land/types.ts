@@ -33,6 +33,8 @@ export interface WaarLandSnapshot extends BaseSnapshot {
     trueFalse: boolean;
     answer: string | null;
     answerEn: string | null;
+    explanation: string | null;
+    explanationEn: string | null;
     response: boolean | null;
     correct: boolean | null;
   } | null;

@@ -649,6 +649,38 @@ th {
 .admin-panel h2 {
   margin-bottom: 12px;
 }
+.plenet-question-selectors,
+.plenet-question-list {
+  display: grid;
+  gap: 14px;
+}
+.plenet-question-selectors {
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  margin: 14px 0;
+}
+.plenet-question-editor label {
+  display: grid;
+  gap: 6px;
+}
+.plenet-question-item {
+  display: grid;
+  gap: 10px;
+  min-width: 0;
+  padding: 14px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+}
+.plenet-question-item legend {
+  padding: 0 6px;
+  font-weight: 700;
+}
+.plenet-question-item textarea {
+  width: 100%;
+  resize: vertical;
+}
+.plenet-question-item p {
+  margin: 0;
+}
 .admin-search {
   display: grid;
   gap: 5px;

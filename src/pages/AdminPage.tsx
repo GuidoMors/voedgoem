@@ -1,8 +1,9 @@
 import { useCallback, useEffect, useMemo, useState, type FormEvent } from "react";
 import { api } from "../api";
 import type { AdminUser } from "../types";
+import { PlenetQuestionEditor } from "./PlenetQuestionEditor";
 
-type AdminTab = "players" | "recovery" | "hosters" | "displays" | "wordFeedback";
+type AdminTab = "players" | "recovery" | "hosters" | "displays" | "wordFeedback" | "plenetQuestions";
 
 interface WordFeedbackEntry {
   wordKey: string;
@@ -17,7 +18,8 @@ const tabs: { id: AdminTab; label: string }[] = [
   { id: "recovery", label: "Recovery keys" },
   { id: "hosters", label: "Hosters" },
   { id: "displays", label: "Display accounts" },
-  { id: "wordFeedback", label: "31 Seconds words" }
+  { id: "wordFeedback", label: "31 Seconds words" },
+  { id: "plenetQuestions", label: "Edit Plenet questions" }
 ];
 
 export function AdminPage() {
@@ -30,6 +32,8 @@ export function AdminPage() {
   const [activeTab, setActiveTab] = useState<AdminTab>("players");
   const [search, setSearch] = useState("");
   const [wordFeedback, setWordFeedback] = useState<WordFeedbackEntry[]>([]);
+  const [editorKey, setEditorKey] = useState(0);
+  const [editorDirty, setEditorDirty] = useState(false);
 
   const load = useCallback(async () => {
     try {
@@ -57,10 +61,12 @@ export function AdminPage() {
   }, [search, users]);
 
   const changeTab = (tab: AdminTab) => {
+    if (activeTab === "plenetQuestions" && editorDirty && !window.confirm("Discard your unsaved Plenet question edits?")) return;
     setActiveTab(tab);
     setSearch("");
     setError("");
     if (tab === "wordFeedback") void loadWordFeedback();
+    if (tab === "plenetQuestions") setEditorKey(key => key + 1);
   };
 
   const removeWordFeedback = async (entry: WordFeedbackEntry) => {
@@ -173,7 +179,16 @@ export function AdminPage() {
     <div className="page admin-page">
       <div className="row between">
         <h1>Admin</h1>
-        <button onClick={() => activeTab === "wordFeedback" ? void loadWordFeedback() : void load()}>Refresh</button>
+        <button onClick={() => {
+          if (activeTab === "wordFeedback") void loadWordFeedback();
+          else if (activeTab === "plenetQuestions") {
+            if (!editorDirty || window.confirm("Reload and discard your unsaved Plenet question edits?")) {
+              setEditorDirty(false);
+              setEditorKey(key => key + 1);
+            }
+          }
+          else void load();
+        }}>Refresh</button>
       </div>
       <div className="admin-tabs" role="tablist" aria-label="Admin sections">
         {tabs.map(tab => (
@@ -241,6 +256,9 @@ export function AdminPage() {
             </div>
           )}
         </>}
+        <div hidden={activeTab !== "plenetQuestions"}>
+          <PlenetQuestionEditor key={editorKey} onDirtyChange={setEditorDirty} />
+        </div>
       </section>
     </div>
   );

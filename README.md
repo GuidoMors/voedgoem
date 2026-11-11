@@ -85,8 +85,10 @@ Do not deploy, migrate a remote database, or commit without authorization.
 ## Administration and display accounts
 
 The Admin modal lists users, generates recovery keys, manages hoster status,
-creates display accounts and reviews word feedback. A new recovery key
-invalidates the previous one; copy it to the player securely.
+creates display accounts, reviews word feedback and edits Plenet questions and
+explanations in Dutch or English. Plenet edits are applied to games started
+after they are saved. A new recovery key invalidates the previous one; copy it
+to the player securely.
 
 Admins are granted or revoked through the server project:
 
