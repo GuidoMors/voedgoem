@@ -32,7 +32,7 @@ export const PARTS: { bodies: PartInfo[]; faces: PartInfo[]; hats: PartInfo[] } 
     },
     {
       "id": "fancychef",
-      "label": "Fancy chef"
+      "label": "Fancy"
     },
     {
       "id": "handkerchef",
@@ -74,7 +74,7 @@ export const PARTS: { bodies: PartInfo[]; faces: PartInfo[]; hats: PartInfo[] } 
   "faces": [
     {
       "id": "1chef",
-      "label": "Chef"
+      "label": "Human"
     },
     {
       "id": "bear",
@@ -184,11 +184,11 @@ export const PARTS: { bodies: PartInfo[]; faces: PartInfo[]; hats: PartInfo[] } 
     },
     {
       "id": "knife",
-      "label": "Knife"
+      "label": "Cleaver"
     },
     {
       "id": "knighthelmet",
-      "label": "Knight helmet"
+      "label": "Helmet"
     },
     {
       "id": "mustache",
@@ -208,7 +208,7 @@ export const PARTS: { bodies: PartInfo[]; faces: PartInfo[]; hats: PartInfo[] } 
     },
     {
       "id": "policehat",
-      "label": "Police hat"
+      "label": "Police"
     },
     {
       "id": "tophat",
