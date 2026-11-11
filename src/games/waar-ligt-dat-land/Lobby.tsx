@@ -17,7 +17,7 @@ const MAP_WIDTH = 640;
 const MAP_HEIGHT = 440;
 const GLOBE_RADIUS = 190;
 const MIN_ZOOM = 1;
-const MAX_ZOOM = 4.5;
+const MAX_ZOOM = 8;
 
 type Language = "nl" | "en";
 
@@ -48,7 +48,6 @@ const TEXT = {
     readyNextTurn: "Klaar voor de volgende beurt?", waitingForActive: "Wachten tot de speler aan de beurt verdergaat.",
     nextTurn: "Volgende beurt", gameOver: "Spel afgelopen", points: "punten", returnToLobby: "Terug naar de lobby",
     yourScore: "Jouw score", countriesFound: "Gevonden landen", language: "Taal",
-    hint: "Volledig Engelse vragen zijn beschikbaar voor Nederland, België, Duitsland, Frankrijk, Spanje, Italië, Griekenland, het Verenigd Koninkrijk, Ierland, IJsland, Portugal, Zweden en Noorwegen. Bij andere landen zijn alleen de automatisch gemaakte aardrijkskundevragen Engels; overige vragen blijven Nederlands."
   },
   en: {
     players: "Players", you: "You", spectators: "Spectators", backToSpectating: "Back to spectating",
@@ -76,7 +75,6 @@ const TEXT = {
     readyNextTurn: "Ready for the next turn?", waitingForActive: "Waiting for the active player to continue.",
     nextTurn: "Next turn", gameOver: "Game over", points: "points", returnToLobby: "Return to lobby",
     yourScore: "Your score", countriesFound: "Countries found", language: "Language",
-    hint: "Fully translated English trivia is available for the Netherlands, Belgium, Germany, France, Spain, Italy, Greece, the United Kingdom, Ireland, Iceland, Portugal, Sweden, and Norway. For other countries, only the automatically generated geography questions are in English; other questions remain in Dutch."
   }
 } as const;
 
@@ -116,7 +114,7 @@ function localizedTurnMessage(snapshot: WaarLandSnapshot, language: Language): s
     const answer = language === "en"
       ? snapshot.trivia.answerEn ?? snapshot.trivia.answer
       : snapshot.trivia.answer;
-    return language === "en" ? `Not quite. ${answer}.` : `Niet helemaal. ${answer}.`;
+    return language === "en" ? `Not quite, no points. The answer was:` : `Jammer, geen punten. Het antwoord was:`;
   }
   if (language === "en") return message;
   const score = message.match(/^Correct! \+(\d+) points?\.?$/);
@@ -294,31 +292,6 @@ function WorldMap({ snapshot, canGuess, language, onGuess }: {
 
   return (
     <div className="wld-map-wrap">
-      {canGuess && (
-        <form className="wld-map-search" onSubmit={event => {
-          event.preventDefault();
-          if (!selectedCountry || wrong.has(selectedCountry.id)) return;
-          guess(selectedCountry.id);
-          setCountryQuery("");
-        }}>
-          <label className="wld-visually-hidden" htmlFor="wld-country-search">{TEXT[language].searchLabel}</label>
-          <input
-            id="wld-country-search"
-            type="search"
-            list="wld-country-options"
-            autoComplete="off"
-            placeholder={TEXT[language].searchCountry}
-            value={countryQuery}
-            onChange={event => setCountryQuery(event.target.value)}
-          />
-          <datalist id="wld-country-options">
-            {availableCountries.filter(country => !wrong.has(country.id)).map(country => (
-              <option key={country.id} value={country.name} />
-            ))}
-          </datalist>
-          <button className="primary" type="submit" disabled={!selectedCountry || wrong.has(selectedCountry.id)}>{TEXT[language].guess}</button>
-        </form>
-      )}
       <div className="wld-globe-stage">
         <svg
           ref={svgRef}
@@ -453,7 +426,6 @@ function WorldMap({ snapshot, canGuess, language, onGuess }: {
           <button type="button" aria-label={TEXT[language].zoomOut} disabled={view.zoom <= MIN_ZOOM} onClick={() => zoomBy(1 / 1.2)}>−</button>
           <button type="button" aria-label={TEXT[language].resetGlobe} disabled={view.longitude === 0 && view.latitude === 0 && view.zoom === 1} onClick={resetView}>⌂</button>
         </div>
-        <p className="wld-map-hint">{TEXT[language].rotateHint}</p>
       </div>
       {snapshot.distanceFeedback.length > 0 && (
         <div className="wld-map-legend" aria-label="Guess distance colors">
@@ -477,7 +449,7 @@ function PlayerScores({ snapshot, userId, language }: { snapshot: WaarLandSnapsh
         <li key={player.id} className={`${player.id === snapshot.activePlayerId ? "active" : ""}${player.id === userId ? " me" : ""}`}>
           <Person id={player.id} name={player.username} />
           {player.id === userId && <span className="pill">{TEXT[language].you}</span>}
-          <strong>{player.score}</strong>
+          <strong className="score-bubble">{player.score}</strong>
         </li>
       ))}
     </ol>
@@ -524,7 +496,7 @@ function WaitingRoom({ snapshot, userId, isHost, isDisplay, language, send }: Ga
           {snapshot.spectators.length > 0 && (
             <>
               <h3>{text.spectators}</h3>
-              <ul className="names">{snapshot.spectators.map(person => <li key={person.id}><Person id={person.id} name={person.username} /></li>)}</ul>
+              <ul className="names spectator-names">{snapshot.spectators.map(person => <li key={person.id}><Person id={person.id} name={person.username} /></li>)}</ul>
             </>
           )}
         </section>
@@ -625,7 +597,6 @@ export function WaarLandLobby(props: GameLobbyProps<WaarLandSnapshot>) {
           </div>
           <div className="wld-play-area">
             <section className="card wld-clue-card">
-              <p className="muted">{text.whereCountry}</p>
               <h2>{language === "en" ? snapshot.targetNameEn ?? snapshot.targetName ?? text.drawCountry : snapshot.targetName ?? text.drawCountry}</h2>
               {snapshot.step === "draw" && active && <button className="primary" type="button" onClick={() => send({ type: "draw" })}>{text.drawCountry}</button>}
               {snapshot.step === "guess" && (
@@ -651,8 +622,14 @@ export function WaarLandLobby(props: GameLobbyProps<WaarLandSnapshot>) {
                     </div>
                   ) : (
                     <>
-                      <p className="muted small">{text.sayAnswer}</p>
-                      <button type="button" disabled={!active} onClick={() => send({ type: "revealAnswer" })}>{text.revealAnswer}</button>
+                      {active && (
+                        <>
+                          <p className="muted small">{text.sayAnswer}</p>
+                          <button type="button" onClick={() => send({ type: "revealAnswer" })}>
+                            {text.revealAnswer}
+                          </button>
+                        </>
+                      )}
                     </>
                   )}
                 </div>
@@ -672,7 +649,6 @@ export function WaarLandLobby(props: GameLobbyProps<WaarLandSnapshot>) {
                     </>
                   ) : (
                     <>
-                      <p className="muted small">{text.answerForReview}</p>
                       {userId === snapshot.reviewerId ? (
                         <>
                           {snapshot.reviewerId === snapshot.activePlayerId && <p className="muted small">{text.noReviewer}</p>}
