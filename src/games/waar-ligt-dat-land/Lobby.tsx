@@ -167,7 +167,7 @@ function WorldMap({ snapshot, canGuess, language, onGuess }: {
     [view.latitude, view.longitude, view.zoom]
   );
   const path = useMemo(() => geoPath(projection), [projection]);
-  const pointRadius = 3.4 * view.zoom;
+  const pointRadius = 2 * view.zoom;
   const pointPath = useMemo(() => geoPath(projection).pointRadius(pointRadius), [pointRadius, projection]);
   const spherePath = path({ type: "Sphere" }) ?? "";
   const graticulePath = path(geoGraticule10()) ?? "";
