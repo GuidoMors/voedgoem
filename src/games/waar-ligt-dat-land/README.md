@@ -63,6 +63,8 @@ custom four-letter room code, or browser-local multiplayer protocol.
   question.
 - At game end, show a score-ordered results view with ties represented
   accurately. Let the host return to the lobby using the shared host controls.
+  During a match, show the host a Quit game control that cancels the match and
+  returns all players to the lobby.
 
 ## Map and content
 

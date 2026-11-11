@@ -30,6 +30,7 @@ const TEXT = {
     gameEnd: "Na het gekozen aantal beurten per speler wint de speler met de hoogste score.",
     waitingForHost: "Wachten tot {name} het spel start.", roundsPerPlayer: "Rondes per speler",
     startGame: "Start spel", needPlayer: "Er moet minstens één speler meedoen om te starten.",
+    quitGame: "Spel beëindigen",
     whereCountry: "Waar ligt dit land?", drawCountry: "Trek een land", yourTurn: "Jij bent aan de beurt", drawButton: "trek",
     selectCountry: "Kies het land op de wereldbol.", searchingCountry: "zoekt dit land.",
     searchCountry: "Zoek een land…", guess: "Raden", searchLabel: "Zoek een land om te raden",
@@ -57,6 +58,7 @@ const TEXT = {
     gameEnd: "After each player has taken the chosen number of turns, the highest score wins.",
     waitingForHost: "Waiting for {name} to start.", roundsPerPlayer: "Rounds per player",
     startGame: "Start game", needPlayer: "At least one player must join before starting.",
+    quitGame: "Quit game",
     whereCountry: "Where is this country?", drawCountry: "Draw a country", yourTurn: "Your turn", drawButton: "draw",
     selectCountry: "Select the country on the globe.", searchingCountry: "is looking for this country.",
     searchCountry: "Search countries…", guess: "Guess", searchLabel: "Search for a country to guess",
@@ -672,6 +674,11 @@ export function WaarLandLobby(props: GameLobbyProps<WaarLandSnapshot>) {
             <WorldMap snapshot={snapshot} canGuess={canGuess} language={language} onGuess={countryId => send({ type: "guess", countryId })} />
           </div>
           {ownPlayer && <p className="muted small">{text.yourScore}: {ownPlayer.score} · {text.countriesFound}: {ownPlayer.countriesFound}</p>}
+          {isHost && <HostControlsTab>
+            <div className="host-actions wld-host-controls">
+              <button className="danger" type="button" onClick={() => send({ type: "exit" })}>{text.quitGame}</button>
+            </div>
+          </HostControlsTab>}
         </>
       )}
     </div>
