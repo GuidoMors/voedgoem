@@ -17,7 +17,7 @@ const MAP_WIDTH = 640;
 const MAP_HEIGHT = 440;
 const GLOBE_RADIUS = 190;
 const MIN_ZOOM = 1;
-const MAX_ZOOM = 8;
+const MAX_ZOOM = 100;
 
 type Language = "nl" | "en";
 
@@ -448,7 +448,6 @@ function PlayerScores({ snapshot, userId, language }: { snapshot: WaarLandSnapsh
       {[...snapshot.players].sort((a, b) => b.score - a.score || a.order - b.order).map(player => (
         <li key={player.id} className={`${player.id === snapshot.activePlayerId ? "active" : ""}${player.id === userId ? " me" : ""}`}>
           <Person id={player.id} name={player.username} />
-          {player.id === userId && <span className="pill">{TEXT[language].you}</span>}
           <strong className="score-bubble">{player.score}</strong>
         </li>
       ))}
