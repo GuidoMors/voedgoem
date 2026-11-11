@@ -108,6 +108,7 @@ export default function App() {
           {!user.isDisplay && inGame && lobbyGame === "thirtyone" && <a href="#/word-feedback" onClick={event => openModal(event, "wordFeedback")}>Words</a>}
           {inGame && lobbyGame === "kin" && <a href="#/rulebook" onClick={event => openModal(event, "rulebook")}>Rulebook</a>}
           {user.isAdmin && <a href="#/admin" onClick={event => openModal(event, "admin")}>Admin</a>}
+          <div id="plenet-language-slot" />
         </nav>
         <div className="who">
           {user.isDisplay

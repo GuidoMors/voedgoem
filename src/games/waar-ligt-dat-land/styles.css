@@ -392,25 +392,31 @@ body[data-game="waar-ligt-dat-land"] .wld-game button:disabled {
   cursor: not-allowed;
 }
 
-body[data-game="waar-ligt-dat-land"] .wld-language-switch {
+body[data-game="waar-ligt-dat-land"] #plenet-language-slot {
   display: flex;
-  flex-wrap: wrap;
   align-items: center;
-  gap: 8px;
 }
 
-body[data-game="waar-ligt-dat-land"] .wld-language-switch button {
-  padding: 6px 12px;
-  border: 1px solid var(--border);
+body[data-game="waar-ligt-dat-land"] .wld-language-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 6px 8px;
+  border: 1px solid rgba(126, 220, 237, .45);
   border-radius: 999px;
-  background: var(--themelog);
-  color: var(--neon-soft);
+  background: linear-gradient(145deg, #343365, #25254c);
+  color: #fff4d1;
   font: inherit;
+  font-size: 13px;
+  line-height: 1.2;
 }
 
-body[data-game="waar-ligt-dat-land"] .wld-language-switch button[aria-pressed="true"] {
-  background: var(--neon);
-  color: var(--themeblack);
+body[data-game="waar-ligt-dat-land"] .wld-language-toggle .active {
+  padding: 2px 5px;
+  border-radius: 999px;
+  background: linear-gradient(120deg, #ff9475, #ffca68);
+  color: #302044;
+  font-weight: 800;
 }
 
 html body[data-game="waar-ligt-dat-land"] .page .bot-panel.card {
@@ -608,18 +614,11 @@ body[data-game="waar-ligt-dat-land"] .wld-country:hover {
 }
 
 body[data-game="waar-ligt-dat-land"] .wld-map-zoom button,
-body[data-game="waar-ligt-dat-land"] .wld-language-switch button {
+body[data-game="waar-ligt-dat-land"] .wld-language-toggle {
   border-color: rgba(126, 220, 237, .45);
   background: linear-gradient(145deg, #343365, #25254c);
   color: #fff4d1;
   box-shadow: 0 4px 12px rgba(5, 6, 25, .22);
-}
-
-body[data-game="waar-ligt-dat-land"] .wld-language-switch button[aria-pressed="true"] {
-  border-color: #ff9a78;
-  background: linear-gradient(120deg, #ff9475, #ffca68);
-  color: #302044;
-  font-weight: 800;
 }
 
 body[data-game="waar-ligt-dat-land"] .wld-scores li {
