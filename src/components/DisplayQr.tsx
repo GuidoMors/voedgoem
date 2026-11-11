@@ -13,8 +13,6 @@ export function DisplayQr({ url }: { url: string }) {
   return (
     <aside className="display-qr" aria-label="Scan to log in on your phone">
       <div className="display-qr-code" dangerouslySetInnerHTML={{ __html: svg }} />
-      <strong>Scan to log in</strong>
-      <span className="small muted">{url.replace(/^https?:\/\//, "")}</span>
     </aside>
   );
 }

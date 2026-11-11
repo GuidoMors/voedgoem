@@ -30,7 +30,7 @@ const TEXT = {
     gameEnd: "Na het gekozen aantal beurten per speler wint de speler met de hoogste score.",
     waitingForHost: "Wachten tot {name} het spel start.", roundsPerPlayer: "Rondes per speler",
     startGame: "Start spel", needPlayer: "Er moet minstens één speler meedoen om te starten.",
-    whereCountry: "Waar ligt dit land?", drawCountry: "Trek een land", yourTurn: "Jij bent aan de beurt",
+    whereCountry: "Waar ligt dit land?", drawCountry: "Trek een land", yourTurn: "Jij bent aan de beurt", drawButton: "trek",
     selectCountry: "Kies het land op de wereldbol.", searchingCountry: "zoekt dit land.",
     searchCountry: "Zoek een land…", guess: "Raden", searchLabel: "Zoek een land om te raden",
     globeLabel: "Interactieve wereldbol. Sleep om te draaien; gebruik plus en min om in te zoomen. Zoek een land om toegankelijk te raden.",
@@ -57,7 +57,7 @@ const TEXT = {
     gameEnd: "After each player has taken the chosen number of turns, the highest score wins.",
     waitingForHost: "Waiting for {name} to start.", roundsPerPlayer: "Rounds per player",
     startGame: "Start game", needPlayer: "At least one player must join before starting.",
-    whereCountry: "Where is this country?", drawCountry: "Draw a country", yourTurn: "Your turn",
+    whereCountry: "Where is this country?", drawCountry: "Draw a country", yourTurn: "Your turn", drawButton: "draw",
     selectCountry: "Select the country on the globe.", searchingCountry: "is looking for this country.",
     searchCountry: "Search countries…", guess: "Guess", searchLabel: "Search for a country to guess",
     globeLabel: "Interactive globe. Drag to rotate; use plus and minus to zoom. Search for a country to make an accessible guess.",
@@ -607,7 +607,7 @@ export function WaarLandLobby(props: GameLobbyProps<WaarLandSnapshot>) {
           <div className="wld-play-area">
             <section className="card wld-clue-card">
               <h2>{language === "en" ? snapshot.targetNameEn ?? snapshot.targetName ?? text.drawCountry : snapshot.targetName ?? text.drawCountry}</h2>
-              {snapshot.step === "draw" && active && <button className="primary" type="button" onClick={() => send({ type: "draw" })}>{text.drawCountry}</button>}
+              {snapshot.step === "draw" && active && <button className="primary" type="button" onClick={() => send({ type: "draw" })}>{text.drawButton}</button>}
               {snapshot.step === "guess" && (
                 <>
                   <p>{active ? text.selectCountry : language === "nl" ? `${activePlayerName} zoekt dit land.` : `${activePlayerName} ${text.searchingCountry}`}</p>
