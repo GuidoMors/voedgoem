@@ -69,8 +69,9 @@ custom four-letter room code, or browser-local multiplayer protocol.
 - The source HTML uses an orthographic globe. The app projects simplified
   Natural Earth 1:110m country paths in `map-data.ts` onto an interactive
   orthographic globe using `d3-geo`, plus point markers for small countries
-  without a path. Incorrect guesses are shaded by distance to the target.
-  Country IDs are ISO-3166 alpha-3. The
+  without a path; their clickable markers grow by up to 100% as the globe zooms
+  in. Incorrect guesses are shaded by distance to the target. Country IDs are
+  ISO-3166 alpha-3. The
   geometry is public domain from Natural Earth
   (https://www.naturalearthdata.com/); the supplied HTML's fallback points
   are used for microstates/islands. Bundle the map and its projection locally;
