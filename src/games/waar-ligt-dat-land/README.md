@@ -56,10 +56,11 @@ custom four-letter room code, or browser-local multiplayer protocol.
   do not reveal its map location while guesses remain.
 - Do not show country names as visible globe labels or hover tooltips. Allow
   each player to switch the interface, country names, categories, questions,
-  and answers between Dutch and English; keep the language preference local
-  to that player. English questions and answers are available for all 195
-  countries; countries without a question in the selected true/false format
-  use a generated English geography question.
+  and answers between Dutch and English using the toggle in the top navigation
+  menu; keep the language preference local to that player. English questions
+  and answers are available for all 195 countries; countries without a
+  question in the selected true/false format use a generated English geography
+  question.
 - At game end, show a score-ordered results view with ties represented
   accurately. Let the host return to the lobby using the shared host controls.
 

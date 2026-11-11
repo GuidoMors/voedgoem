@@ -1,5 +1,6 @@
 import { geoGraticule10, geoOrthographic, geoPath } from "d3-geo";
 import { useEffect, useMemo, useRef, useState, type PointerEvent as ReactPointerEvent } from "react";
+import { createPortal } from "react-dom";
 import { Person } from "../../avatar/Avatar";
 import { HostControlsTab } from "../../components/HostControlsTab";
 import { KickButton } from "../../components/KickButton";
@@ -540,24 +541,34 @@ function WaitingRoom({ snapshot, userId, isHost, isDisplay, language, send }: Ga
 export function WaarLandLobby(props: GameLobbyProps<WaarLandSnapshot>) {
   const { snapshot, userId, isHost, send } = props;
   const [language, setLanguage] = useState<Language>(() => localStorage.getItem("wld-language") === "en" ? "en" : "nl");
+  const [languageSlot, setLanguageSlot] = useState<HTMLElement | null>(null);
   const text = TEXT[language];
+  useEffect(() => {
+    setLanguageSlot(document.getElementById("plenet-language-slot"));
+  }, []);
   const changeLanguage = (next: Language) => {
     localStorage.setItem("wld-language", next);
     setLanguage(next);
   };
   const languageSwitch = (
-    <div className="wld-language-switch" aria-label={text.language}>
-      <span>{text.language}:</span>
-      <button type="button" aria-pressed={language === "nl"} onClick={() => changeLanguage("nl")}>Nederlands</button>
-      <button type="button" aria-pressed={language === "en"} onClick={() => changeLanguage("en")}>English</button>
-    </div>
+    <button
+      className="wld-language-toggle"
+      type="button"
+      aria-label={`${text.language}: ${language === "nl" ? "Nederlands" : "English"}. Switch language.`}
+      aria-pressed={language === "en"}
+      title={`${text.language}: ${language === "nl" ? "Nederlands" : "English"}`}
+      onClick={() => changeLanguage(language === "nl" ? "en" : "nl")}
+    >
+      <span className={language === "nl" ? "active" : ""}>NL</span>
+      <span aria-hidden="true">/</span>
+      <span className={language === "en" ? "active" : ""}>EN</span>
+    </button>
   );
   if (snapshot.phase === "lobby") {
     return (
       <div className="wld-game">
         <GameBrand language={language} />
-        {languageSwitch}
-        {language === "en" && <p className="muted small">{text.hint}</p>}
+        {languageSlot && createPortal(languageSwitch, languageSlot)}
         <WaitingRoom {...props} language={language} />
       </div>
     );
@@ -572,8 +583,7 @@ export function WaarLandLobby(props: GameLobbyProps<WaarLandSnapshot>) {
   return (
     <div className="wld-game">
       <GameBrand language={language} />
-      {languageSwitch}
-      {language === "en" && <p className="muted small">{text.hint}</p>}
+      {languageSlot && createPortal(languageSwitch, languageSlot)}
       <PlayerScores snapshot={snapshot} userId={userId} language={language} />
       {snapshot.phase === "results" ? (
         <section className="card wld-results">
