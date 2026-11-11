@@ -26,3 +26,20 @@ in public UI: use the appropriate viewer-specific server snapshot.
 When changing these flows, test GM, affected player, unrelated player and
 display views, including required confirmations and historical navigation.
 Use isolated fixtures rather than taking actions in a live game.
+
+## Mobile layout
+
+Game styles live in `styles.css`. At widths up to 760px, the village uses
+a two-column grid in seat order, with visible seat numbers instead of an
+overlapping circle. Desktop keeps the circular table. Role visibility and
+the lover, imitation and throat-cut indicators use the same server snapshot
+and conditions in both layouts.
+
+Mobile setup uses a compact two-column role picker, with single-column
+settings and rules descriptions. Connected/offline pills appear below player
+names in the mobile lobby. Buttons and text inputs have at least 44px
+touch targets; text inputs use 16px type to avoid focus zoom. GM choices wrap
+within the screen, and the confirmation summary appears before its button.
+Upcoming steps and public events stack below the village and scroll within
+bounded panels. Check 320px, 390px and 760px layouts with long names and a full
+village, including GM, player and display views.

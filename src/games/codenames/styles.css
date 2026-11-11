@@ -75,7 +75,18 @@
   background: #000;
 }
 .cn-card {
+  font-size: 1rem;
   position: relative;
+  -webkit-touch-callout: none;
+  user-select: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  min-height: 76px;
+  padding: 12px 6px;
+  letter-spacing: 0.02em;
+  border-width: 3px;
 }
 .cn-card.hint-received.hint-red,
 .cn-card.hint-given.hint-red {
@@ -115,10 +126,6 @@
   background: rgba(0,0,0,0.65);
   color: #fff;
 }
-.cn-card {
-  -webkit-touch-callout: none;
-  user-select: none;
-}
 .cn-card .tag-label.tag-red {
   background: #dc2626;
 }
@@ -145,17 +152,6 @@
   max-width: 900px;
   margin-left: auto;
   margin-right: auto;
-}
-.cn-card {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
-  min-height: 76px;
-  padding: 12px 6px;
-  font-size: 1rem;
-  letter-spacing: 0.02em;
-  border-width: 3px;
 }
 .cn-side {
   font-size: 0.85rem;
@@ -281,7 +277,7 @@ body[data-game="codenames"] {
   --themewhite: #2b2118;
   --muted: #7d6e58;
   --danger-rgb: 180, 30, 30;
-  --font-big: 'Playfair Display', Georgia, serif;
+  --font-big: 'Libre Baskerville', Georgia, serif;
   --font-small: 'Libre Baskerville', Georgia, serif;
   font-size: 16px;
   color: #2b2118;
@@ -329,6 +325,9 @@ body[data-game="codenames"] .cn-status {
   border: 1px solid #c9b88f;
   border-radius: 12px;
   box-shadow: 0 2px 4px rgba(60,40,10,.25), inset 0 0 0 4px #fffdf5, inset 0 0 0 5px #e0d3b0;
+}
+body[data-game="codenames"] .card.teamcard{
+  grid-column: span 2;
 }
 body[data-game="codenames"] .names li {
   box-shadow: none;

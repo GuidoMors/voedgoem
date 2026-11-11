@@ -80,7 +80,7 @@ function Waiting({ snapshot, userId, isHost, send }: GameLobbyProps<KinSnapshot>
         </section>
       </div>
       {isHost && (
-        <HostControlsTab showHeading={false}>
+        <HostControlsTab>
           <div className="host-actions kin-host-options">
             <label>Game type{" "}
               <select value={snapshot.options.mode} onChange={event => send({ type: "setOptions", mode: event.target.value })}>
@@ -282,7 +282,7 @@ function SetupScreen({ snapshot, userId, isHost, send }: GameLobbyProps<KinSnaps
         </aside>
       </div>
       {isHost && (
-        <HostControlsTab showHeading={false}>
+        <HostControlsTab>
           <div className="host-actions">
             <button onClick={() => window.confirm("Return to the lobby and discard this game?") && send({ type: "abort" })}>Back to lobby</button>
           </div>

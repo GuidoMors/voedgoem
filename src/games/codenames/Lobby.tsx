@@ -80,8 +80,8 @@ function Waiting({ snapshot, seat, isHost, send }: { snapshot: CodenamesSnapshot
 
   return (
     <>
-    <div className="grid-2">
-      <section className="card">
+    <div className="grid-3">
+      <section className="card teamcard">
         <h2>Teams <span className="pill">{snapshot.seats.length}/{snapshot.maxPlayers}</span></h2>
         <div className="teams">
           {TEAMS.map(team => {
@@ -105,7 +105,7 @@ function Waiting({ snapshot, seat, isHost, send }: { snapshot: CodenamesSnapshot
         </div>
         {seat && <button onClick={() => send({ type: "unseat" })}>Back to spectating</button>}
       </section>
-      <section className="card">
+      <section className="card specatorcard">
         <h2>Spectators <span className="pill">{snapshot.spectators.length}</span></h2>
         {snapshot.spectators.length === 0 ? <p className="muted">No spectators.</p> : <ul className="names">{snapshot.spectators.map(person => <li key={person.id}><Person id={person.id} name={person.username} /></li>)}</ul>}
         {!isHost && <p className="muted small">Waiting for {snapshot.host.name} to start the draft.</p>}
@@ -114,7 +114,7 @@ function Waiting({ snapshot, seat, isHost, send }: { snapshot: CodenamesSnapshot
     {isHost && <HostControlsTab>
       <div className="host-actions">
         <label className="field">
-          Number of words ({snapshot.wordPoolSize} available)
+          Number of words ({snapshot.wordPoolSize})
           <input type="number" min={9} max={Math.min(60, snapshot.wordPoolSize)} value={wordCount} onChange={event => setWordCount(Number(event.target.value))} />
         </label>
         <label className="field">
@@ -198,7 +198,7 @@ function Table({ snapshot, seat, isHost, send }: { snapshot: CodenamesSnapshot; 
       <div className={`cn-status cn-status-bar team-${snapshot.winner ?? snapshot.turn}`}>
         <strong>{status}</strong>
         {playing && snapshot.turnEndsAt && <TurnTimer snapshot={snapshot} />}
-        {snapshot.remaining && <span className="small cn-remaining">Red <strong>{snapshot.remaining.red}</strong> · Blue <strong>{snapshot.remaining.blue}</strong></span>}
+        {snapshot.remaining && <span className="small cn-remaining"><span className="text-red">Red</span> <strong>{snapshot.remaining.red}</strong> · <span className="text-blue">Blue</span> <strong>{snapshot.remaining.blue}</strong></span>}
       </div>
       <p className="muted small">
         {seat
