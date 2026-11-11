@@ -242,14 +242,19 @@ function WorldMap({ snapshot, canGuess, language, onGuess }: {
       const point = projectAt(current.longitude, current.latitude);
       const longitudePoint = projectAt(current.longitude + 0.1, current.latitude);
       const latitudePoint = projectAt(current.longitude, current.latitude + 0.1);
-      const longitudeDx = (longitudePoint[0] - point[0]) / 0.1;
-      const longitudeDy = (longitudePoint[1] - point[1]) / 0.1;
-      const latitudeDx = (latitudePoint[0] - point[0]) / 0.1;
-      const latitudeDy = (latitudePoint[1] - point[1]) / 0.1;
-      const determinant = longitudeDx * latitudeDy - latitudeDx * longitudeDy;
-      if (Math.abs(determinant) > 0.001) {
-        next.longitude = wrapLongitude(current.longitude + (dx * latitudeDy - dy * latitudeDx) / determinant);
-        next.latitude = Math.max(-85, Math.min(85, current.latitude + (longitudeDx * dy - longitudeDy * dx) / determinant));
+      if (point && longitudePoint && latitudePoint) {
+        const longitudeDx = (longitudePoint[0] - point[0]) / 0.1;
+        const longitudeDy = (longitudePoint[1] - point[1]) / 0.1;
+        const latitudeDx = (latitudePoint[0] - point[0]) / 0.1;
+        const latitudeDy = (latitudePoint[1] - point[1]) / 0.1;
+        const determinant = longitudeDx * latitudeDy - latitudeDx * longitudeDy;
+        if (Math.abs(determinant) > 0.001) {
+          next.longitude = wrapLongitude(current.longitude + (dx * latitudeDy - dy * latitudeDx) / determinant);
+          next.latitude = Math.max(-85, Math.min(85, current.latitude + (longitudeDx * dy - longitudeDy * dx) / determinant));
+        } else {
+          next.longitude = wrapLongitude(current.longitude + dx / (GLOBE_RADIUS * current.zoom) * 180 / Math.PI);
+          next.latitude = Math.max(-85, Math.min(85, current.latitude - dy / (GLOBE_RADIUS * current.zoom) * 180 / Math.PI));
+        }
       } else {
         next.longitude = wrapLongitude(current.longitude + dx / (GLOBE_RADIUS * current.zoom) * 180 / Math.PI);
         next.latitude = Math.max(-85, Math.min(85, current.latitude - dy / (GLOBE_RADIUS * current.zoom) * 180 / Math.PI));
@@ -349,7 +354,7 @@ function WorldMap({ snapshot, canGuess, language, onGuess }: {
             const target = event.target;
             const countryId = target instanceof SVGElement ? target.dataset.countryId ?? null : null;
             const [x, y] = svgCoordinates(event);
-            const anchor = projection.invert([x, y]);
+            const anchor = projection.invert?.([x, y]) ?? null;
             drag.current = {
               pointerId: event.pointerId,
               x,
