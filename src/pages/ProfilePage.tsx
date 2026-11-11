@@ -59,10 +59,10 @@ export function ProfilePage({ user, onSaved }: { user: User; onSaved: (user: Use
       <section className="card profile">
         <div className="profile-preview">
           <Avatar avatar={draft} view={view} size={200} />
-          <div className="row">
-            <button onClick={() => rotate(-1)} aria-label="Rotate left">↻</button>
+          <div className="row rotate-buttons">
+            <button onClick={() => rotate(-1)} aria-label="Rotate left" className="rotate-left-button-profile">↻</button>
             <span className="muted small">{VIEWS.find(item => item.id === view)!.label}</span>
-            <button onClick={() => rotate(1)} aria-label="Rotate right">↺</button>
+            <button onClick={() => rotate(1)} aria-label="Rotate right" className="rotate-right-button-profile">↺</button>
           </div>
         </div>
         <div className="profile-parts">

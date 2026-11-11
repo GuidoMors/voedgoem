@@ -680,6 +680,10 @@ th {
   border-radius: 12px;
   background: rgba(255,255,255,0.05);
 }
+.rotate-buttons {
+  justify-content: space-between;
+  width: 100%;
+}
 .profile-parts {
   flex: 1;
   min-width: 260px;
@@ -703,12 +707,15 @@ th {
   border: 0;
   background: none;
   cursor: pointer;
+  border-radius: 100%;
+  border: 15px;
 }
 .swatches {
   display: flex;
   flex-wrap: wrap;
   gap: 6px;
   margin-top: 8px;
+  place-content: center;
 }
 .swatch {
   width: 22px;
