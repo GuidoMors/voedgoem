@@ -25,13 +25,15 @@ frontend is deployed as a Cloudflare Workers static-assets Worker.
 ## Games
 
 The frontend registry supports Blokus, Codenames, Dworf, Kin, Pass Time,
-Tetris, 31 Seconds, Werewolves and Wordle PvP. Game-specific implementation
-and interaction notes belong under `src/games/<id>/`, not in this overview.
+Tetris, 31 Seconds, Werewolves, Wordle PvP and Plenet.
+Game-specific implementation and interaction notes belong under
+`src/games/<id>/`, not in this overview.
 
 - [Kin frontend guide](./src/games/kin/README.md)
 - [Tetris frontend guide](./src/games/tetris/README.md)
 - [Werewolves frontend guide](./src/games/werewolves/README.md)
 - [Pass Time theme reference](./src/games/pass-time/README.md)
+- [Plenet frontend guide](./src/games/waar-ligt-dat-land/README.md)
 
 ## Development
 

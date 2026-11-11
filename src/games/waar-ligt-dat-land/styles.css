@@ -1,0 +1,649 @@
+.lobby-list li.hub-lobby[data-game="waar-ligt-dat-land"] {
+  --hub-surface: #102b38;
+  --hub-panel: #173c4b;
+  --hub-edge: #8dd7d2;
+  --hub-panel-font-color: #b7eeea;
+  --hub-sub-text-color: #b7eeea;
+  --hub-font: system-ui, sans-serif;
+  --hub-radius: 14px;
+  --hub-shadow: inset 0 0 14px rgba(102, 211, 199, .16);
+  --hub-text: #f0fbf8;
+}
+
+body[data-game="waar-ligt-dat-land"] {
+  --thememain: #ffbd59;
+  --themesubmain: #6558d9;
+  --themeblack: #171735;
+  --themegrey: #23234d;
+  --themelog: #191b3b;
+  --neon-rgb: 255, 126, 112;
+  --neon: rgb(var(--neon-rgb));
+  --neon-soft: #ffe1a3;
+  --font-big: var(--font-small);
+  --card: var(--themelog);
+  --border: rgba(113, 220, 236, .38);
+  --accent: #ff806f;
+  --muted: #bec8ea;
+}
+
+body[data-game="waar-ligt-dat-land"] .wld-game,
+body[data-game="waar-ligt-dat-land"] .wld-roster,
+body[data-game="waar-ligt-dat-land"] .wld-results ol {
+  display: grid;
+  gap: 12px;
+}
+
+body[data-game="waar-ligt-dat-land"] .wld-roster,
+body[data-game="waar-ligt-dat-land"] .wld-results ol,
+body[data-game="waar-ligt-dat-land"] .wld-scores {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+body[data-game="waar-ligt-dat-land"] .wld-play-area {
+  display: grid;
+  grid-template-columns: minmax(230px, .75fr) minmax(0, 1.5fr);
+  gap: 16px;
+  align-items: start;
+}
+
+body[data-game="waar-ligt-dat-land"] .wld-clue-card {
+  min-width: 0;
+}
+
+body[data-game="waar-ligt-dat-land"] .wld-clue-card h2 {
+  color: var(--neon-soft);
+  font-size: clamp(1.5rem, 3vw, 2.2rem);
+}
+
+body[data-game="waar-ligt-dat-land"] .wld-map-wrap {
+  min-width: 0;
+  display: grid;
+  gap: 10px;
+}
+
+body[data-game="waar-ligt-dat-land"] .wld-visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+body[data-game="waar-ligt-dat-land"] .wld-map {
+  display: block;
+  width: 100%;
+  height: auto;
+  overflow: hidden;
+  border: 1px solid rgba(141, 215, 210, .36);
+  border-radius: 18px;
+  background: radial-gradient(ellipse at 50% 45%, #193c4b 0, #0d202d 70%);
+  cursor: grab;
+  touch-action: none;
+  user-select: none;
+  outline: none;
+  filter: drop-shadow(0 18px 24px rgba(0, 0, 0, .28));
+}
+
+body[data-game="waar-ligt-dat-land"] .wld-map:active {
+  cursor: grabbing;
+}
+
+body[data-game="waar-ligt-dat-land"] .wld-map:focus-visible {
+  outline: 2px solid var(--neon);
+  outline-offset: 3px;
+}
+
+body[data-game="waar-ligt-dat-land"] .wld-globe-stage {
+  position: relative;
+  overflow: hidden;
+  border: 1px solid rgba(141, 215, 210, .2);
+  border-radius: 18px;
+  background:
+    radial-gradient(ellipse at 50% 42%, rgba(52, 113, 127, .22), transparent 58%),
+    linear-gradient(145deg, #102834, #091923);
+}
+
+body[data-game="waar-ligt-dat-land"] .wld-ocean {
+  fill: url(#wld-ocean-gradient);
+}
+
+body[data-game="waar-ligt-dat-land"] .wld-graticule {
+  fill: none;
+  stroke: rgba(209, 239, 230, .2);
+  stroke-width: .7px;
+  pointer-events: none;
+}
+
+body[data-game="waar-ligt-dat-land"] .wld-country {
+  fill: #c9c4a8;
+  stroke: #536e6c;
+  stroke-width: .72px;
+  vector-effect: non-scaling-stroke;
+  cursor: crosshair;
+  transition: fill .16s ease, stroke .16s ease;
+}
+
+body[data-game="waar-ligt-dat-land"] .wld-country:hover {
+  fill: #efe0ad;
+  stroke: #f4f3d9;
+}
+
+body[data-game="waar-ligt-dat-land"] .wld-country.heat-1,
+body[data-game="waar-ligt-dat-land"] .wld-country-point.heat-1 {
+  fill: #3a78a0;
+  stroke: #b7d7e4;
+}
+
+body[data-game="waar-ligt-dat-land"] .wld-country.heat-2,
+body[data-game="waar-ligt-dat-land"] .wld-country-point.heat-2 {
+  fill: #43b9bd;
+  stroke: #c0f0e2;
+}
+
+body[data-game="waar-ligt-dat-land"] .wld-country.heat-3,
+body[data-game="waar-ligt-dat-land"] .wld-country-point.heat-3 {
+  fill: #6dbe74;
+  stroke: #d3efb8;
+}
+
+body[data-game="waar-ligt-dat-land"] .wld-country.heat-4,
+body[data-game="waar-ligt-dat-land"] .wld-country-point.heat-4 {
+  fill: #d8c657;
+  stroke: #fff0a1;
+}
+
+body[data-game="waar-ligt-dat-land"] .wld-country.heat-5,
+body[data-game="waar-ligt-dat-land"] .wld-country-point.heat-5 {
+  fill: #ed8a43;
+  stroke: #ffd19a;
+}
+
+body[data-game="waar-ligt-dat-land"] .wld-country.heat-6,
+body[data-game="waar-ligt-dat-land"] .wld-country-point.heat-6 {
+  fill: #e75650;
+  stroke: #ffd2be;
+}
+
+body[data-game="waar-ligt-dat-land"] .wld-country.target,
+body[data-game="waar-ligt-dat-land"] .wld-country-point.target {
+  fill: #57d890;
+  stroke: #e0ffcf;
+}
+
+body[data-game="waar-ligt-dat-land"] .wld-country-point {
+  fill: #c9c4a8;
+  stroke: #f0eee0;
+  stroke-width: .8px;
+  vector-effect: non-scaling-stroke;
+  cursor: crosshair;
+}
+
+body[data-game="waar-ligt-dat-land"] .wld-globe-light {
+  fill: url(#wld-globe-light);
+  pointer-events: none;
+}
+
+body[data-game="waar-ligt-dat-land"] .wld-globe-outline {
+  fill: none;
+  stroke: rgba(200, 247, 232, .5);
+  stroke-width: 1px;
+  pointer-events: none;
+}
+
+body[data-game="waar-ligt-dat-land"] .wld-map-search {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 8px;
+}
+
+body[data-game="waar-ligt-dat-land"] .wld-map-search input,
+body[data-game="waar-ligt-dat-land"] .wld-host-controls input {
+  min-height: 40px;
+  padding: 7px 10px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--themelog);
+  color: var(--text, #fff);
+  font: inherit;
+}
+
+body[data-game="waar-ligt-dat-land"] .wld-map-search input {
+  min-width: 0;
+  border-radius: 999px;
+  padding-inline: 16px;
+}
+
+body[data-game="waar-ligt-dat-land"] .wld-map-search button {
+  min-width: 92px;
+  border-radius: 999px;
+}
+
+body[data-game="waar-ligt-dat-land"] .wld-map-search button:disabled {
+  opacity: .48;
+}
+
+body[data-game="waar-ligt-dat-land"] .wld-map-zoom {
+  position: absolute;
+  right: 12px;
+  top: 12px;
+  display: grid;
+  gap: 6px;
+}
+
+body[data-game="waar-ligt-dat-land"] .wld-map-zoom button {
+  width: 40px;
+  height: 40px;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: rgba(12, 31, 40, .9);
+  color: #eaf8f5;
+  font-size: 1.25rem;
+  backdrop-filter: blur(8px);
+}
+
+body[data-game="waar-ligt-dat-land"] .wld-map-zoom button:disabled {
+  opacity: .45;
+  cursor: not-allowed;
+}
+
+body[data-game="waar-ligt-dat-land"] .wld-map-hint {
+  position: absolute;
+  left: 12px;
+  bottom: 10px;
+  max-width: calc(100% - 112px);
+  margin: 0;
+  padding: 6px 10px;
+  border: 1px solid rgba(196, 237, 228, .2);
+  border-radius: 999px;
+  background: rgba(9, 25, 34, .78);
+  color: #d4efeb;
+  font-size: .78rem;
+  pointer-events: none;
+  backdrop-filter: blur(8px);
+}
+
+body[data-game="waar-ligt-dat-land"] .wld-map-legend {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 5px;
+  color: var(--muted);
+  font-size: .78rem;
+}
+
+body[data-game="waar-ligt-dat-land"] .wld-map-legend i {
+  display: inline-block;
+  width: 15px;
+  height: 10px;
+  border: 1px solid rgba(255, 255, 255, .36);
+  border-radius: 999px;
+}
+
+body[data-game="waar-ligt-dat-land"] .wld-map-legend .heat-1 { background: #3a78a0; }
+body[data-game="waar-ligt-dat-land"] .wld-map-legend .heat-2 { background: #43b9bd; }
+body[data-game="waar-ligt-dat-land"] .wld-map-legend .heat-3 { background: #6dbe74; }
+body[data-game="waar-ligt-dat-land"] .wld-map-legend .heat-4 { background: #d8c657; }
+body[data-game="waar-ligt-dat-land"] .wld-map-legend .heat-5 { background: #ed8a43; }
+body[data-game="waar-ligt-dat-land"] .wld-map-legend .heat-6 { background: #e75650; }
+
+body[data-game="waar-ligt-dat-land"] .wld-map-instructions {
+  margin: 0;
+  color: var(--muted);
+  font-size: .85rem;
+}
+
+body[data-game="waar-ligt-dat-land"] .wld-scores {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+body[data-game="waar-ligt-dat-land"] .wld-scores li {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  padding: 7px 10px;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: var(--themelog);
+}
+
+body[data-game="waar-ligt-dat-land"] .wld-scores li.active {
+  box-shadow: 0 0 0 2px var(--neon);
+}
+
+body[data-game="waar-ligt-dat-land"] .wld-scores li.me {
+  color: var(--neon-soft);
+}
+
+body[data-game="waar-ligt-dat-land"] .wld-turn-status,
+body[data-game="waar-ligt-dat-land"] .wld-results li {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  align-items: center;
+}
+
+body[data-game="waar-ligt-dat-land"] .wld-attempts {
+  font-size: 1.35rem;
+  letter-spacing: .16em;
+}
+
+body[data-game="waar-ligt-dat-land"] .wld-feedback {
+  color: var(--neon-soft);
+  font-weight: 700;
+}
+
+body[data-game="waar-ligt-dat-land"] .wld-distance {
+  margin: 4px 0;
+  font-size: .9rem;
+}
+
+body[data-game="waar-ligt-dat-land"] .wld-question {
+  display: grid;
+  gap: 8px;
+  margin-top: 14px;
+  padding-top: 12px;
+  border-top: 1px solid var(--border);
+}
+
+body[data-game="waar-ligt-dat-land"] .wld-question > strong,
+body[data-game="waar-ligt-dat-land"] .wld-answer {
+  color: var(--neon-soft);
+}
+
+body[data-game="waar-ligt-dat-land"] .wld-host-controls {
+  align-items: center;
+}
+
+body[data-game="waar-ligt-dat-land"] .wld-host-controls label {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+body[data-game="waar-ligt-dat-land"] .wld-host-controls input {
+  width: 90px;
+}
+
+body[data-game="waar-ligt-dat-land"] .wld-game button:disabled {
+  opacity: .48;
+  cursor: not-allowed;
+}
+
+body[data-game="waar-ligt-dat-land"] .wld-language-switch {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+}
+
+body[data-game="waar-ligt-dat-land"] .wld-language-switch button {
+  padding: 6px 12px;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: var(--themelog);
+  color: var(--neon-soft);
+  font: inherit;
+}
+
+body[data-game="waar-ligt-dat-land"] .wld-language-switch button[aria-pressed="true"] {
+  background: var(--neon);
+  color: var(--themeblack);
+}
+
+html body[data-game="waar-ligt-dat-land"] .page .bot-panel.card {
+  border: 1px solid rgba(var(--neon-rgb), .5);
+  border-radius: 12px;
+  background: #142d36;
+  color: #eaf8f5;
+}
+
+html body[data-game="waar-ligt-dat-land"] .page .bot-panel h2,
+html body[data-game="waar-ligt-dat-land"] .page .bot-panel p,
+html body[data-game="waar-ligt-dat-land"] .page .bot-panel .small {
+  color: #c1eeea;
+}
+
+html body[data-game="waar-ligt-dat-land"] .page .bot-panel button:disabled {
+  border-color: rgba(var(--neon-rgb), .35);
+  background: #203d45;
+  color: #9ab8b7;
+  filter: none;
+  opacity: .62;
+}
+
+.modal.stats-modal[data-game="waar-ligt-dat-land"] {
+  --stats-accent: #1b7376;
+  --stats-accent-hover: #11565d;
+  --stats-border-radius: 12px;
+}
+
+.modal.stats-modal[data-game] .stats-page .stats-tab[data-tab-game="waar-ligt-dat-land"] {
+  background: #246c73;
+  color: #f2fffc;
+}
+
+.modal.stats-modal[data-game] .stats-page .stats-tab[data-tab-game="waar-ligt-dat-land"]:hover:not(:disabled) {
+  background: #398a8d;
+}
+
+.modal.stats-modal[data-game] .stats-page .stats-tab[data-tab-game="waar-ligt-dat-land"][aria-selected="true"],
+.modal.stats-modal[data-game] .stats-page .stats-tab[data-tab-game="waar-ligt-dat-land"][aria-selected="true"]:hover {
+  background: #123f49;
+  color: #c8faf0;
+}
+
+.modal.stats-modal[data-game="waar-ligt-dat-land"] .stats-page .card,
+.modal.stats-modal[data-game="waar-ligt-dat-land"] .stats-page .stat {
+  border-color: rgba(36, 108, 115, .45);
+}
+
+@media (max-width: 760px) {
+  body[data-game="waar-ligt-dat-land"] .wld-play-area {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  body[data-game="waar-ligt-dat-land"] .wld-map-zoom {
+    right: 8px;
+    top: 8px;
+  }
+
+  body[data-game="waar-ligt-dat-land"] .wld-map-zoom button {
+    width: 36px;
+    height: 36px;
+  }
+
+  body[data-game="waar-ligt-dat-land"] .wld-map-hint {
+    left: 8px;
+    bottom: 8px;
+    font-size: .7rem;
+  }
+
+  body[data-game="waar-ligt-dat-land"] .wld-map-legend {
+    justify-content: center;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  body[data-game="waar-ligt-dat-land"] .wld-country {
+    transition: none;
+  }
+}
+
+body[data-game="waar-ligt-dat-land"] {
+  background:
+    radial-gradient(ellipse at 12% 9%, rgba(119, 90, 225, .18), transparent 34rem),
+    radial-gradient(ellipse at 92% 38%, rgba(28, 173, 191, .13), transparent 32rem),
+    #12152c;
+}
+
+body[data-game="waar-ligt-dat-land"] .wld-game {
+  gap: 16px;
+}
+
+body[data-game="waar-ligt-dat-land"] .wld-brand {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  overflow: hidden;
+  min-height: 112px;
+  padding: 18px 24px;
+  border: 1px solid rgba(255, 213, 122, .65);
+  border-radius: 22px;
+  background:
+    radial-gradient(circle at 88% 18%, rgba(255, 229, 135, .24), transparent 11rem),
+    linear-gradient(112deg, #5143b7 0%, #724cc1 42%, #d7568a 100%);
+  box-shadow: 0 14px 34px rgba(8, 8, 32, .3), inset 0 1px rgba(255, 255, 255, .22);
+}
+
+body[data-game="waar-ligt-dat-land"] .wld-brand-orbit {
+  display: grid;
+  flex: 0 0 66px;
+  width: 66px;
+  height: 66px;
+  place-items: center;
+  border: 2px solid rgba(255, 255, 255, .65);
+  border-radius: 50%;
+  background: linear-gradient(145deg, #ffd36d, #ff876f 58%, #61d4d7);
+  box-shadow: 0 0 24px rgba(255, 226, 131, .38);
+  font-size: 2.2rem;
+}
+
+body[data-game="waar-ligt-dat-land"] .wld-brand p {
+  margin: 0 0 5px;
+  color: #ffe59c;
+  font-size: .72rem;
+  font-weight: 900;
+  letter-spacing: .16em;
+}
+
+body[data-game="waar-ligt-dat-land"] .wld-brand h1 {
+  margin: 0;
+  color: #fff;
+  font-size: clamp(2rem, 5vw, 3rem);
+  font-weight: 900;
+  letter-spacing: -.045em;
+  line-height: 1;
+  text-shadow: 0 3px 0 rgba(50, 31, 100, .25);
+}
+
+body[data-game="waar-ligt-dat-land"] .wld-brand-spark {
+  position: absolute;
+  top: 13px;
+  right: 22px;
+  color: #ffe38d;
+  font-size: 2rem;
+  text-shadow: 0 0 16px rgba(255, 240, 178, .75);
+}
+
+body[data-game="waar-ligt-dat-land"] .wld-game > .grid-2 > .card,
+body[data-game="waar-ligt-dat-land"] .wld-clue-card,
+body[data-game="waar-ligt-dat-land"] .wld-results {
+  border: 1px solid rgba(113, 220, 236, .35);
+  border-radius: 18px;
+  background:
+    linear-gradient(145deg, rgba(42, 44, 91, .94), rgba(24, 27, 58, .98));
+  box-shadow: 0 12px 28px rgba(6, 8, 28, .24), inset 0 1px rgba(255, 255, 255, .07);
+}
+
+body[data-game="waar-ligt-dat-land"] .wld-turn-status {
+  padding: 12px 16px;
+  border: 1px solid rgba(255, 204, 112, .55);
+  border-radius: 14px;
+  background: linear-gradient(105deg, rgba(255, 126, 112, .2), rgba(116, 95, 220, .22), rgba(57, 193, 202, .16));
+}
+
+body[data-game="waar-ligt-dat-land"] .wld-turn-status strong {
+  color: #ffe197;
+}
+
+body[data-game="waar-ligt-dat-land"] .wld-map {
+  border-color: rgba(115, 224, 232, .66);
+  background: radial-gradient(ellipse at 50% 45%, #48449c 0, #182047 72%);
+  box-shadow: 0 18px 34px rgba(7, 10, 36, .34), 0 0 0 4px rgba(111, 209, 229, .08);
+}
+
+body[data-game="waar-ligt-dat-land"] .wld-globe-stage {
+  border-color: rgba(113, 220, 236, .42);
+  background:
+    radial-gradient(ellipse at 50% 42%, rgba(113, 97, 227, .3), transparent 58%),
+    linear-gradient(145deg, #211d50, #111b38);
+}
+
+body[data-game="waar-ligt-dat-land"] .wld-country {
+  fill: #f0d98a;
+  stroke: #655c8b;
+}
+
+body[data-game="waar-ligt-dat-land"] .wld-country:hover {
+  fill: #fff0a5;
+  stroke: #fff;
+}
+
+body[data-game="waar-ligt-dat-land"] .wld-map-zoom button,
+body[data-game="waar-ligt-dat-land"] .wld-language-switch button {
+  border-color: rgba(126, 220, 237, .45);
+  background: linear-gradient(145deg, #343365, #25254c);
+  color: #fff4d1;
+  box-shadow: 0 4px 12px rgba(5, 6, 25, .22);
+}
+
+body[data-game="waar-ligt-dat-land"] .wld-language-switch button[aria-pressed="true"] {
+  border-color: #ff9a78;
+  background: linear-gradient(120deg, #ff9475, #ffca68);
+  color: #302044;
+  font-weight: 800;
+}
+
+body[data-game="waar-ligt-dat-land"] .wld-scores li {
+  border-color: rgba(112, 218, 234, .34);
+  background: linear-gradient(135deg, #292b58, #202448);
+}
+
+body[data-game="waar-ligt-dat-land"] .wld-scores li.active {
+  border-color: #ffd26f;
+  box-shadow: 0 0 0 2px rgba(255, 210, 111, .42), 0 0 18px rgba(255, 185, 87, .16);
+}
+
+body[data-game="waar-ligt-dat-land"] .wld-question {
+  border-color: rgba(113, 220, 236, .34);
+}
+
+body[data-game="waar-ligt-dat-land"] .wld-question > strong {
+  width: fit-content;
+  padding: 5px 10px;
+  border: 1px solid rgba(255, 202, 111, .5);
+  border-radius: 999px;
+  background: rgba(255, 195, 91, .12);
+  color: #ffdc8a;
+}
+
+body[data-game="waar-ligt-dat-land"] .wld-clue-card .primary,
+body[data-game="waar-ligt-dat-land"] .wld-results .primary {
+  border-color: #ffb56a;
+  background: linear-gradient(115deg, #ff806f, #f7b348);
+  color: #281d39;
+  font-weight: 800;
+}
+
+@media (max-width: 760px) {
+  body[data-game="waar-ligt-dat-land"] .wld-brand {
+    min-height: 96px;
+    padding: 14px 18px;
+  }
+
+  body[data-game="waar-ligt-dat-land"] .wld-brand-orbit {
+    flex-basis: 54px;
+    width: 54px;
+    height: 54px;
+    font-size: 1.8rem;
+  }
+}

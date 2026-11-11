@@ -7,7 +7,8 @@ const GAME_FAVICONS: Record<string, string> = {
   werewolves: "werewolves.ico",
   kin: "kin.ico",
   "pass-time": "pass-time.ico",
-  "wordle-pvp": "wordle-pvp.ico"
+  "wordle-pvp": "wordle-pvp.ico",
+  "waar-ligt-dat-land": "waar-ligt-dat-land.svg"
 };
 
 export function gameFaviconUrl(game: string): string | undefined {

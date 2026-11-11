@@ -7,6 +7,7 @@ import { ThirtyOneLobby } from "./thirtyone/Lobby";
 import { WerewolvesLobby } from "./werewolves/Lobby";
 import { PassTimeLobby } from "./pass-time/Lobby";
 import { WordlePvpLobby } from "./wordle-pvp/Lobby";
+import { WaarLandLobby } from "./waar-ligt-dat-land/Lobby";
 import type { LobbySnapshot } from "../types";
 import type { Send } from "./types";
 import type { ReactNode } from "react";
@@ -23,5 +24,6 @@ export function GameLobby({ snapshot, userId, isHost, isAdmin, isDisplay, send, 
     case "thirtyone": return <ThirtyOneLobby {...{ snapshot, userId, isHost, isAdmin, isDisplay, send }} />;
     case "werewolves": return <WerewolvesLobby {...{ snapshot, userId, isHost, isAdmin, isDisplay, send }} />;
     case "wordle-pvp": return <WordlePvpLobby {...{ snapshot, userId, isHost, isAdmin, send }} />;
+    case "waar-ligt-dat-land": return <WaarLandLobby {...{ snapshot, userId, isHost, isAdmin, isDisplay, send }} />;
   }
 }

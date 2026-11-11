@@ -35,6 +35,10 @@ function getTurnBotId(snapshot: LobbySnapshot): string | null {
       return null;
     case "wordle-pvp":
       return null;
+    case "waar-ligt-dat-land":
+      return snapshot.phase === "playing" && snapshot.activePlayerId && botIds.has(snapshot.activePlayerId)
+        ? snapshot.activePlayerId
+        : null;
     case "pass-time":
       return snapshot.phase === "playing" && snapshot.gameStep === "cards" && botIds.has(snapshot.currentPlayerId ?? "")
         ? snapshot.currentPlayerId
@@ -101,6 +105,7 @@ export function LobbyPage({ lobbyId, user, onGameChange, chatOpen, onChatClose }
   const acting = !!bot && !!botView;
   const view = acting ? ({ ...snapshot, ...botView } as LobbySnapshot) : snapshot;
   const turnBotId = getTurnBotId(snapshot);
+  const supportsAutopilot = snapshot.game !== "waar-ligt-dat-land";
 
   const botControls = user.isAdmin && (snapshot.phase === "lobby" || snapshot.bots.length > 0) && (
         <section className="card bot-panel">
@@ -108,7 +113,7 @@ export function LobbyPage({ lobbyId, user, onGameChange, chatOpen, onChatClose }
             <h2>Test bots</h2>
             <span className="row">
               <button disabled={!turnBotId || controlling === turnBotId} onClick={() => turnBotId && setControlling(turnBotId)}>Control bot whose turn it is</button>
-              <button className={snapshot.autoBots ? "primary" : ""} disabled={snapshot.bots.length === 0} onClick={() => send({ type: "bot:auto", enabled: !snapshot.autoBots })}>{snapshot.autoBots ? "Autopilot on" : "Autopilot off"}</button>
+              <button className={snapshot.autoBots ? "primary" : ""} disabled={snapshot.bots.length === 0 || !supportsAutopilot} title={!supportsAutopilot ? "Autopilot is not supported for this game." : undefined} onClick={() => send({ type: "bot:auto", enabled: !snapshot.autoBots })}>{supportsAutopilot ? snapshot.autoBots ? "Autopilot on" : "Autopilot off" : "Autopilot unavailable"}</button>
               <button disabled={snapshot.bots.length === 0 || snapshot.phase !== "lobby"} onClick={() => send({ type: "bot:join" })}>Bots join game</button>
               <button onClick={() => send({ type: "bot:add" })}>Add bot</button>
             </span>
@@ -134,6 +139,7 @@ export function LobbyPage({ lobbyId, user, onGameChange, chatOpen, onChatClose }
               ))}
             </ul>
           )}
+          {!supportsAutopilot && snapshot.bots.length > 0 && <p className="muted small">Autopilot is unavailable because answers to the trivia questions are self-graded.</p>}
         </section>
       );
 

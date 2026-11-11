@@ -11,5 +11,6 @@ import "./games/tetris/styles.css";
 import "./games/thirtyone/styles.css";
 import "./games/werewolves/styles.css";
 import "./games/wordle-pvp/styles.css";
+import "./games/waar-ligt-dat-land/styles.css";
 
 createRoot(document.getElementById("root")!).render(<StrictMode><App /></StrictMode>);

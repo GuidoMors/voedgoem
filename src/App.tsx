@@ -65,6 +65,10 @@ export default function App() {
   }, [lobbyGame, route]);
 
   useEffect(() => {
+    document.title = lobbyGame === "waar-ligt-dat-land" ? "Plenet" : "voedgoem";
+  }, [lobbyGame]);
+
+  useEffect(() => {
     api<{ user: User }>("/api/auth/me").then(result => setUser(result.user)).catch(() => setToken(null)).finally(() => setLoading(false));
   }, []);
 
