@@ -112,9 +112,6 @@ function countryName(id: string, dutchName: string, language: Language): string 
 function localizedTurnMessage(snapshot: WaarLandSnapshot, language: Language): string {
   const message = snapshot.turnMessage;
   if (message.startsWith("Not quite.") && snapshot.trivia) {
-    const answer = language === "en"
-      ? snapshot.trivia.answerEn ?? snapshot.trivia.answer
-      : snapshot.trivia.answer;
     return language === "en" ? `Not quite, no points. The answer was:` : `Jammer, geen punten. Het antwoord was:`;
   }
   if (language === "en") return message;
@@ -143,7 +140,6 @@ function WorldMap({ snapshot, canGuess, language, onGuess }: {
 }) {
   const [view, setView] = useState<GlobeView>({ longitude: 0, latitude: 0, zoom: 1 });
   const viewRef = useRef(view);
-  const [countryQuery, setCountryQuery] = useState("");
   const svgRef = useRef<SVGSVGElement>(null);
   const drag = useRef<{
     pointerId: number;
@@ -162,13 +158,6 @@ function WorldMap({ snapshot, canGuess, language, onGuess }: {
   const wrong = new Set(snapshot.wrongGuesses);
   const distances = new Map(snapshot.distanceFeedback.map(guess => [guess.countryId, guess.distanceKm]));
   const names = new Map(snapshot.countries.map(country => [country.id, countryName(country.id, country.name, language)]));
-  const availableCountries = useMemo(
-    () => snapshot.countries
-      .map(country => ({ ...country, name: countryName(country.id, country.name, language) }))
-      .sort((a, b) => a.name.localeCompare(b.name)),
-    [snapshot.countries, language]
-  );
-  const selectedCountry = availableCountries.find(country => country.name.toLowerCase() === countryQuery.trim().toLowerCase());
   const projection = useMemo(
     () => geoOrthographic()
       .translate([MAP_WIDTH / 2, MAP_HEIGHT / 2])
@@ -444,7 +433,7 @@ function WorldMap({ snapshot, canGuess, language, onGuess }: {
   );
 }
 
-function PlayerScores({ snapshot, userId, language }: { snapshot: WaarLandSnapshot; userId: string; language: Language }) {
+function PlayerScores({ snapshot, userId }: { snapshot: WaarLandSnapshot; userId: string }) {
   return (
     <ol className="wld-scores">
       {[...snapshot.players].sort((a, b) => b.score - a.score || a.order - b.order).map(player => (
@@ -585,7 +574,7 @@ export function WaarLandLobby(props: GameLobbyProps<WaarLandSnapshot>) {
     <div className="wld-game">
       <GameBrand language={language} />
       {languageSlot && createPortal(languageSwitch, languageSlot)}
-      <PlayerScores snapshot={snapshot} userId={userId} language={language} />
+      <PlayerScores snapshot={snapshot} userId={userId} />
       {snapshot.phase === "results" ? (
         <section className="card wld-results">
           <h2>{text.gameOver}</h2>
