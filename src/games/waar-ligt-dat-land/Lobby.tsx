@@ -34,9 +34,9 @@ const TEXT = {
     whereCountry: "Waar ligt dit land?", drawCountry: "Trek een land", yourTurn: "Jij bent aan de beurt", drawButton: "trek",
     selectCountry: "Kies het land op de wereldbol.", searchingCountry: "zoekt dit land.",
     searchCountry: "Zoek een land…", guess: "Raden", searchLabel: "Zoek een land om te raden",
-    globeLabel: "Interactieve wereldbol. Sleep om te draaien; gebruik plus en min om in te zoomen. Zoek een land om toegankelijk te raden.",
+    globeLabel: "Interactieve wereldbol. Sleep om te draaien; gebruik twee vingers om in en uit te zoomen en te richten; gebruik plus en min voor toegankelijk zoomen. Zoek een land om te raden.",
     zoomControls: "Bediening wereldbol", zoomIn: "Inzoomen", zoomOut: "Uitzoomen",
-    resetGlobe: "Wereldbol herstellen", rotateHint: "Pak de bol vast en sleep; laat los om door te draaien · Scroll of gebruik +/− om in te zoomen",
+    resetGlobe: "Wereldbol herstellen", rotateHint: "Sleep om de bol te draaien · Knijp of spreid twee vingers om te zoomen op die plek · Scroll of gebruik +/−",
     far: "Ver", close: "Dichtbij", guessInstructions: "Klik op een land op de wereldbol of zoek het hierboven.",
     globeSearch: "Zoeken naar landen", true: "Waar", false: "Niet waar", revealAnswer: "Toon antwoord voor de volgende speler",
     sayAnswer: "Zeg eerst je antwoord hardop; daarna kan de volgende speler het beoordelen.",
@@ -62,9 +62,9 @@ const TEXT = {
     whereCountry: "Where is this country?", drawCountry: "Draw a country", yourTurn: "Your turn", drawButton: "draw",
     selectCountry: "Select the country on the globe.", searchingCountry: "is looking for this country.",
     searchCountry: "Search countries…", guess: "Guess", searchLabel: "Search for a country to guess",
-    globeLabel: "Interactive globe. Drag to rotate; use plus and minus to zoom. Search for a country to make an accessible guess.",
+    globeLabel: "Interactive globe. Drag to rotate; use two fingers to zoom in or out around that spot; use plus and minus for accessible zoom. Search for a country to guess.",
     zoomControls: "Globe controls", zoomIn: "Zoom in", zoomOut: "Zoom out",
-    resetGlobe: "Reset globe view", rotateHint: "Grab and drag the globe; release to keep it spinning · Scroll or use +/− to zoom",
+    resetGlobe: "Reset globe view", rotateHint: "Drag to rotate · Pinch with two fingers to zoom around that spot · Scroll or use +/−",
     far: "Far", close: "Close", guessInstructions: "Click a country on the globe or search its name above.",
     globeSearch: "Search countries", true: "True", false: "False", revealAnswer: "Show answer for the next player",
     sayAnswer: "Say your answer out loud first; then the next player can review it.",
@@ -143,6 +143,8 @@ function WorldMap({ snapshot, canGuess, language, onGuess }: {
   const [view, setView] = useState<GlobeView>({ longitude: 0, latitude: 0, zoom: 1 });
   const viewRef = useRef(view);
   const svgRef = useRef<SVGSVGElement>(null);
+  const activePointers = useRef(new Map<number, { point: [number, number]; type: string }>());
+  const pinch = useRef<{ distance: number; midpoint: [number, number] } | null>(null);
   const drag = useRef<{
     pointerId: number;
     x: number;
@@ -257,6 +259,58 @@ function WorldMap({ snapshot, canGuess, language, onGuess }: {
     setGlobeView(next);
   };
 
+  const beginDrag = (pointerId: number, x: number, y: number) => {
+    const anchor = projection.invert?.([x, y]) ?? null;
+    drag.current = {
+      pointerId,
+      x,
+      y,
+      startX: x,
+      startY: y,
+      moved: false,
+      countryId: null,
+      anchor: anchor ? [anchor[0], anchor[1]] : null,
+      velocityLongitude: 0,
+      velocityLatitude: 0,
+      lastMoveTime: performance.now()
+    };
+  };
+
+  const getTouchPoints = () => [...activePointers.current.values()]
+    .filter(pointer => pointer.type === "touch")
+    .slice(0, 2)
+    .map(pointer => pointer.point);
+
+  const projectAnchorTo = (anchor: [number, number], x: number, y: number, zoomFactor: number) => {
+    const current = viewRef.current;
+    const nextZoom = clampZoom(current.zoom * zoomFactor);
+    if (nextZoom === current.zoom) return;
+    setGlobeView({ ...current, zoom: nextZoom });
+    const projected = geoOrthographic()
+      .translate([MAP_WIDTH / 2, MAP_HEIGHT / 2])
+      .scale(GLOBE_RADIUS * nextZoom)
+      .clipAngle(90)
+      .rotate([current.longitude, current.latitude, 0])(anchor);
+    if (projected) rotateForDrag(anchor, x - projected[0], y - projected[1]);
+  };
+
+  const finishPointer = (event: ReactPointerEvent<SVGSVGElement>, cancelled: boolean) => {
+    const wasPinching = pinch.current !== null;
+    activePointers.current.delete(event.pointerId);
+    if (wasPinching) {
+      pinch.current = null;
+      drag.current = null;
+      const remaining = activePointers.current.entries().next().value as [number, { point: [number, number]; type: string }] | undefined;
+      if (remaining) beginDrag(remaining[0], remaining[1].point[0], remaining[1].point[1]);
+      return;
+    }
+    const current = drag.current;
+    drag.current = null;
+    if (!current || current.pointerId !== event.pointerId) return;
+    if (!cancelled && !current.moved && current.countryId) guess(current.countryId);
+    if (!cancelled && current.moved) startInertia(current.velocityLongitude, current.velocityLatitude);
+  };
+
   const startInertia = (longitude: number, latitude: number) => {
     if (Math.hypot(longitude, latitude) < 0.12) return;
     let velocityLongitude = longitude;
@@ -317,9 +371,23 @@ function WorldMap({ snapshot, canGuess, language, onGuess }: {
           onPointerDown={event => {
             if (event.button !== 0) return;
             stopInertia();
+            const [x, y] = svgCoordinates(event);
+            activePointers.current.set(event.pointerId, { point: [x, y], type: event.pointerType });
+            event.currentTarget.setPointerCapture(event.pointerId);
+            const touchPoints = getTouchPoints();
+            if (touchPoints.length >= 2) {
+              const points = touchPoints;
+              const dx = points[1]![0] - points[0]![0];
+              const dy = points[1]![1] - points[0]![1];
+              pinch.current = {
+                distance: Math.hypot(dx, dy),
+                midpoint: [(points[0]![0] + points[1]![0]) / 2, (points[0]![1] + points[1]![1]) / 2]
+              };
+              drag.current = null;
+              return;
+            }
             const target = event.target;
             const countryId = target instanceof SVGElement ? target.dataset.countryId ?? null : null;
-            const [x, y] = svgCoordinates(event);
             const anchor = projection.invert?.([x, y]) ?? null;
             drag.current = {
               pointerId: event.pointerId,
@@ -334,14 +402,38 @@ function WorldMap({ snapshot, canGuess, language, onGuess }: {
               velocityLatitude: 0,
               lastMoveTime: event.timeStamp
             };
-            event.currentTarget.setPointerCapture(event.pointerId);
           }}
           onPointerMove={event => {
+            if (!activePointers.current.has(event.pointerId)) return;
+            const [x, y] = svgCoordinates(event);
+            const pointer = activePointers.current.get(event.pointerId)!;
+            activePointers.current.set(event.pointerId, { ...pointer, point: [x, y] });
+            const touchPoints = getTouchPoints();
+            if (touchPoints.length >= 2) {
+              const points = touchPoints;
+              const dx = points[1]![0] - points[0]![0];
+              const dy = points[1]![1] - points[0]![1];
+              const nextPinch = {
+                distance: Math.hypot(dx, dy),
+                midpoint: [(points[0]![0] + points[1]![0]) / 2, (points[0]![1] + points[1]![1]) / 2] as [number, number]
+              };
+              const previous = pinch.current;
+              if (previous && previous.distance > 0 && nextPinch.distance > 0) {
+                const anchor = projection.invert?.(previous.midpoint) ?? null;
+                if (anchor) {
+                  projectAnchorTo([anchor[0], anchor[1]], nextPinch.midpoint[0], nextPinch.midpoint[1], nextPinch.distance / previous.distance);
+                } else {
+                  zoomBy(nextPinch.distance / previous.distance);
+                }
+              }
+              pinch.current = nextPinch;
+              drag.current = null;
+              return;
+            }
             const current = drag.current;
             if (!current || current.pointerId !== event.pointerId) {
               return;
             }
-            const [x, y] = svgCoordinates(event);
             if (Math.hypot(x - current.startX, y - current.startY) > 4) current.moved = true;
             if (current.moved) {
               const dx = x - current.x;
@@ -357,15 +449,8 @@ function WorldMap({ snapshot, canGuess, language, onGuess }: {
               current.lastMoveTime = event.timeStamp;
             }
           }}
-          onPointerUp={event => {
-            const current = drag.current;
-            drag.current = null;
-            if (current && current.pointerId === event.pointerId) {
-              if (!current.moved && current.countryId) guess(current.countryId);
-              if (current.moved) startInertia(current.velocityLongitude, current.velocityLatitude);
-            }
-          }}
-          onPointerCancel={() => { drag.current = null; }}
+          onPointerUp={event => finishPointer(event, false)}
+          onPointerCancel={event => finishPointer(event, true)}
         >
           <defs>
             <radialGradient id="wld-ocean-gradient" cx="34%" cy="28%" r="80%">

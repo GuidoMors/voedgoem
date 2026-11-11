@@ -43,9 +43,10 @@ custom four-letter room code, or browser-local multiplayer protocol.
   question, reveal an open-ended answer, or advance the turn. Only open-ended
   answers are reviewed by the next connected participant in turn order.
 - Present the country clue on a card and a rotatable, zoomable SVG globe beside
-  or below it. Drag to rotate, use the wheel or zoom controls to zoom, and click
-  a country to guess. Keep the searchable country input and keyboard controls
-  available for accessible input.
+  or below it. Drag with one pointer to rotate; on touch devices, pinch with two
+  fingers to zoom around the touched location. Use the wheel or zoom controls
+  as alternatives, and click a country to guess. Keep the searchable country
+  input and keyboard controls available for accessible input.
 - Give immediate feedback for incorrect guesses, including the guessed
   country's name, approximate great-circle distance to the target, and
   remaining attempts. Mark incorrect guesses so they cannot be selected again
