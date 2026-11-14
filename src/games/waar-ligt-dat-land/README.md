@@ -14,9 +14,11 @@ Coordinate wire-format and game-rule changes with the sibling server guide at
 - Finding the country leads to one trivia question worth 1 additional point.
   Balance question selection between true/false and open-ended questions.
   True/false questions are checked immediately by the game. For open-ended
-  questions, the active player answers first; after the answer is revealed,
-  the next connected player in turn order approves or rejects it. If no other
-  player is connected, the active player reviews their own answer.
+  questions, finding the country immediately shows the question to the active
+  player and the answer to the reviewer. The active player answers aloud; the
+  next connected reviewer judges it. After judgment, reveal the answer to all
+  players and display spectators. If no other player is connected, the active
+  player reviews their own answer.
 - After the turn's feedback, the active player advances to the next turn. The
   game ends after the configured number of rounds has been played by every
   participant. Rank by total score; equal scores are ties.
@@ -40,8 +42,9 @@ custom four-letter room code, or browser-local multiplayer protocol.
   participant and show clear readiness guidance.
 - Show participant names, scores, and the active-turn highlight throughout
   play. Only the active participant can draw, select a country, answer a
-  question, reveal an open-ended answer, or advance the turn. Only open-ended
-  answers are reviewed by the next connected participant in turn order.
+  question, or advance the turn.
+  Display spectators must not see an open-ended answer before the reviewer
+  judges it.
 - Present the country clue on a card and a rotatable, zoomable SVG globe beside
   or below it. Drag with one pointer to rotate; on touch devices, pinch with two
   fingers to zoom around the touched location. Use the wheel or zoom controls
@@ -97,7 +100,9 @@ custom four-letter room code, or browser-local multiplayer protocol.
   player views.
 - True/false questions are scored immediately by the server. Open-ended
   answers are reviewed once by the next connected player in turn order; only
-  when no other player is connected may the active player review their own.
+  that reviewer sees the answer before grading. Reveal it to all viewers after
+  judgment. When no other player is connected, the active player reviews their
+  own answer.
 - Make active-player controls visibly disabled for spectators and other
   participants. Include keyboard-accessible country search, arrow-key globe
   rotation, plus/minus zoom, and a reset shortcut in addition to pointer input.

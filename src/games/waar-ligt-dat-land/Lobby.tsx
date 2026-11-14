@@ -38,9 +38,9 @@ const TEXT = {
     zoomControls: "Bediening wereldbol", zoomIn: "Inzoomen", zoomOut: "Uitzoomen",
     resetGlobe: "Wereldbol herstellen", rotateHint: "Sleep om de bol te draaien · Knijp of spreid twee vingers om te zoomen op die plek · Scroll of gebruik +/−",
     far: "Ver", close: "Dichtbij", guessInstructions: "Klik op een land op de wereldbol of zoek het hierboven.",
-    globeSearch: "Zoeken naar landen", true: "Waar", false: "Niet waar", revealAnswer: "Toon antwoord voor de volgende speler",
-    sayAnswer: "Zeg eerst je antwoord hardop; daarna kan de volgende speler het beoordelen.",
-    answerForReview: "De speler aan de beurt heeft geantwoord. De volgende speler beoordeelt het antwoord.",
+    globeSearch: "Zoeken naar landen", true: "Waar", false: "Niet waar",
+    sayAnswer: "Zeg je antwoord hardop; de beoordelaar ziet het antwoord al en kan je daarna beoordelen.",
+    waitingForJudge: "Zeg je antwoord hardop. De beoordelaar kan het antwoord nakijken.",
     selectedTrue: "De speler koos: waar.", selectedFalse: "De speler koos: niet waar.",
     approveAnswer: "Goedkeuren", rejectAnswer: "Afkeuren", waitingForReviewer: "Wachten op de beoordeling van {name}.",
     noReviewer: "Er is geen andere speler; jij beoordeelt je eigen antwoord.",
@@ -66,9 +66,9 @@ const TEXT = {
     zoomControls: "Globe controls", zoomIn: "Zoom in", zoomOut: "Zoom out",
     resetGlobe: "Reset globe view", rotateHint: "Drag to rotate · Pinch with two fingers to zoom around that spot · Scroll or use +/−",
     far: "Far", close: "Close", guessInstructions: "Click a country on the globe or search its name above.",
-    globeSearch: "Search countries", true: "True", false: "False", revealAnswer: "Show answer for the next player",
-    sayAnswer: "Say your answer out loud first; then the next player can review it.",
-    answerForReview: "The active player has answered. The next player reviews the answer.",
+    globeSearch: "Search countries", true: "True", false: "False",
+    sayAnswer: "Say your answer out loud; the reviewer can already see the answer and judge it afterwards.",
+    waitingForJudge: "Say your answer out loud. The reviewer can judge it now.",
     selectedTrue: "The active player selected: true.", selectedFalse: "The active player selected: false.",
     approveAnswer: "Approve", rejectAnswer: "Reject", waitingForReviewer: "Waiting for {name} to review the answer.",
     noReviewer: "There is no other player, so you review your own answer.",
@@ -706,25 +706,16 @@ export function WaarLandLobby(props: GameLobbyProps<WaarLandSnapshot>) {
                       <button type="button" disabled={!active} onClick={() => send({ type: "answer", correct: true })}>{text.true}</button>
                       <button type="button" disabled={!active} onClick={() => send({ type: "answer", correct: false })}>{text.false}</button>
                     </div>
-                  ) : (
-                    <>
-                      {active && (
-                        <>
-                          <p className="muted small">{text.sayAnswer}</p>
-                          <button type="button" onClick={() => send({ type: "revealAnswer" })}>
-                            {text.revealAnswer}
-                          </button>
-                        </>
-                      )}
-                    </>
-                  )}
+                  ) : active && <p className="muted small">{text.sayAnswer}</p>}
                 </div>
               )}
               {snapshot.step === "answer" && snapshot.trivia && (
                 <div className="wld-question">
                   <strong>{language === "en" ? CATEGORY_NAMES_EN[snapshot.trivia.category] ?? snapshot.trivia.category : snapshot.trivia.category}</strong>
                   <p>{language === "en" ? snapshot.trivia.questionEn ?? snapshot.trivia.question : snapshot.trivia.question}</p>
-                  <p className="wld-answer">{language === "en" ? snapshot.trivia.answerEn ?? snapshot.trivia.answer : snapshot.trivia.answer}</p>
+                  {snapshot.trivia.answer && (
+                    <p className="wld-answer">{language === "en" ? snapshot.trivia.answerEn ?? snapshot.trivia.answer : snapshot.trivia.answer}</p>
+                  )}
                   {snapshot.trivia.explanation && (
                     <p className="wld-explanation">
                       <strong>{text.explanation}:</strong>{" "}
@@ -749,7 +740,9 @@ export function WaarLandLobby(props: GameLobbyProps<WaarLandSnapshot>) {
                             <button type="button" onClick={() => send({ type: "grade", correct: false })}>{text.rejectAnswer}</button>
                           </div>
                         </>
-                      ) : <p className="muted small">{text.waitingForReviewer.replace("{name}", reviewerName)}</p>}
+                      ) : active
+                        ? <p className="muted small">{text.waitingForJudge}</p>
+                        : <p className="muted small">{text.waitingForReviewer.replace("{name}", reviewerName)}</p>}
                     </>
                   )}
                 </div>
